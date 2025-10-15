@@ -1,3 +1,5 @@
+@import url('https://use.typekit.net/your-aktiv-grotesk-kit-id.css'); /* Replace with actual Adobe Fonts kit ID */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,6 +16,14 @@
   }
 
   :root {
+    /* Gallery 1882 Design System */
+    --gallery-navy: #14233a;
+    --gallery-lake: #1f9fcc;
+    --gallery-bright-lake: #25c1f8;
+    --gallery-off-white: #fffbeb;
+    --gallery-forest: #214731;
+
+    /* Keep existing shadcn variables for compatibility */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -88,8 +98,46 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground min-h-[100vh] flex flex-col;
+    @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
+    font-family: 'Aktiv Grotesk', system-ui, sans-serif;
+  }
+
+  /* Gallery 1882 Typography System */
+  h1, h2, h3 {
+    @apply font-bold leading-tight tracking-tight text-navy;
+    letter-spacing: -0.04em;
+  }
+
+  p {
+    @apply leading-normal text-navy;
+    line-height: 1.3;
+  }
+
+  /* Caption styles */
+  .caption {
+    @apply font-medium uppercase text-sm tracking-wider;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Gallery 1882 Component Styles */
+@layer components {
+  .gallery-card {
+    @apply aspect-[4/5] border border-lake object-cover object-top;
+  }
+
+  .gallery-button-primary {
+    @apply bg-lake text-white px-6 py-3 font-medium transition-colors hover:bg-lake/90;
+  }
+
+  .gallery-button-secondary {
+    @apply border border-lake text-navy px-6 py-3 font-medium transition-colors hover:bg-lake hover:text-white;
+  }
+
+  .gallery-button-cta {
+    @apply bg-bright-lake text-white px-6 py-3 font-medium transition-colors hover:bg-bright-lake/90;
   }
 }
 
@@ -100,4 +148,13 @@ html {
 html[data-theme='dark'],
 html[data-theme='light'] {
   opacity: initial;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

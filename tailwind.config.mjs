@@ -49,6 +49,8 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.6s ease-out',
+        'slide-up': 'slide-up 0.6s ease-out',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -56,6 +58,14 @@ const config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        // Gallery 1882 Design System Colors
+        navy: '#14233a',
+        lake: '#1f9fcc',
+        'bright-lake': '#25c1f8',
+        'off-white': '#fffbeb',
+        forest: '#214731',
+
+        // Keep existing shadcn colors for compatibility
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
@@ -94,8 +104,9 @@ const config = {
         warning: 'hsl(var(--warning))',
       },
       fontFamily: {
+        // Gallery 1882 Typography - Aktiv Grotesk with system fallbacks
+        sans: ['Aktiv Grotesk', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-geist-sans)'],
       },
       keyframes: {
         'accordion-down': {
@@ -106,6 +117,14 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       typography: () => ({
         DEFAULT: {
@@ -114,8 +133,26 @@ const config = {
               '--tw-prose-body': 'var(--text)',
               '--tw-prose-headings': 'var(--text)',
               h1: {
-                fontWeight: 'normal',
-                marginBottom: '0.25em',
+                fontWeight: 'bold',
+                lineHeight: '1.1',
+                letterSpacing: '-0.04em',
+                color: '#14233a',
+              },
+              h2: {
+                fontWeight: 'bold',
+                lineHeight: '1.1',
+                letterSpacing: '-0.04em',
+                color: '#14233a',
+              },
+              h3: {
+                fontWeight: 'bold',
+                lineHeight: '1.1',
+                letterSpacing: '-0.04em',
+                color: '#14233a',
+              },
+              p: {
+                lineHeight: '1.3',
+                color: '#14233a',
               },
             },
           ],
@@ -128,7 +165,7 @@ const config = {
               },
               h2: {
                 fontSize: '1.25rem',
-                fontWeight: 600,
+                fontWeight: 'bold',
               },
             },
           ],
