@@ -28,53 +28,68 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      viewport={{ once: true }}
-      className="grid gap-12 lg:grid-cols-2 lg:items-center"
-    >
-      {/* Image */}
-      <div className="order-2 lg:order-1">
-        <div className="gallery-card overflow-hidden">
-          <Image
-            src={exhibition.image}
-            alt={`${exhibition.title} by ${exhibition.artist}`}
-            width={400}
-            height={500}
-            className="h-full w-full object-cover object-top"
-          />
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="order-1 lg:order-2">
+    <section className="py-32 gallery-section">
+      <div className="container">
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
+          className="grid gap-20 lg:grid-cols-12 lg:items-center"
         >
-          <div className="caption text-lake mb-4">Current Exhibition</div>
-          <h2 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">{exhibition.title}</h2>
-          <p className="mb-6 text-xl font-medium text-lake">{exhibition.artist}</p>
-          <p className="mb-6 text-lg leading-relaxed">{exhibition.description}</p>
-          <div className="mb-8 text-sm text-forest">
-            <p>
-              {formatDate(exhibition.startDate)} - {formatDate(exhibition.endDate)}
-            </p>
+          {/* Image - Asymmetrical Layout */}
+          <div className="lg:col-span-7">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="gallery-card overflow-hidden group"
+            >
+              <Image
+                src={exhibition.image}
+                alt={`${exhibition.title} by ${exhibition.artist}`}
+                width={500}
+                height={625}
+                className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              />
+            </motion.div>
           </div>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <a href={`/exhibitions/${exhibition.id}`} className="gallery-button-primary">
-              View Exhibition
-            </a>
-            <a href="/visit" className="gallery-button-secondary">
-              Plan Your Visit
-            </a>
+
+          {/* Content - Asymmetrical Layout */}
+          <div className="lg:col-span-5 lg:col-start-8">
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="caption text-lake mb-6">Current Exhibition</div>
+              <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl">
+                {exhibition.title}
+              </h2>
+              <p className="mb-8 text-xl font-medium text-lake">{exhibition.artist}</p>
+              <p className="mb-8 text-lg leading-relaxed text-navy/80">{exhibition.description}</p>
+              <div className="mb-10 text-sm text-forest">
+                <p className="font-medium">
+                  {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
+                </p>
+              </div>
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <a
+                  href={`/exhibitions/${exhibition.id}`}
+                  className="gallery-button-primary px-8 py-4 text-lg"
+                >
+                  View Exhibition
+                </a>
+                <a href="/visit" className="gallery-button-secondary px-8 py-4 text-lg">
+                  Plan Your Visit
+                </a>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
-    </motion.div>
+    </section>
   )
 }

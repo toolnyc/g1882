@@ -1,72 +1,76 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
-import { mockGalleryInfo } from '@/data/mockData'
+import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
 
 export const GalleryHero: React.FC = () => {
   return (
-    <section className="relative h-screen w-full overflow-hidden">
-      {/* Video Background with Fallback */}
+    <section className="relative h-[90vh] w-full overflow-hidden">
+      {/* Cloudflare Stream Video */}
       <div className="absolute inset-0">
-        <video className="h-full w-full object-cover" autoPlay muted loop playsInline>
-          <source src="/api/placeholder/1920/1080" type="video/mp4" />
-        </video>
-        {/* Fallback Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(/api/placeholder/1920/1080)',
-          }}
-        />
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-navy/20" />
+        <div className="relative h-full w-full overflow-hidden">
+          <iframe
+            src="https://customer-dz4f40f4nnmmdd6e.cloudflarestream.com/8aa90e2afac27de9b53b72d6feda8fc5/iframe?muted=true&preload=true&loop=true&autoplay=true&controls=false&poster=https%3A%2F%2Fcustomer-dz4f40f4nnmmdd6e.cloudflarestream.com%2F8aa90e2afac27de9b53b72d6feda8fc5%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600"
+            loading="lazy"
+            className="hero-video-iframe"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media;"
+            allowFullScreen={true}
+          />
+        </div>
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/20" />
       </div>
 
-      {/* Content */}
+      {/* Minimal Content */}
       <div className="relative z-10 flex h-full items-center justify-center">
         <div className="container text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
           >
-            <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-7xl">
-              {mockGalleryInfo.name}
-            </h1>
-            <p className="mb-8 text-xl font-medium md:text-2xl">{mockGalleryInfo.tagline}</p>
-            <motion.div
+            <img src="Word-Sand.svg" alt="Gallery 1882" className="max-w-xs mx-auto p-4" />
+            {/* <h1 className="text-off-white mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              Gallery 1882
+            </h1> */}
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="text-md text-off-white pl-4"
             >
-              <a href="/exhibitions" className="gallery-button-cta">
-                View Exhibitions
-              </a>
-              <a
-                href="/visit"
-                className="gallery-button-secondary border-white text-white hover:bg-white hover:text-navy"
-              >
-                Visit Us
-              </a>
-            </motion.div>
+              Contemporary Art in the Indiana Dunes
+            </motion.p>
           </motion.div>
         </div>
       </div>
+
+      {/* Weather Widget */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 1.2 }}
+        className="absolute top-8 right-8"
+      >
+        <WeatherWidget />
+      </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        transition={{ duration: 1.5, delay: 1.5 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2"
       >
-        <div className="h-8 w-px bg-white/60" />
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="mt-2 h-2 w-2 rounded-full bg-white"
-        />
+        <div className="flex flex-col items-center gap-2">
+          <span className="caption text-off-white/60">Scroll</span>
+          <div className="h-12 w-px bg-white/40" />
+          <motion.div
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="h-3 w-3 rounded-full bg-bright-lake"
+          />
+        </div>
       </motion.div>
     </section>
   )

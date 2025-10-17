@@ -117,8 +117,7 @@
 
   /* Caption styles */
   .caption {
-    @apply font-medium uppercase text-sm tracking-wider;
-    letter-spacing: 0.05em;
+    @apply font-medium uppercase text-sm;
   }
 }
 
@@ -126,18 +125,92 @@
 @layer components {
   .gallery-card {
     @apply aspect-[4/5] border border-lake object-cover object-top;
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .gallery-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0);
+    background-size: 20px 20px;
+    opacity: 0.1;
+    pointer-events: none;
+    border-radius: 3px;
   }
 
   .gallery-button-primary {
     @apply bg-lake text-white px-6 py-3 font-medium transition-colors hover:bg-lake/90;
+    border-radius: 3px;
   }
 
   .gallery-button-secondary {
     @apply border border-lake text-navy px-6 py-3 font-medium transition-colors hover:bg-lake hover:text-white;
+    border-radius: 3px;
   }
 
   .gallery-button-cta {
     @apply bg-bright-lake text-white px-6 py-3 font-medium transition-colors hover:bg-bright-lake/90;
+    border-radius: 3px;
+  }
+
+  /* Subtle grain effect for sections */
+  .gallery-section {
+    position: relative;
+  }
+
+  .gallery-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Hero video iframe styles */
+  .hero-video-iframe {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    transform: scale(1.5) !important;
+    transform-origin: center center !important;
+    min-height: 100vh !important;
+    min-width: 100vw !important;
+    object-fit: cover !important;
+  }
+}
+
+/* Mobile-specific video styles - outside of @layer for better specificity */
+@media (max-width: 1000px) {
+  .hero-video-iframe {
+    transform: scale(2) !important;
+    min-height: 150vh !important;
+    min-width: 150vw !important;
+    left: -25% !important;
+    top: -25% !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-video-iframe {
+    transform: scale(2.25) !important;
+    min-height: 200vh !important;
+    min-width: 200vw !important;
+    left: -50% !important;
+    top: -50% !important;
   }
 }
 

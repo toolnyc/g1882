@@ -12,25 +12,13 @@ export default function HomePage() {
       <GalleryHero />
 
       {/* Current Exhibition */}
-      <section className="py-16 bg-off-white">
-        <div className="container">
-          <CurrentExhibition exhibition={mockExhibitions[0]} />
-        </div>
-      </section>
+      <CurrentExhibition exhibition={mockExhibitions[0]} />
 
       {/* Upcoming Exhibitions */}
-      <section className="py-16 bg-white">
-        <div className="container">
-          <UpcomingExhibitions exhibitions={mockExhibitions.slice(1)} />
-        </div>
-      </section>
+      <UpcomingExhibitions exhibitions={mockExhibitions.slice(1)} />
 
       {/* Gallery Info */}
-      <section className="py-16 bg-off-white">
-        <div className="container">
-          <GalleryInfo info={mockGalleryInfo} />
-        </div>
-      </section>
+      <GalleryInfo info={mockGalleryInfo} />
     </main>
   )
 }
