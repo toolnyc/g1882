@@ -52,6 +52,7 @@ export const AdminBar: React.FC<{
         block: show,
         hidden: !show,
       })}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}
     >
       <div className="container">
         <PayloadAdminBar

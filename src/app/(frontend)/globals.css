@@ -59,39 +59,6 @@
     --error: 10 100% 86%;
   }
 
-  [data-theme='dark'] {
-    --background: 0 0% 0%;
-    --foreground: 210 40% 98%;
-
-    --card: 0 0% 4%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 0, 0%, 15%, 0.8;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-
-    --success: 196 100% 14%;
-    --warning: 34 51% 25%;
-    --error: 10 39% 43%;
-  }
 }
 
 @layer base {
@@ -102,6 +69,12 @@
   body {
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
     font-family: 'Aktiv Grotesk', system-ui, sans-serif;
+    cursor: none; /* Hide default cursor */
+  }
+
+  /* Hide cursor on all interactive elements */
+  a, button, [role="button"], input, textarea, select, [data-clickable] {
+    cursor: none !important;
   }
 
   /* Gallery 1882 Typography System */
@@ -145,18 +118,24 @@
   }
 
   .gallery-button-primary {
-    @apply bg-lake text-white px-6 py-3 font-medium transition-colors hover:bg-lake/90;
+    @apply bg-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-bright-lake hover:scale-110 hover:shadow-lg hover:shadow-lake/30;
     border-radius: 3px;
+    position: relative;
+    overflow: hidden;
   }
 
   .gallery-button-secondary {
-    @apply border border-lake text-navy px-6 py-3 font-medium transition-colors hover:bg-lake hover:text-white;
+    @apply border border-lake text-navy px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:text-white hover:scale-105 hover:shadow-lg hover:shadow-lake/20;
     border-radius: 3px;
+    position: relative;
+    overflow: hidden;
   }
 
   .gallery-button-cta {
-    @apply bg-bright-lake text-white px-6 py-3 font-medium transition-colors hover:bg-bright-lake/90;
+    @apply bg-bright-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:scale-110 hover:shadow-xl hover:shadow-bright-lake/40;
     border-radius: 3px;
+    position: relative;
+    overflow: hidden;
   }
 
   /* Subtle grain effect for sections */
@@ -215,12 +194,7 @@
 }
 
 html {
-  opacity: 0;
-}
-
-html[data-theme='dark'],
-html[data-theme='light'] {
-  opacity: initial;
+  opacity: 1;
 }
 
 /* Respect reduced motion preferences */

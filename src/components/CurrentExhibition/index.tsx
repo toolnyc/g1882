@@ -2,6 +2,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface Exhibition {
   id: string
@@ -82,9 +83,9 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
                 >
                   View Exhibition
                 </a>
-                <a href="/visit" className="gallery-button-secondary px-8 py-4 text-lg">
+                <Link href="/visit" className="gallery-button-secondary px-8 py-4 text-lg">
                   Plan Your Visit
-                </a>
+                </Link>
               </div>
             </motion.div>
           </div>

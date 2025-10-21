@@ -9,7 +9,6 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  darkMode: ['selector', '[data-theme="dark"]'],
   plugins: [tailwindcssAnimate, typography],
   prefix: '',
   safelist: [
@@ -25,6 +24,7 @@ const config = {
     'bg-success/30',
     'border-warning',
     'bg-warning/30',
+    'text-off-white', // Add this line
   ],
   theme: {
     container: {

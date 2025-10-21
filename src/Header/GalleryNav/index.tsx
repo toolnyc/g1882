@@ -3,31 +3,32 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import type { Header } from '@/payload-types'
+import { CMSLink } from '@/components/Link'
 
-const navigationItems = [
-  { label: 'Exhibitions', href: '/exhibitions' },
-  { label: 'Visit', href: '/visit' },
-  { label: 'Artists', href: '/artists' },
-]
-
-export const GalleryNav: React.FC = () => {
+export const GalleryNav: React.FC<{ data: Header }> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+
+  // Use Payload navigation data, fallback to default if none
+  const navigationItems = data?.navItems || [
+    { link: { label: 'Exhibitions', url: '/exhibitions' } },
+    { link: { label: 'Visit', url: '/visit' } },
+    { link: { label: 'Artists', url: '/artists' } },
+  ]
 
   return (
     <>
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-8">
-        {navigationItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
-              pathname === item.href ? 'text-lake' : 'text-navy'
+        {navigationItems.map((item, index) => (
+          <CMSLink
+            key={index}
+            {...item.link}
+            className={`nav-link text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
+              pathname === item.link?.url ? 'text-lake font-semibold' : 'text-navy font-medium'
             }`}
-          >
-            {item.label}
-          </Link>
+          />
         ))}
       </nav>
 
@@ -58,17 +59,15 @@ export const GalleryNav: React.FC = () => {
             className="absolute top-full left-0 right-0 bg-white/20 backdrop-blur-md border-t border-white/30 md:hidden"
           >
             <nav className="container py-4 space-y-4">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`block text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
-                    pathname === item.href ? 'text-lake' : 'text-navy'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+              {navigationItems.map((item, index) => (
+                <div key={index} onClick={() => setIsOpen(false)}>
+                  <CMSLink
+                    {...item.link}
+                    className={`nav-link block text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
+                      pathname === item.link?.url ? 'text-lake' : 'text-navy'
+                    }`}
+                  />
+                </div>
               ))}
             </nav>
           </motion.div>

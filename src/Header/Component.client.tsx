@@ -58,7 +58,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
-      {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20">
         <div className="container relative z-20">
@@ -66,7 +65,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
             <Link href="/">
               <img src="Icon-Navy-Flat.png" alt="Gallery 1882" className="max-w-16" />
             </Link>
-            <GalleryNav />
+            <GalleryNav data={data} />
           </div>
         </div>
       </div>

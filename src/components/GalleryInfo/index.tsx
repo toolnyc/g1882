@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 interface GalleryInfo {
   name: string
@@ -46,40 +47,40 @@ export const GalleryInfo: React.FC<GalleryInfoProps> = ({ info }) => {
           </div>
 
           {/* Visit Information - Asymmetrical Layout */}
-          <div className="lg:col-span-5 lg:col-start-8 space-y-12">
+          <div className="lg:col-span-5 lg:col-start-8 space-y-6">
             <div>
               <h3 className="mb-8 text-2xl font-bold tracking-tight">Visit Us</h3>
               <div className="space-y-6 text-lg">
                 <div>
                   <p className="font-bold text-navy mb-2">Address</p>
-                  <p className="text-forest leading-relaxed">{info.address}</p>
+                  <p>{info.address}</p>
                 </div>
                 <div>
                   <p className="font-bold text-navy mb-2">Phone</p>
-                  <p className="text-forest">{info.phone}</p>
+                  <p>{info.phone}</p>
                 </div>
                 <div>
                   <p className="font-bold text-navy mb-2">Email</p>
-                  <p className="text-forest">{info.email}</p>
+                  <p>{info.email}</p>
                 </div>
                 <div>
                   <p className="font-bold text-navy mb-2">Hours</p>
-                  <p className="text-forest">{info.hours}</p>
+                  <p>{info.hours}</p>
                 </div>
                 <div>
                   <p className="font-bold text-navy mb-2">Admission</p>
-                  <p className="text-forest">{info.admission}</p>
+                  <p>{info.admission}</p>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
-              <a href="/visit" className="gallery-button-primary px-8 py-4 text-lg">
+              <Link href="/visit" className="gallery-button-primary px-8 py-4 text-lg">
                 Plan Your Visit
-              </a>
-              <a href="/contact" className="gallery-button-secondary px-8 py-4 text-lg">
+              </Link>
+              <Link href="/contact" className="gallery-button-secondary px-8 py-4 text-lg">
                 Contact Us
-              </a>
+              </Link>
             </div>
           </div>
         </motion.div>
