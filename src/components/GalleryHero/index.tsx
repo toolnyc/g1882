@@ -29,7 +29,11 @@ export const GalleryHero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
           >
-            <img src="Word-Sand.svg" alt="Gallery 1882" className="max-w-xs mx-auto p-4" />
+            <img
+              src="Word-Sand.svg"
+              alt="Gallery 1882"
+              className="max-w-xs mx-auto p-4 drop-shadow-sm opacity-80"
+            />
             {/* <h1 className="text-off-white mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
               Gallery 1882
             </h1> */}

@@ -22,7 +22,7 @@ export const GalleryNav: React.FC = () => {
           <Link
             key={item.href}
             href={item.href}
-            className={`text-lg font-medium transition-colors hover:text-lake ${
+            className={`text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
               pathname === item.href ? 'text-lake' : 'text-navy'
             }`}
           >
@@ -55,7 +55,7 @@ export const GalleryNav: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="absolute top-full left-0 right-0 bg-off-white border-t border-lake md:hidden"
+            className="absolute top-full left-0 right-0 bg-white/20 backdrop-blur-md border-t border-white/30 md:hidden"
           >
             <nav className="container py-4 space-y-4">
               {navigationItems.map((item) => (
@@ -63,7 +63,7 @@ export const GalleryNav: React.FC = () => {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block text-lg font-medium transition-colors hover:text-lake ${
+                  className={`block text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
                     pathname === item.href ? 'text-lake' : 'text-navy'
                   }`}
                 >

@@ -9,7 +9,8 @@ export const mockExhibitions = [
     endDate: '2024-05-20',
     description:
       'A contemplative exploration of light and water along the Indiana Dunes shoreline.',
-    image: '/api/placeholder/400/500',
+    image:
+      'https://fastly.picsum.photos/id/79/2000/3011.jpg?hmac=TQsXWj0kLBLRXbSAh2Pygog1-cOefqpjEoKyl0uD3tg',
     featured: true,
   },
   {
@@ -20,7 +21,8 @@ export const mockExhibitions = [
     endDate: '2024-08-15',
     description:
       'Mixed media works examining the relationship between industry and nature in the Great Lakes region.',
-    image: '/api/placeholder/400/500',
+    image:
+      'https://fastly.picsum.photos/id/88/1280/1707.jpg?hmac=NnkwPVDBTVxHkc4rALB_fyu-OHY2usdm7iRk5El7JC4',
     featured: false,
   },
   {
@@ -30,7 +32,8 @@ export const mockExhibitions = [
     startDate: '2024-09-01',
     endDate: '2024-11-30',
     description: 'Sculptural interpretations of the ever-changing dune landscapes.',
-    image: '/api/placeholder/400/500',
+    image:
+      'https://fastly.picsum.photos/id/121/1600/1067.jpg?hmac=QDrnlQAvC_54xDpx2afpzKMbjCZvnRljseYvkK8XPCQ',
     featured: false,
   },
 ]
@@ -40,14 +43,16 @@ export const mockArtists = [
     id: '1',
     name: 'Sarah Chen',
     bio: 'Sarah Chen is a landscape photographer based in Chicago, known for her intimate studies of the Great Lakes region.',
-    image: '/api/placeholder/400/500',
+    image:
+      'https://fastly.picsum.photos/id/185/3995/2662.jpg?hmac=gXqQYKLwRcZNsxrWGW6YosAXEIU6-D7UbytF_ApGmDs',
     exhibitions: ['Shoreline Reflections'],
   },
   {
     id: '2',
     name: 'Marcus Rodriguez',
     bio: 'Marcus Rodriguez creates large-scale installations that explore the intersection of urban and natural environments.',
-    image: '/api/placeholder/400/500',
+    image:
+      'https://fastly.picsum.photos/id/221/1440/879.jpg?hmac=-y8GQ4KS-tmCflYwphSLZmsTu-m0rL8U6CldcgLjJoA',
     exhibitions: ['Industrial Echoes'],
   },
   {
