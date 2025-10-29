@@ -9,8 +9,7 @@ export const mockExhibitions = [
     endDate: '2024-05-20',
     description:
       'A contemplative exploration of light and water along the Indiana Dunes shoreline.',
-    image:
-      'https://fastly.picsum.photos/id/79/2000/3011.jpg?hmac=TQsXWj0kLBLRXbSAh2Pygog1-cOefqpjEoKyl0uD3tg',
+    image: '/media/placeholder.svg',
     featured: true,
   },
   {
@@ -21,8 +20,7 @@ export const mockExhibitions = [
     endDate: '2024-08-15',
     description:
       'Mixed media works examining the relationship between industry and nature in the Great Lakes region.',
-    image:
-      'https://fastly.picsum.photos/id/88/1280/1707.jpg?hmac=NnkwPVDBTVxHkc4rALB_fyu-OHY2usdm7iRk5El7JC4',
+    image: '/media/placeholder.svg',
     featured: false,
   },
   {
@@ -32,8 +30,7 @@ export const mockExhibitions = [
     startDate: '2024-09-01',
     endDate: '2024-11-30',
     description: 'Sculptural interpretations of the ever-changing dune landscapes.',
-    image:
-      'https://fastly.picsum.photos/id/121/1600/1067.jpg?hmac=QDrnlQAvC_54xDpx2afpzKMbjCZvnRljseYvkK8XPCQ',
+    image: '/media/placeholder.svg',
     featured: false,
   },
 ]
@@ -43,23 +40,21 @@ export const mockArtists = [
     id: '1',
     name: 'Sarah Chen',
     bio: 'Sarah Chen is a landscape photographer based in Chicago, known for her intimate studies of the Great Lakes region.',
-    image:
-      'https://fastly.picsum.photos/id/185/3995/2662.jpg?hmac=gXqQYKLwRcZNsxrWGW6YosAXEIU6-D7UbytF_ApGmDs',
+    image: '/media/placeholder.svg',
     exhibitions: ['Shoreline Reflections'],
   },
   {
     id: '2',
     name: 'Marcus Rodriguez',
     bio: 'Marcus Rodriguez creates large-scale installations that explore the intersection of urban and natural environments.',
-    image:
-      'https://fastly.picsum.photos/id/221/1440/879.jpg?hmac=-y8GQ4KS-tmCflYwphSLZmsTu-m0rL8U6CldcgLjJoA',
+    image: '/media/placeholder.svg',
     exhibitions: ['Industrial Echoes'],
   },
   {
     id: '3',
     name: 'Elena Kowalski',
     bio: 'Elena Kowalski is a sculptor whose work examines the relationship between geological time and human experience.',
-    image: '/api/placeholder/400/500',
+    image: '/media/placeholder.svg',
     exhibitions: ['Dune Formations'],
   },
 ]
@@ -132,8 +127,7 @@ export const mockVisitSection = {
   title: 'Experience Art in Nature',
   description:
     'Step into our contemporary gallery space where art meets the dramatic Indiana Dunes landscape. Our carefully curated exhibitions offer intimate encounters with works that explore the intersection of creativity and the natural world.',
-  image:
-    'https://fastly.picsum.photos/id/1015/800/1000.jpg?hmac=8KqJ5w7vJ9QzK8QzK8QzK8QzK8QzK8QzK8QzK8QzK8QzK',
+  image: '/media/placeholder.svg',
   ctaText: 'Plan Your Visit',
   ctaUrl: '/visit',
 }
@@ -144,8 +138,7 @@ export const mockFeaturedArtist = {
   name: 'Sarah Chen',
   title: 'Shoreline Reflections',
   bio: 'Sarah Chen is a landscape photographer whose intimate studies of the Great Lakes region capture the ephemeral beauty of light and water. Her work invites viewers to slow down and contemplate the subtle interactions between natural elements.',
-  image:
-    'https://fastly.picsum.photos/id/185/600/750.jpg?hmac=gXqQYKLwRcZNsxrWGW6YosAXEIU6-D7UbytF_ApGmDs',
+  image: '/media/placeholder.svg',
   exhibitionId: '1',
   artistSlug: 'sarah-chen',
 }
