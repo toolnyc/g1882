@@ -126,3 +126,43 @@ export const mockGalleryInfo = {
   hours: 'Wednesday - Sunday, 10 AM - 6 PM',
   admission: 'Free',
 }
+
+// Visit Section Data
+export const mockVisitSection = {
+  title: 'Experience Art in Nature',
+  description:
+    'Step into our contemporary gallery space where art meets the dramatic Indiana Dunes landscape. Our carefully curated exhibitions offer intimate encounters with works that explore the intersection of creativity and the natural world.',
+  image:
+    'https://fastly.picsum.photos/id/1015/800/1000.jpg?hmac=8KqJ5w7vJ9QzK8QzK8QzK8QzK8QzK8QzK8QzK8QzK8QzK',
+  ctaText: 'Plan Your Visit',
+  ctaUrl: '/visit',
+}
+
+// Artist Feature Data
+export const mockFeaturedArtist = {
+  id: '1',
+  name: 'Sarah Chen',
+  title: 'Shoreline Reflections',
+  bio: 'Sarah Chen is a landscape photographer whose intimate studies of the Great Lakes region capture the ephemeral beauty of light and water. Her work invites viewers to slow down and contemplate the subtle interactions between natural elements.',
+  image:
+    'https://fastly.picsum.photos/id/185/600/750.jpg?hmac=gXqQYKLwRcZNsxrWGW6YosAXEIU6-D7UbytF_ApGmDs',
+  exhibitionId: '1',
+  artistSlug: 'sarah-chen',
+}
+
+// Journal Banner Data
+export const mockJournalBanner = {
+  headline: 'Stay Connected',
+  subheadline:
+    'Subscribe to our journal for exclusive artist interviews, behind-the-scenes content, and insights into contemporary art practice.',
+  ctaText: 'Subscribe to Journal',
+  ctaUrl: '/journal',
+}
+
+// Mission Section Data
+export const mockMission = {
+  statement:
+    'We believe art has the power to transform our understanding of place, to bridge the gap between human creativity and the natural world, and to inspire new ways of seeing the landscape we call home.',
+  ctaText: 'Learn More About Us',
+  ctaUrl: '/about',
+}

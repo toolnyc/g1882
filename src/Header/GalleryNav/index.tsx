@@ -10,12 +10,18 @@ export const GalleryNav: React.FC<{ data: Header }> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
+  // Add this debug logging
+  console.log('GalleryNav received data:', JSON.stringify(data, null, 2))
+  console.log('navItems:', data?.navItems)
+
   // Use Payload navigation data, fallback to default if none
-  const navigationItems = data?.navItems || [
+  const navigationItems = [
     { link: { label: 'Exhibitions', url: '/exhibitions' } },
     { link: { label: 'Visit', url: '/visit' } },
     { link: { label: 'Artists', url: '/artists' } },
   ]
+
+  console.log('Final navigationItems:', navigationItems)
 
   return (
     <>
