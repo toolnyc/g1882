@@ -2,7 +2,7 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import React from 'react'
 
 import type { Footer } from '@/payload-types'
-
+import { NewsletterForm } from './NewsletterForm'
 import { CMSLink } from '@/components/Link'
 
 export async function Footer() {
@@ -56,6 +56,7 @@ export async function Footer() {
           </div>
 
           {/* Contact */}
+
           <div>
             <h4 className="mb-4 font-bold" style={{ color: '#fffbeb' }}>
               Contact
@@ -63,6 +64,14 @@ export async function Footer() {
             <div className="space-y-2 text-sm">
               <p className="text-off-white">(219) 555-0188</p>
               <p className="text-off-white">info@gallery1882.org</p>
+            </div>
+          </div>
+          <div>
+            <h4 className="mb-4 font-bold" style={{ color: '#fffbeb' }}>
+              The Journal
+            </h4>
+            <div className="space-y-2 text-sm">
+              <NewsletterForm />
             </div>
           </div>
         </div>

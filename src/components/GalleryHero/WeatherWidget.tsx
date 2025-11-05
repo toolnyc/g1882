@@ -43,11 +43,10 @@ export const WeatherWidget: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="px-4 py-3 text-white"
+      className="px-4 py-3 text-white flex gap-2"
     >
-      <div className="text-md font-medium text-bright-lake">{weather.temperature}°F</div>
-      <div className="text-sm text-white/70">{weather.condition}</div>
-      <div className="text-sm text-white/60">{weather.location}</div>
+      <div className="text-sm text-bright-lake font-bold">{weather.temperature}°F</div>
+      <div className="text-sm text-off-white">{weather.condition}</div>
     </motion.div>
   )
 }

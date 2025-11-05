@@ -97,7 +97,7 @@
 /* Gallery 1882 Component Styles */
 @layer components {
   .gallery-card {
-    @apply aspect-[4/5] border border-lake object-cover object-top;
+    @apply aspect-[4/5] object-cover object-top;
     border-radius: 3px;
     position: relative;
   }
@@ -118,21 +118,21 @@
   }
 
   .gallery-button-primary {
-    @apply bg-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-bright-lake hover:scale-110 hover:shadow-lg hover:shadow-lake/30;
+    @apply bg-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-bright-lake hover:scale-105;
     border-radius: 3px;
     position: relative;
     overflow: hidden;
   }
 
   .gallery-button-secondary {
-    @apply border border-lake text-navy px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:text-white hover:scale-105 hover:shadow-lg hover:shadow-lake/20;
+    @apply border border-lake text-navy px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:text-white hover:scale-105;
     border-radius: 3px;
     position: relative;
     overflow: hidden;
   }
 
   .gallery-button-cta {
-    @apply bg-bright-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:scale-110 hover:shadow-xl hover:shadow-bright-lake/40;
+    @apply bg-bright-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:scale-105;
     border-radius: 3px;
     position: relative;
     overflow: hidden;

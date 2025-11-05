@@ -2,6 +2,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
+import { LiveIndicator } from '../LiveIndicator'
 
 export const GalleryHero: React.FC = () => {
   return (
@@ -29,14 +30,18 @@ export const GalleryHero: React.FC = () => {
         className="absolute bottom-8 right-8 z-[2] opacity-60"
       >
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-6 py-4">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="text-lg text-off-white/80 tracking-tight pl-4"
-          >
-            Contemporary Art in the Indiana Dunes
-          </motion.p>
+          <div className="flex items-center">
+            <LiveIndicator size="sm" colorClassName="bg-bright-lake" />
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.4 }}
+              className="text-lg text-off-white tracking-tight pl-4"
+            >
+              Open
+            </motion.p>
+          </div>
+
           <WeatherWidget />
         </div>
       </motion.div>

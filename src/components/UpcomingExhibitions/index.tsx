@@ -36,10 +36,10 @@ export const UpcomingExhibitions: React.FC<UpcomingExhibitionsProps> = ({ exhibi
     })
   }
 
-  // Sort exhibitions by start date
-  const sortedExhibitions = [...exhibitions].sort(
-    (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-  )
+  // Show only the 3 most recent exhibitions (latest startDates)
+  const sortedExhibitions = [...exhibitions]
+    .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+    .slice(0, 3)
 
   return (
     <section className="py-32 bg-navy gallery-section">
@@ -68,7 +68,7 @@ export const UpcomingExhibitions: React.FC<UpcomingExhibitionsProps> = ({ exhibi
                 viewport={{ once: true }}
                 className="group"
               >
-                <div className="border-b-2 border-bright-lake py-12 hover:scale-105 hover:shadow-bright-lake/30 transition-all duration-500">
+                <div className="border-b border-bright-lake py-12 hover:scale-105 transition-all duration-500">
                   <div className="grid grid-cols-12 gap-8 items-start">
                     {/* Date Section - Prominent */}
                     <div className="col-span-12 lg:col-span-3">

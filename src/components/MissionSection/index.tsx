@@ -1,17 +1,26 @@
 'use client'
 import React from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { motion, useScroll, useTransform } from 'framer-motion'
 
-interface MissionSectionProps {
-  statement: string
-  ctaText: string
-  ctaUrl: string
-}
+export const MissionSection: React.FC = () => {
+  const { scrollYProgress } = useScroll()
 
-export const MissionSection: React.FC<MissionSectionProps> = ({ statement, ctaText, ctaUrl }) => {
+  // Animate border from 0 to 100% width
+  const borderWidth = useTransform(scrollYProgress, [0, 0.2], ['0%', '100%'])
+
+  const statement =
+    'We believe art has the power to transform our understanding of place, to bridge the gap between human creativity and the natural world, and to inspire new ways of seeing the landscape we call home.'
+  const words = statement.split(' ').reduce<string[]>((acc, word, idx) => {
+    if ((idx + 1) % 3 === 0 && idx !== 0) {
+      acc[acc.length - 1] += ' ' + word
+    } else {
+      acc.push(word)
+    }
+    return acc
+  }, [])
+
   return (
-    <section className="py-32 bg-navy gallery-section">
+    <section className="py-20 gallery-section">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -20,30 +29,37 @@ export const MissionSection: React.FC<MissionSectionProps> = ({ statement, ctaTe
           viewport={{ once: true }}
           className="text-center max-w-5xl mx-auto"
         >
-          <div className="caption text-bright-lake mb-8">Our Mission</div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="mb-12 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl text-off-white leading-tight"
-            style={{ letterSpacing: '-0.05em' }}
-          >
-            {statement}
-          </motion.h2>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
+            className="caption text-lake mb-6"
           >
-            <Link
-              href={ctaUrl}
-              className="bg-off-white text-navy hover:bg-bright-lake hover:text-off-white px-8 py-4 text-lg font-medium rounded-[3px] transition-all duration-300"
-            >
-              {ctaText}
-            </Link>
+            Our Mission
           </motion.div>
+
+          <motion.h2 className="mb-10 text-3xl md:text-4xl text-navy leading-tight">
+            {words.map((word, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1,
+                  ease: 'easeOut',
+                }}
+                viewport={{ once: true }}
+                className="inline-block mr-2"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </motion.h2>
+
+          {/* Animated bright lake border */}
+          <motion.div className="h-[.15em] bg-bright-lake mx-auto" style={{ width: borderWidth }} />
         </motion.div>
       </div>
     </section>

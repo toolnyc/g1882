@@ -4,7 +4,6 @@ import { CurrentExhibition } from '@/components/CurrentExhibition'
 import { VisitSection } from '@/components/VisitSection'
 import { ArtistFeature } from '@/components/ArtistFeature'
 import { UpcomingExhibitions } from '@/components/UpcomingExhibitions'
-import { JournalBanner } from '@/components/JournalBanner'
 import { MissionSection } from '@/components/MissionSection'
 import { GalleryInfo } from '@/components/GalleryInfo'
 import {
@@ -12,15 +11,16 @@ import {
   mockGalleryInfo,
   mockVisitSection,
   mockFeaturedArtist,
-  mockJournalBanner,
-  mockMission,
 } from '@/data/mockData'
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-off-white">
       {/* Hero Section */}
       <GalleryHero />
+
+      {/* Mission Section */}
+      <MissionSection />
 
       {/* Current Exhibition */}
       <CurrentExhibition exhibition={mockExhibitions[0]} />
@@ -34,14 +34,7 @@ export default function HomePage() {
       {/* Upcoming Exhibitions */}
       <UpcomingExhibitions exhibitions={mockExhibitions.slice(1)} />
 
-      {/* Journal Banner */}
-      <JournalBanner {...mockJournalBanner} />
-
-      {/* Mission Section */}
-      <MissionSection {...mockMission} />
-
       {/* Gallery Info */}
-      <GalleryInfo info={mockGalleryInfo} />
     </main>
   )
 }

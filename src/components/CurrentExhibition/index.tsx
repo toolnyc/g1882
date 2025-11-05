@@ -3,6 +3,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { LiveIndicator } from '../LiveIndicator'
 
 interface Exhibition {
   id: string
@@ -39,7 +40,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
           className="grid gap-20 lg:grid-cols-12 lg:items-center"
         >
           {/* Image - Asymmetrical Layout */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-6">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -50,8 +51,8 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
               <Image
                 src={exhibition.image}
                 alt={`${exhibition.title} by ${exhibition.artist}`}
-                width={500}
-                height={625}
+                width={400}
+                height={500}
                 className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
             </motion.div>
@@ -65,17 +66,14 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
               transition={{ duration: 0.8, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <div className="caption text-lake mb-6">Current Exhibition</div>
-              <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl">
+              <div className="flex items-center gap-4 mb-6">
+                <LiveIndicator size="sm" />
+                <div className="caption text-lake flex items-center">On Now</div>
+              </div>
+              <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">
                 {exhibition.title}
               </h2>
-              <p className="mb-8 text-xl font-medium text-lake">{exhibition.artist}</p>
               <p className="mb-8 text-lg leading-relaxed text-navy/80">{exhibition.description}</p>
-              <div className="mb-10 text-sm text-forest">
-                <p className="font-medium">
-                  {formatDate(exhibition.startDate)} — {formatDate(exhibition.endDate)}
-                </p>
-              </div>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <a
                   href={`/exhibitions/${exhibition.id}`}
@@ -83,9 +81,6 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
                 >
                   View Exhibition
                 </a>
-                <Link href="/visit" className="gallery-button-secondary px-8 py-4 text-lg">
-                  Plan Your Visit
-                </Link>
               </div>
             </motion.div>
           </div>

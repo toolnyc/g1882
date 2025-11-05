@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -16,8 +16,21 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
   ctaText,
   ctaUrl,
 }) => {
+  const [email, setEmail] = useState('')
+  const [isSubscribed, setIsSubscribed] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email) {
+      // Here you would typically send the email to your backend
+      console.log('Email submitted:', email)
+      setIsSubscribed(true)
+      setEmail('')
+    }
+  }
+
   return (
-    <section className="py-24 bg-bright-lake gallery-section">
+    <section className="py-24 bg-lake gallery-section">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -44,18 +57,38 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
           >
             {subheadline}
           </motion.p>
+
+          {/* Email Signup Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
+            className="mb-8"
           >
-            <Link
-              href={ctaUrl}
-              className="bg-off-white text-bright-lake px-8 py-4 text-lg font-medium rounded-[3px] hover:bg-navy hover:text-off-white transition-all duration-300"
-            >
-              {ctaText}
-            </Link>
+            {!isSubscribed ? (
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
+              >
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="flex-1 w-full px-4 py-3 text-navy placeholder-navy/60 bg-off-white rounded-[3px] border-0 focus:outline-none focus:ring-2 focus:ring-off-white/50"
+                />
+                <button
+                  type="submit"
+                  className="bg-navy text-off-white px-6 py-3 text-lg font-medium rounded-[3px] hover:bg-off-white hover:text-navy hover:scale-105 transition-all duration-300 whitespace-nowrap"
+                >
+                  Subscribe
+                </button>
+              </form>
+            ) : (
+              <div className="text-off-white text-lg font-medium">Thank you for subscribing!</div>
+            )}
           </motion.div>
         </motion.div>
       </div>
