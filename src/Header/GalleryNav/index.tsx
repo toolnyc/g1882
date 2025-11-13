@@ -16,7 +16,7 @@ export const GalleryNav: React.FC<{ data: Header }> = ({ data }) => {
 
   // Use Payload navigation data, fallback to default if none
   const navigationItems = [
-    { link: { label: 'Exhibitions', url: '/exhibitions' } },
+    { link: { label: 'Happenings', url: '/happenings' } },
     { link: { label: 'Visit', url: '/visit' } },
     { link: { label: 'Artists', url: '/artists' } },
   ]

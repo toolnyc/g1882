@@ -28,6 +28,18 @@ const eslintConfig = [
           caughtErrorsIgnorePattern: '^(_|ignore)',
         },
       ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/endpoints/seed/*'],
+              message:
+                'Importing from seed endpoints is not allowed in runtime code. Seed data should only be used during database seeding.',
+            },
+          ],
+        },
+      ],
     },
   },
   {

@@ -1,10 +1,16 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 interface DirectoryItem {
-  id: string
+  id?: string
+  slug?: string | null
   name: string
+  groupKey?: string
+  displayName?: string
+  subtitle?: string
+  href?: string | null
   [key: string]: any
 }
 
@@ -12,9 +18,6 @@ interface DirectoryListingProps {
   items: DirectoryItem[]
   title: string
   groupBy: 'alphabetical' | 'chronological'
-  getGroupKey: (item: DirectoryItem) => string
-  getDisplayName: (item: DirectoryItem) => string
-  getSubtitle?: (item: DirectoryItem) => string
   className?: string
   banner?: React.ReactNode
 }
@@ -23,9 +26,6 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   items,
   title,
   groupBy,
-  getGroupKey,
-  getDisplayName,
-  getSubtitle,
   className = '',
   banner,
 }) => {
@@ -36,7 +36,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   // Group items by the specified key
   const groupedItems = items.reduce(
     (groups, item) => {
-      const key = getGroupKey(item)
+      const key = item.groupKey || 'Unknown'
       if (!groups[key]) {
         groups[key] = []
       }
@@ -60,7 +60,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   sortedGroups.forEach((groupKey) => {
     groupedItems[groupKey].sort((a, b) => {
       if (groupBy === 'alphabetical') {
-        return getDisplayName(a).localeCompare(getDisplayName(b))
+        return (a.displayName || a.name || '').localeCompare(b.displayName || b.name || '')
       } else {
         // For chronological, sort by date (newest first)
         return (
@@ -160,23 +160,18 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
 
                   {/* Items in Group */}
                   <div className="space-y-0">
-                    {groupedItems[groupKey].map((item, itemIndex) => (
-                      <motion.div
-                        key={item.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: itemIndex * 0.05 }}
-                        viewport={{ once: true }}
-                        className="group"
-                      >
+                    {groupedItems[groupKey].map((item, itemIndex) => {
+                      const href = item.href || (item.slug ? `/${title.toLowerCase()}/${item.slug}` : null)
+                      const displayName = item.displayName || item.name || ''
+                      const content = (
                         <div className="border-b border-navy/20 py-6 hover:scale-[1.01] transition-all duration-700">
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <h3 className="text-xl font-semibold text-navy group-hover:text-bright-lake transition-colors duration-200">
-                                {getDisplayName(item)}
+                                {displayName}
                               </h3>
-                              {getSubtitle && (
-                                <p className="text-sm text-navy/70 mt-1">{getSubtitle(item)}</p>
+                              {item.subtitle && (
+                                <p className="text-sm text-navy/70 mt-1">{item.subtitle}</p>
                               )}
                             </div>
                             <div className="ml-4">
@@ -196,8 +191,27 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                             </div>
                           </div>
                         </div>
-                      </motion.div>
-                    ))}
+                      )
+
+                      return (
+                        <motion.div
+                          key={item.id || itemIndex}
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.4, delay: itemIndex * 0.05 }}
+                          viewport={{ once: true }}
+                          className="group"
+                        >
+                          {href ? (
+                            <Link href={href} className="block">
+                              {content}
+                            </Link>
+                          ) : (
+                            content
+                          )}
+                        </motion.div>
+                      )
+                    })}
                   </div>
                 </motion.div>
               ))}

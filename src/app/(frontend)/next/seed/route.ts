@@ -6,8 +6,21 @@ import { headers } from 'next/headers'
 export const maxDuration = 60 // This function can run for a maximum of 60 seconds
 
 export async function POST(): Promise<Response> {
-  const payload = await getPayload({ config })
+  // Restrict seed route to development only
+  if (process.env.NODE_ENV !== 'development') {
+    return new Response('Seed route is only available in development.', { status: 403 })
+  }
+
+  // Optionally require SEED_SECRET header
   const requestHeaders = await headers()
+  const seedSecret = requestHeaders.get('x-seed-secret')
+  const expectedSecret = process.env.SEED_SECRET
+
+  if (expectedSecret && seedSecret !== expectedSecret) {
+    return new Response('Invalid seed secret.', { status: 403 })
+  }
+
+  const payload = await getPayload({ config })
 
   // Authenticate by passing request headers
   const { user } = await payload.auth({ headers: requestHeaders })
@@ -26,6 +39,31 @@ export async function POST(): Promise<Response> {
     return Response.json({ success: true })
   } catch (e) {
     payload.logger.error({ err: e, message: 'Error seeding data' })
-    return new Response('Error seeding data.', { status: 500 })
+
+    // Check if this is a validation error with structured data
+    if (e && typeof e === 'object' && 'data' in e && e.data && typeof e.data === 'object') {
+      const errorData = e.data as { errors?: unknown[] }
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        return Response.json(
+          {
+            success: false,
+            errors: errorData.errors,
+            message: 'Validation error occurred while seeding data.',
+          },
+          { status: 400 },
+        )
+      }
+    }
+
+    // Check if error has a message property
+    const errorMessage = e instanceof Error ? e.message : String(e)
+
+    return Response.json(
+      {
+        success: false,
+        message: errorMessage || 'Error seeding data.',
+      },
+      { status: 500 },
+    )
   }
 }

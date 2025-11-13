@@ -1,4 +1,5 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { getCachedSpace } from '@/utilities/getSpace'
 import React from 'react'
 
 import type { Footer } from '@/payload-types'
@@ -7,6 +8,7 @@ import { CMSLink } from '@/components/Link'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
+  const space = await getCachedSpace()()
 
   const navItems = footerData?.navItems || []
 
@@ -16,15 +18,22 @@ export async function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Gallery Info */}
           <div>
-            <h3 className="mb-4 text-xl font-bold text-off-white">Gallery 1882</h3>
+            <h3 className="mb-4 text-xl font-bold text-off-white">
+              {space?.name || 'Gallery 1882'}
+            </h3>
             <p className="mb-4 text-sm text-off-white">
-              Contemporary art in the heart of the Indiana Dunes region.
+              {space?.tagline || 'Contemporary art in the heart of the Indiana Dunes region.'}
             </p>
-            <p className="text-sm text-off-white">
-              123 Dune Drive
-              <br />
-              Chesterton, IN 46304
-            </p>
+            {space?.address && (
+              <p className="text-sm text-off-white">
+                {space.address.split(',').map((line, i) => (
+                  <React.Fragment key={i}>
+                    {line.trim()}
+                    {i < space.address.split(',').length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </p>
+            )}
           </div>
 
           {/* CMS Navigation Links */}
@@ -49,21 +58,32 @@ export async function Footer() {
               Visit
             </h4>
             <div className="space-y-2 text-sm">
-              <p className="text-off-white">Wednesday - Sunday</p>
-              <p className="text-off-white">10 AM - 6 PM</p>
-              <p className="mt-4 text-off-white">Free Admission</p>
+              {space?.hours ? (
+                space.hours.split(',').map((line, i) => (
+                  <p key={i} className="text-off-white">
+                    {line.trim()}
+                  </p>
+                ))
+              ) : (
+                <>
+                  <p className="text-off-white">Wednesday - Sunday</p>
+                  <p className="text-off-white">10 AM - 6 PM</p>
+                </>
+              )}
+              {space?.admission && (
+                <p className="mt-4 text-off-white">{space.admission}</p>
+              )}
             </div>
           </div>
 
           {/* Contact */}
-
           <div>
             <h4 className="mb-4 font-bold" style={{ color: '#fffbeb' }}>
               Contact
             </h4>
             <div className="space-y-2 text-sm">
-              <p className="text-off-white">(219) 555-0188</p>
-              <p className="text-off-white">info@gallery1882.org</p>
+              {space?.phone && <p className="text-off-white">{space.phone}</p>}
+              {space?.email && <p className="text-off-white">{space.email}</p>}
             </div>
           </div>
           <div>

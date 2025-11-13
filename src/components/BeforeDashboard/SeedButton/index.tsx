@@ -43,25 +43,46 @@ export const SeedButton: React.FC = () => {
           new Promise((resolve, reject) => {
             try {
               fetch('/next/seed', { method: 'POST', credentials: 'include' })
-                .then((res) => {
+                .then(async (res) => {
                   if (res.ok) {
                     resolve(true)
                     setSeeded(true)
                   } else {
-                    reject('An error occurred while seeding.')
+                    // Try to parse JSON error response
+                    let errorMessage = 'An error occurred while seeding.'
+                    try {
+                      const errorData = await res.json()
+                      if (errorData.errors && Array.isArray(errorData.errors)) {
+                        // Format validation errors
+                        const errorMessages = errorData.errors
+                          .map((err: { message?: string; path?: string }) => {
+                            if (err.path && err.message) {
+                              return `${err.path}: ${err.message}`
+                            }
+                            return err.message || 'Validation error'
+                          })
+                          .join('; ')
+                        errorMessage = `Validation errors: ${errorMessages}`
+                      } else if (errorData.message) {
+                        errorMessage = errorData.message
+                      }
+                    } catch {
+                      // If JSON parsing fails, use default message
+                    }
+                    reject(errorMessage)
                   }
                 })
                 .catch((error) => {
-                  reject(error)
+                  reject(error instanceof Error ? error.message : String(error))
                 })
             } catch (error) {
-              reject(error)
+              reject(error instanceof Error ? error.message : String(error))
             }
           }),
           {
             loading: 'Seeding with data....',
             success: <SuccessMessage />,
-            error: 'An error occurred while seeding.',
+            error: (error) => (typeof error === 'string' ? error : 'An error occurred while seeding.'),
           },
         )
       } catch (err) {

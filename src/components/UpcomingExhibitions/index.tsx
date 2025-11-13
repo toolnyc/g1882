@@ -133,8 +133,8 @@ export const UpcomingExhibitions: React.FC<UpcomingExhibitionsProps> = ({ exhibi
             viewport={{ once: true }}
             className="mt-20 text-center"
           >
-            <Link href="/exhibitions" className="gallery-button-primary px-8 py-4 text-lg">
-              View All Exhibitions
+            <Link href="/happenings" className="gallery-button-primary px-8 py-4 text-lg">
+              View All Happenings
             </Link>
           </motion.div>
         </motion.div>

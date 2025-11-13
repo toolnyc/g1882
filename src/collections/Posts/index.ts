@@ -41,7 +41,8 @@ export const Posts: CollectionConfig<'posts'> = {
   defaultPopulate: {
     title: true,
     slug: true,
-    categories: true,
+    artists: true,
+    happenings: true,
     meta: {
       image: true,
       description: true,
@@ -121,13 +122,22 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'posts',
             },
             {
-              name: 'categories',
+              name: 'artists',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
               },
               hasMany: true,
-              relationTo: 'categories',
+              relationTo: 'artists',
+            },
+            {
+              name: 'happenings',
+              type: 'relationship',
+              admin: {
+                position: 'sidebar',
+              },
+              hasMany: true,
+              relationTo: 'happenings',
             },
           ],
           label: 'Meta',

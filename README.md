@@ -248,6 +248,10 @@ The seed script will also create a demo user for demonstration purposes only:
 
 > NOTICE: seeding the database is destructive because it drops your current database to populate a fresh one from the seed template. Only run this command if you are starting a new project or can afford to lose your current data.
 
+#### Seed Data Restrictions
+
+Mock data used for seeding is located in `src/endpoints/seed/mockData.ts` and should only be imported within seed endpoint files. An ESLint rule (`no-restricted-imports`) is configured to prevent importing from `@/endpoints/seed/*` in runtime code (app, components, utilities). This ensures that seed data is only used during database seeding and not in the production application.
+
 ## Production
 
 To run Payload in production, you need to build and start the Admin panel. To do so, follow these steps:

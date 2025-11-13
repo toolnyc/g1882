@@ -5,28 +5,74 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
 
-interface Exhibition {
-  id: string
-  title: string
-  artist: string
-  startDate: string
-  endDate: string
-  description: string
-  image: string
-  featured: boolean
+interface Happening {
+  id?: string
+  slug?: string | null
+  title?: string | null
+  featuredPerson?: { name?: string | null } | string | null
+  featuredPersonName?: string | null
+  startDate?: string | Date | null
+  endDate?: string | Date | null
+  description?: any
+  heroImage?: { url?: string; alt?: string } | string | null
+  featured?: boolean
+  isActive?: boolean
 }
 
 interface CurrentExhibitionProps {
-  exhibition: Exhibition
+  happening: Happening
 }
 
-export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening }) => {
+  const formatDate = (dateString: string | Date) => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
+    return date.toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
     })
+  }
+
+  const getFeaturedPersonName = () => {
+    if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
+      return happening.featuredPerson.name
+    }
+    return happening.featuredPersonName || ''
+  }
+
+  const getImageUrl = () => {
+    if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
+      return happening.heroImage.url
+    }
+    if (typeof happening.heroImage === 'string') {
+      return happening.heroImage
+    }
+    return '/media/test-art.jpg'
+  }
+
+  const getImageAlt = () => {
+    if (typeof happening.heroImage === 'object' && happening.heroImage?.alt) {
+      return happening.heroImage.alt
+    }
+    return `${happening.title || 'Happening'}${getFeaturedPersonName() ? ` by ${getFeaturedPersonName()}` : ''}`
+  }
+
+  const getDescription = () => {
+    if (typeof happening.description === 'string') {
+      return happening.description
+    }
+    // For rich text, extract text content (simplified)
+    if (typeof happening.description === 'object' && happening.description?.root) {
+      const extractText = (node: any): string => {
+        if (node.type === 'text') return node.text || ''
+        if (node.children) {
+          return node.children.map(extractText).join(' ')
+        }
+        return ''
+      }
+      return extractText(happening.description.root) || 'View details for more information.'
+    }
+    return 'View details for more information.'
   }
 
   return (
@@ -49,8 +95,8 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
               className="gallery-card overflow-hidden group"
             >
               <Image
-                src={exhibition.image}
-                alt={`${exhibition.title} by ${exhibition.artist}`}
+                src={getImageUrl()}
+                alt={getImageAlt()}
                 width={400}
                 height={500}
                 className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
@@ -71,16 +117,23 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ exhibition
                 <div className="caption text-lake flex items-center">On Now</div>
               </div>
               <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">
-                {exhibition.title}
+                {happening.title}
               </h2>
-              <p className="mb-8 text-lg leading-relaxed text-navy/80">{exhibition.description}</p>
+              {getFeaturedPersonName() && (
+                <p className="mb-4 text-xl font-semibold text-bright-lake">
+                  {getFeaturedPersonName()}
+                </p>
+              )}
+              <p className="mb-8 text-lg leading-relaxed text-navy/80">{getDescription()}</p>
               <div className="flex flex-col gap-4 sm:flex-row">
-                <a
-                  href={`/exhibitions/${exhibition.id}`}
-                  className="gallery-button-primary px-8 py-4 text-lg"
-                >
-                  View Exhibition
-                </a>
+                {happening.slug && (
+                  <Link
+                    href={`/happenings/${happening.slug}`}
+                    className="gallery-button-primary px-8 py-4 text-lg"
+                  >
+                    View Happening
+                  </Link>
+                )}
               </div>
             </motion.div>
           </div>
