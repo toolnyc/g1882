@@ -1,6 +1,7 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getCachedSpace } from '@/utilities/getSpace'
 import React from 'react'
+import payload from 'payload'
 
 import type { Footer } from '@/payload-types'
 import { NewsletterForm } from './NewsletterForm'
@@ -70,9 +71,7 @@ export async function Footer() {
                   <p className="text-off-white">10 AM - 6 PM</p>
                 </>
               )}
-              {space?.admission && (
-                <p className="mt-4 text-off-white">{space.admission}</p>
-              )}
+              {space?.admission && <p className="mt-4 text-off-white">{space.admission}</p>}
             </div>
           </div>
 

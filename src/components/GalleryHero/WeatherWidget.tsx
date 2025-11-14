@@ -11,6 +11,18 @@ interface WeatherData {
 export const WeatherWidget: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [currentTime, setCurrentTime] = useState<string>('')
+
+  // Format time in Central Time (Chicago)
+  const formatCentralTime = (): string => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Chicago',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    })
+    return `${formatter.format(new Date())} Central Time`
+  }
 
   useEffect(() => {
     // Mock weather data for now - replace with real API call
@@ -24,6 +36,17 @@ export const WeatherWidget: React.FC = () => {
       setWeather(mockWeather)
       setLoading(false)
     }, 1000)
+
+    // Set initial time
+    setCurrentTime(formatCentralTime())
+
+    // Update time every minute
+    const interval = setInterval(() => {
+      setCurrentTime(formatCentralTime())
+    }, 60000) // 60 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval)
   }, [])
 
   if (loading) {
@@ -43,10 +66,10 @@ export const WeatherWidget: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="px-4 py-3 text-white flex gap-2"
+      className="text-white flex gap-2"
     >
-      <div className="text-sm text-bright-lake font-bold">{weather.temperature}°F</div>
-      <div className="text-sm text-off-white">{weather.condition}</div>
+      <div className="text-xs text-bright-lake">{weather.temperature}°F</div>
+      <div className="text-xs text-off-white">{weather.condition}</div>
     </motion.div>
   )
 }

@@ -21,6 +21,7 @@ export default async function HomePage() {
   // Get upcoming happenings (not active, future dates)
   const getUpcoming = getCachedHappenings({ upcoming: true })
   const upcomingHappenings = await getUpcoming()
+  console.log('upcomingHappenings', upcomingHappenings)
 
   // Fetch space global for visit section
   const space = await getCachedSpace()()

@@ -22,6 +22,7 @@ export default async function ArtistsPage() {
     bio: string
     image: string
     exhibitions: string[]
+    slug?: string
   } | null = null
   let exhibitionTitle: string | undefined
 
@@ -44,6 +45,7 @@ export default async function ArtistsPage() {
         bio: artist.bio || '',
         image: imageUrl,
         exhibitions: [],
+        slug: artist.slug,
       }
       exhibitionTitle = mostRecentHappening.title
     }

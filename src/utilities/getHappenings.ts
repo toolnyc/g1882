@@ -72,13 +72,8 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
  * Returns a cached function to fetch happenings
  */
 export const getCachedHappenings = (filters: HappeningFilters = {}) =>
-  unstable_cache(
-    async () => getHappenings(filters),
-    ['happenings', JSON.stringify(filters)],
-    {
-      tags: ['happenings'],
-    },
-  )
+  unstable_cache(async () => getHappenings(filters), ['happenings', JSON.stringify(filters)], {
+    tags: ['happenings'],
+  })
 
 export { getHappenings }
-

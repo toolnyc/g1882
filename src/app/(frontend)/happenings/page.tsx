@@ -3,7 +3,9 @@ import { DirectoryListing } from '@/components/DirectoryListing'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { FeaturedHappenings } from '@/components/FeaturedHappenings'
 import { UpcomingHappenings } from '@/components/UpcomingHappenings'
-import Link from 'next/link'
+import { FeatureBanner } from '@/components/FeatureBanner'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
+import type { Media } from '@/payload-types'
 
 export default async function HappeningsPage() {
   const getHappenings = getCachedHappenings({})
@@ -64,34 +66,45 @@ export default async function HappeningsPage() {
     return happening.featuredPersonName || ''
   }
 
+  // Get the most upcoming happening for the banner
+  const upcomingBannerHappening = upcomingHappenings.length > 0 ? upcomingHappenings[0] : null
+  let upcomingBanner = null
+
+  if (upcomingBannerHappening) {
+    const happeningImage =
+      typeof upcomingBannerHappening.heroImage === 'object' && upcomingBannerHappening.heroImage
+        ? (upcomingBannerHappening.heroImage as Media)
+        : null
+    const imageUrl = happeningImage?.url
+      ? getMediaUrl(happeningImage.url, happeningImage.updatedAt)
+      : '/media/test-space.jpg'
+
+    const personName = getFeaturedPersonName(upcomingBannerHappening)
+    const dateSubtitle = getHappeningSubtitle(upcomingBannerHappening)
+
+    upcomingBanner = (
+      <FeatureBanner
+        image={imageUrl}
+        imageAlt={upcomingBannerHappening.title || 'Upcoming Event'}
+        title={upcomingBannerHappening.title || 'Upcoming Event'}
+        subtitle={personName || undefined}
+        description={dateSubtitle || undefined}
+        label="Coming Up"
+        href={upcomingBannerHappening.slug ? `/happenings/${upcomingBannerHappening.slug}` : null}
+        showLiveIndicator={false}
+      />
+    )
+  }
+
   return (
     <main className="min-h-screen bg-off-white">
-      {/* Featured Happenings Section */}
-      {featuredHappenings.length > 0 && (
-        <section className="py-16 border-b border-navy/20">
-          <div className="container">
-            <FeaturedHappenings happenings={featuredHappenings} />
-          </div>
-        </section>
-      )}
-
-      {/* Upcoming Events Section */}
-      {upcomingHappenings.length > 0 && (
-        <section className="py-16 border-b border-navy/20">
-          <div className="container">
-            <UpcomingHappenings happenings={upcomingHappenings} />
-          </div>
-        </section>
-      )}
-
       {/* Timeline View */}
       <DirectoryListing
         items={timelineHappenings.map((happening) => {
           const subtitle = getHappeningSubtitle(happening)
           const personName = getFeaturedPersonName(happening)
-          const fullSubtitle = personName && subtitle
-            ? `${subtitle} • ${personName}`
-            : subtitle || personName || ''
+          const fullSubtitle =
+            personName && subtitle ? `${subtitle} • ${personName}` : subtitle || personName || ''
 
           return {
             ...happening,
@@ -107,8 +120,8 @@ export default async function HappeningsPage() {
         })}
         title="Happenings"
         groupBy="chronological"
+        banner={upcomingBanner}
       />
     </main>
   )
 }
-

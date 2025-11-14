@@ -3,8 +3,39 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
 import { LiveIndicator } from '../LiveIndicator'
+import { useState, useEffect } from 'react'
 
 export const GalleryHero: React.FC = () => {
+  const [loading, setLoading] = useState(true)
+  const [currentTime, setCurrentTime] = useState<string>('')
+  // Format time in Central Time (Chicago)
+  const formatCentralTime = (): string => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Chicago',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    })
+    return `${formatter.format(new Date())} CST`
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+
+    // Set initial time
+    setCurrentTime(formatCentralTime())
+
+    // Update time every minute
+    const interval = setInterval(() => {
+      setCurrentTime(formatCentralTime())
+    }, 60000) // 60 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Cloudflare Stream Video */}
@@ -29,7 +60,7 @@ export const GalleryHero: React.FC = () => {
         transition={{ duration: 1, delay: 1.2 }}
         className="absolute bottom-8 right-8 z-[2] opacity-60"
       >
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-6 py-4">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-6 pt-4   ">
           <div className="flex items-center">
             <LiveIndicator size="sm" colorClassName="bg-bright-lake" />
             <motion.p
@@ -41,8 +72,13 @@ export const GalleryHero: React.FC = () => {
               Open
             </motion.p>
           </div>
-
+          <span className="text-xs text-off-white">{currentTime}</span>
           <WeatherWidget />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="px-4 py-3 flex gap-2"
+          ></motion.div>
         </div>
       </motion.div>
     </section>

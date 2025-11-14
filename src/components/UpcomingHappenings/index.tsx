@@ -149,4 +149,3 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
     </section>
   )
 }
-
