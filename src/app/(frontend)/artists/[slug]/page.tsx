@@ -61,7 +61,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
 
   return (
     <main className="min-h-screen bg-off-white">
-      <article className="pt-16 pb-24">
+      <article className="pt-48 pb-24">
         {/* Hero Image */}
         {artistImage && typeof artistImage === 'object' && artistImage.url && (
           <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
@@ -69,7 +69,8 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
               src={artistImage.url}
               alt={artistImage.alt || artist.name || ''}
               fill
-              className="object-cover"
+              className="object-fit-contain"
+              objectFit="contain"
               priority
             />
           </div>

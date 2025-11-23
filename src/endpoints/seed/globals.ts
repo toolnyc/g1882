@@ -73,7 +73,7 @@ export async function seedGlobals(payload: Payload): Promise<void> {
           link: {
             type: 'custom',
             label: 'Journal',
-            url: '/posts',
+            url: '/journal',
           },
         },
         {

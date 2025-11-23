@@ -6,6 +6,7 @@ import RichText from '@/components/RichText'
 import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
+import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
 
 type Args = {
   params: Promise<{
@@ -38,17 +39,14 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   }
 
   const heroImage =
-    typeof happening.heroImage === 'object' && happening.heroImage
-      ? happening.heroImage
-      : null
+    typeof happening.heroImage === 'object' && happening.heroImage ? happening.heroImage : null
 
   const featuredPerson =
     typeof happening.featuredPerson === 'object' && happening.featuredPerson
       ? happening.featuredPerson
       : null
 
-  const featuredPersonName =
-    featuredPerson?.name || happening.featuredPersonName || ''
+  const featuredPersonName = featuredPerson?.name || happening.featuredPersonName || ''
 
   const startDate = happening.startDate ? new Date(happening.startDate as string) : null
   const endDate = happening.endDate ? new Date(happening.endDate as string) : null
@@ -70,7 +68,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
   return (
     <main className="min-h-screen bg-off-white">
-      <article className="pt-16 pb-24">
+      <article className="pb-24">
         {/* Hero Image */}
         {heroImage && typeof heroImage === 'object' && heroImage.url && (
           <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
@@ -92,9 +90,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 {happening.title}
               </h1>
               {featuredPersonName && (
-                <p className="text-2xl text-bright-lake font-semibold">
-                  {featuredPersonName}
-                </p>
+                <p className="text-2xl text-bright-lake font-semibold">{featuredPersonName}</p>
               )}
             </div>
 
@@ -127,13 +123,19 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             </div>
 
             {/* Category */}
-            {happening.category && (
-              <div className="mb-8">
-                <span className="inline-block px-4 py-2 bg-bright-lake/10 text-bright-lake rounded-full text-sm font-semibold">
-                  {happening.category}
-                </span>
-              </div>
-            )}
+            {happening.category &&
+              (() => {
+                const { bgClass, textClass } = getCategoryTagClasses(happening.category)
+                return (
+                  <div className="mb-8">
+                    <span
+                      className={`inline-block px-4 py-2 ${bgClass} ${textClass} border border-bright-lake rounded text-sm font-semibold`}
+                    >
+                      {happening.category}
+                    </span>
+                  </div>
+                )
+              })()}
 
             {/* Description */}
             {happening.description && (
@@ -152,7 +154,10 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                       if (typeof happening.description === 'string') {
                         return happening.description
                       }
-                      if (typeof happening.description === 'object' && happening.description?.root) {
+                      if (
+                        typeof happening.description === 'object' &&
+                        happening.description?.root
+                      ) {
                         const extractText = (node: any): string => {
                           if (node.type === 'text') return node.text || ''
                           if (node.children) {
@@ -206,4 +211,3 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
   })
 }
-

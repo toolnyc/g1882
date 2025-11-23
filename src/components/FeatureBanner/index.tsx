@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
+import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
 
 export interface FeatureBannerProps {
   image: string
@@ -14,6 +15,7 @@ export interface FeatureBannerProps {
   label?: string
   href?: string | null
   showLiveIndicator?: boolean
+  category?: string | null
 }
 
 export const FeatureBanner: React.FC<FeatureBannerProps> = ({
@@ -25,6 +27,7 @@ export const FeatureBanner: React.FC<FeatureBannerProps> = ({
   label = 'Currently Showing',
   href,
   showLiveIndicator = true,
+  category,
 }) => {
   const content = (
     <motion.div
@@ -53,14 +56,21 @@ export const FeatureBanner: React.FC<FeatureBannerProps> = ({
           <div className="flex items-center gap-3 mb-2">
             {showLiveIndicator && <LiveIndicator size="sm" />}
             <span className="caption text-lake">{label}</span>
+            {category &&
+              (() => {
+                const { bgClass, textClass } = getCategoryTagClasses(category)
+                return (
+                  <span
+                    className={`inline-block px-3 py-1 ${bgClass} ${textClass} border border-bright-lake rounded text-sm font-semibold`}
+                  >
+                    {category}
+                  </span>
+                )
+              })()}
           </div>
           <h2 className="text-2xl font-bold text-navy mb-1 truncate">{title}</h2>
-          {subtitle && (
-            <p className="text-sm text-lake font-medium mb-2">{subtitle}</p>
-          )}
-          {description && (
-            <p className="text-sm text-navy/80 line-clamp-2">{description}</p>
-          )}
+          {subtitle && <p className="text-sm text-lake font-medium mb-2">{subtitle}</p>}
+          {description && <p className="text-sm text-navy/80 line-clamp-2">{description}</p>}
         </div>
       </div>
     </motion.div>
@@ -76,4 +86,3 @@ export const FeatureBanner: React.FC<FeatureBannerProps> = ({
 
   return content
 }
-

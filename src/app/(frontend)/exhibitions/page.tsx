@@ -58,6 +58,7 @@ export default async function ExhibitionsPage() {
       image: imageUrl,
       featured: happening.featured || false,
       href: `/happenings/${happening.slug}`,
+      category: happening.category || null,
     }
   })
 
@@ -84,6 +85,7 @@ export default async function ExhibitionsPage() {
               )
             : '/media/test-art.jpg',
         featured: mostRecentHappening.featured || false,
+        category: mostRecentHappening.category || null,
       }
     : null
 

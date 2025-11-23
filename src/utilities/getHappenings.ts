@@ -14,22 +14,59 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
 
   const where: any = {}
 
+  // Build date range conditions for active filter
+  const activeDateConditions: any[] = []
+  if (filters.active) {
+    // Filter by date ranges instead of isActive field, since isActive is calculated dynamically
+    // Active happenings: startDate <= now AND (endDate >= now OR endDate is null)
+    activeDateConditions.push({
+      startDate: {
+        less_than_equal: now.toISOString(),
+      },
+    })
+    activeDateConditions.push({
+      or: [
+        {
+          endDate: {
+            greater_than_equal: now.toISOString(),
+          },
+        },
+        {
+          endDate: {
+            equals: null,
+          },
+        },
+      ],
+    })
+  }
+
+  // Combine all conditions
+  const allConditions: any[] = []
+
   if (filters.featured !== undefined) {
-    where.featured = {
-      equals: filters.featured,
-    }
+    allConditions.push({
+      featured: {
+        equals: filters.featured,
+      },
+    })
   }
 
   if (filters.upcoming) {
-    where.startDate = {
-      greater_than: now.toISOString(),
-    }
+    allConditions.push({
+      startDate: {
+        greater_than: now.toISOString(),
+      },
+    })
   }
 
-  if (filters.active) {
-    where.isActive = {
-      equals: true,
-    }
+  // Add active date conditions
+  allConditions.push(...activeDateConditions)
+
+  // If we have multiple conditions, use 'and', otherwise use direct assignment
+  if (allConditions.length > 1) {
+    where.and = allConditions
+  } else if (allConditions.length === 1) {
+    Object.assign(where, allConditions[0])
   }
 
   const result = await payload.find({
@@ -64,6 +101,12 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
 
     return { ...happening, isActive }
   })
+
+  // If active filter is requested, only return happenings that are actually active
+  // (after dynamic calculation, in case of isActiveOverride or edge cases)
+  if (filters.active) {
+    return happenings.filter((happening) => happening.isActive === true)
+  }
 
   return happenings
 }

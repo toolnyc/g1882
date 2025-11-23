@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
+import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
 
 interface Exhibition {
   id: string
@@ -14,6 +15,7 @@ interface Exhibition {
   description: string
   image: string
   featured: boolean
+  category?: string | null
 }
 
 interface CurrentExhibitionBannerProps {
@@ -48,6 +50,14 @@ export const CurrentExhibitionBanner: React.FC<CurrentExhibitionBannerProps> = (
           <div className="flex items-center gap-3 mb-2">
             <LiveIndicator size="sm" />
             <span className="caption text-lake">On Now</span>
+            {exhibition.category && (() => {
+              const { bgClass, textClass } = getCategoryTagClasses(exhibition.category)
+              return (
+                <span className={`inline-block px-4 py-2 ${bgClass} ${textClass} border border-bright-lake rounded text-sm font-semibold`}>
+                  {exhibition.category}
+                </span>
+              )
+            })()}
           </div>
           <h2 className="text-2xl font-bold text-navy mb-1 truncate">{exhibition.title}</h2>
           <p className="text-sm text-navy/70 mb-2">by {exhibition.artist}</p>

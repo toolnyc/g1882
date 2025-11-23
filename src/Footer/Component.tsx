@@ -12,9 +12,10 @@ export async function Footer() {
   const space = await getCachedSpace()()
 
   const navItems = footerData?.navItems || []
+  console.log('footer', navItems)
 
   return (
-    <footer className="mt-auto border-t border-lake bg-navy">
+    <footer className="relative z-20 mt-auto border-t border-lake bg-navy">
       <div className="container py-12" style={{ color: '#fffbeb' }}>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Gallery Info */}
@@ -45,8 +46,8 @@ export async function Footer() {
                 {navItems.map((item, index) => (
                   <CMSLink
                     key={index}
-                    {...item}
-                    className="block text-sm hover:text-lake transition-colors"
+                    {...item.link}
+                    className="block text-sm hover:text-lake text-off-white transition-colors"
                   />
                 ))}
               </nav>

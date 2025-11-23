@@ -12,16 +12,15 @@ import { getMediaUrl } from '@/utilities/getMediaUrl'
 import type { Artist, Media } from '@/payload-types'
 
 export default async function HomePage() {
-  const getHappenings = getCachedHappenings({ active: true })
+  const getHappenings = getCachedHappenings()
   const activeHappenings = await getHappenings()
 
   // Get the most active happening (or first featured)
   const currentHappening = activeHappenings.find((h) => h.featured) || activeHappenings[0]
-
+  console.log('currentHappening', activeHappenings)
   // Get upcoming happenings (not active, future dates)
   const getUpcoming = getCachedHappenings({ upcoming: true })
   const upcomingHappenings = await getUpcoming()
-  console.log('upcomingHappenings', upcomingHappenings)
 
   // Fetch space global for visit section
   const space = await getCachedSpace()()
@@ -29,6 +28,7 @@ export default async function HomePage() {
   // Get featured happening for artist feature
   const getFeaturedHappenings = getCachedHappenings({ featured: true })
   const featuredHappenings = await getFeaturedHappenings()
+
   const featuredHappening = featuredHappenings[0] || currentHappening
 
   // Resolve featured artist from happening

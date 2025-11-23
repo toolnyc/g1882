@@ -92,6 +92,7 @@ export default async function HappeningsPage() {
         label="Coming Up"
         href={upcomingBannerHappening.slug ? `/happenings/${upcomingBannerHappening.slug}` : null}
         showLiveIndicator={false}
+        category={upcomingBannerHappening.category || undefined}
       />
     )
   }
@@ -116,6 +117,7 @@ export default async function HappeningsPage() {
             subtitle: fullSubtitle,
             href: happening.slug ? `/happenings/${happening.slug}` : null,
             featuredPersonName: personName,
+            category: happening.category || null,
           }
         })}
         title="Happenings"
