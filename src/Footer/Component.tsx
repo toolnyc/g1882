@@ -12,7 +12,6 @@ export async function Footer() {
   const space = await getCachedSpace()()
 
   const navItems = footerData?.navItems || []
-  console.log('footer', navItems)
 
   return (
     <footer className="relative z-20 mt-auto border-t border-lake bg-navy">

@@ -17,7 +17,6 @@ export default async function HomePage() {
 
   // Get the most active happening (or first featured)
   const currentHappening = activeHappenings.find((h) => h.featured) || activeHappenings[0]
-  console.log('currentHappening', activeHappenings)
   // Get upcoming happenings (not active, future dates)
   const getUpcoming = getCachedHappenings({ upcoming: true })
   const upcomingHappenings = await getUpcoming()

@@ -18,15 +18,6 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
-      // Add picsum.photos for placeholder images
-      {
-        protocol: 'https',
-        hostname: 'fastly.picsum.photos',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-      },
     ],
   },
   webpack: (webpackConfig, { isServer }) => {

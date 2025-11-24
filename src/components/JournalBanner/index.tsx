@@ -23,7 +23,6 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
     e.preventDefault()
     if (email) {
       // Here you would typically send the email to your backend
-      console.log('Email submitted:', email)
       setIsSubscribed(true)
       setEmail('')
     }

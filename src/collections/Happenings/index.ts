@@ -11,6 +11,7 @@ import {
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 
 export const Happenings: CollectionConfig = {
   slug: 'happenings',
@@ -20,7 +21,18 @@ export const Happenings: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  versions: {
+    maxPerDoc: 3,
+    drafts: {
+      autosave: {
+        interval: 100,
+      },
+      schedulePublish: true,
+    },
+  },
   admin: {
+    preview: (doc, { req }) =>
+      generatePreviewPath({ collection: 'happenings', slug: doc.slug as string, req }),
     useAsTitle: 'title',
     defaultColumns: ['title', 'startDate', 'featured', 'isActive', 'updatedAt'],
   },

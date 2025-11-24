@@ -9,7 +9,6 @@ export function NewsletterForm() {
     e.preventDefault()
     if (email) {
       // Here you would typically send the email to your backend
-      console.log('Email submitted:', email)
       setIsSubscribed(true)
       setEmail('')
     }

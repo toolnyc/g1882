@@ -50,14 +50,6 @@ export const Posts: CollectionConfig<'posts'> = {
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
-    livePreview: {
-      url: ({ data, req }) =>
-        generatePreviewPath({
-          slug: data?.slug,
-          collection: 'posts',
-          req,
-        }),
-    },
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
@@ -238,6 +230,6 @@ export const Posts: CollectionConfig<'posts'> = {
       },
       schedulePublish: true,
     },
-    maxPerDoc: 50,
+    maxPerDoc: 3,
   },
 }
