@@ -68,8 +68,10 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               <Image
                 src={image}
                 alt={`${name} - ${title}`}
-                width={400}
-                height={500}
+                width={800}
+                height={1000}
+                quality={90}
+                sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 33vw, (max-width: 1376px) 33vw, 430px"
                 className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
             </motion.div>

@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
-import { getCachedHappenings } from '@/utilities/getHappenings'
 import { generateMeta } from '@/utilities/generateMeta'
 import Link from 'next/link'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { ArtistDetailSkeleton } from '@/components/SkeletonLoaders'
+import { RelatedHappenings } from './RelatedHappenings'
+
+// Revalidate every 60 seconds
+export const revalidate = 60
 
 type Args = {
   params: Promise<{
@@ -48,17 +52,6 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
 
   const artistImage = typeof artist.image === 'object' && artist.image ? artist.image : null
 
-  // Get happenings featuring this artist
-  const getHappenings = getCachedHappenings({})
-  const allHappenings = await getHappenings()
-  const relatedHappenings = allHappenings.filter((happening) => {
-    const featuredPerson =
-      typeof happening.featuredPerson === 'object' && happening.featuredPerson
-        ? happening.featuredPerson
-        : null
-    return featuredPerson?.id === artist.id || happening.featuredPersonName === artist.name
-  })
-
   return (
     <main className="min-h-screen bg-off-white">
       <article className="pt-48 pb-24">
@@ -87,39 +80,34 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
 
             {/* Bio */}
             {artist.bio && (
-              <div className="mb-12">
-                <p className="text-lg leading-relaxed text-navy/80 whitespace-pre-line">
+              <div className="mb-6">
+                <p className="text-base leading-relaxed text-navy/80 whitespace-pre-line">
                   {artist.bio}
                 </p>
               </div>
             )}
 
             {/* Related Happenings */}
-            {relatedHappenings.length > 0 && (
-              <div className="mt-12 pt-8 border-t border-navy/20">
-                <h2 className="text-2xl font-bold text-navy mb-6">Related Happenings</h2>
-                <div className="space-y-4">
-                  {relatedHappenings.map((happening) => (
-                    <Link
-                      key={happening.id}
-                      href={`/happenings/${happening.slug}`}
-                      className="block p-4 border border-navy/20 rounded-lg hover:border-bright-lake transition-colors"
-                    >
-                      <h3 className="text-xl font-semibold text-navy mb-2">{happening.title}</h3>
-                      {happening.startDate && (
-                        <p className="text-sm text-navy/70">
-                          {new Date(happening.startDate as string).toLocaleDateString('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                        </p>
-                      )}
-                    </Link>
-                  ))}
+            <Suspense
+              fallback={
+                <div className="mt-12 pt-8 border-t border-navy/20">
+                  <div className="h-8 bg-navy/20 animate-pulse rounded w-48 mb-6" />
+                  <div className="space-y-4">
+                    {[1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="p-4 border border-navy/20 rounded-lg bg-navy/5 animate-pulse"
+                      >
+                        <div className="h-6 bg-navy/20 animate-pulse rounded w-3/4 mb-2" />
+                        <div className="h-4 bg-navy/10 animate-pulse rounded w-32" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              }
+            >
+              <RelatedHappenings artistId={artist.id} artistName={artist.name} />
+            </Suspense>
           </div>
         </div>
       </article>

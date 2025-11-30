@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
+import { AnimatedBorder } from '@/components/AnimatedBorder'
 
 interface DirectoryItem {
   id?: string
@@ -37,6 +38,8 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const stickyHeaderRef = useRef<HTMLDivElement>(null)
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState<number>(0)
+  const [showBanner, setShowBanner] = useState<boolean>(true)
+  const [lastScrollY, setLastScrollY] = useState<number>(0)
 
   // Filter items based on search query
   const filteredItems = useMemo(() => {
@@ -96,6 +99,29 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
     return groups
   }, [groupedItems, groupBy])
 
+  // Banner hide/show on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      if (currentScrollY < 200) {
+        // Show banner at the top
+        setShowBanner(true)
+      } else if (currentScrollY > lastScrollY && currentScrollY > 300) {
+        // Scrolling down & past 300px - hide banner
+        setShowBanner(false)
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - show banner
+        setShowBanner(true)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
+
   // Measure sticky header height
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -117,7 +143,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
       window.removeEventListener('resize', updateHeaderHeight)
       resizeObserver.disconnect()
     }
-  }, [banner, searchQuery])
+  }, [banner, searchQuery, showBanner])
 
   // Set up intersection observer to track which group is currently visible
   useEffect(() => {
@@ -143,8 +169,8 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
       },
       {
         root: null, // Use viewport instead of container
-        rootMargin: '-20% 0px -20% 0px',
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        rootMargin: '-30% 0px -30% 0px', // Larger margins for less sensitivity
+        threshold: [0, 0.3, 0.5, 0.7, 1.0], // Fewer thresholds for less jumpiness
       },
     )
 
@@ -160,71 +186,109 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   }
 
   return (
-    <section className={`pt-32 gallery-section ${className}`}>
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          {/* Sticky Header, Banner, and Search Container */}
-          <div
-            ref={stickyHeaderRef}
-            className="sticky top-20 z-10 bg-cream/50 backdrop-blur-lg -mx-4 px-4 pt-4 pb-3 mb-8 border-b border-navy/10"
-          >
-            {/* Header */}
-            <div className="mb-4">
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy border-b-4 border-bright-lake pb-4">
-                {title}
-              </h1>
-            </div>
-
-            {/* Banner */}
-            {banner && <div className="mb-3">{banner}</div>}
-
-            {/* Search Bar */}
-            <div>
-              <Input
-                type="text"
-                placeholder={`Search ${title.toLowerCase()}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full opacity-60 focus:opacity-100 transition-opacity"
-              />
-            </div>
+    <>
+      {/* Fixed Header/Banner stays outside the main scrollable content so it can remain
+          independent of the section offsets and avoid layout jumps. */}
+      <div
+        ref={stickyHeaderRef}
+        className="fixed top-0 left-0 right-0 z-20 directory-header-fixed bg-off-white border-b border-navy/10"
+      >
+        <div className="container px-4 pt-36 pb-3">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy pb-6">
+              {title}
+            </h1>
+            <AnimatedBorder />
           </div>
 
-          <div className="flex w-full">
-            {/* Side Tracker */}
-            <div className="w-16 flex-shrink-0 mr-8">
-              <div
-                className="sticky self-start"
-                style={{
-                  top: stickyHeaderHeight > 0 ? `calc(5rem + ${stickyHeaderHeight}px)` : '5rem',
-                }}
-              >
-                {sortedGroups
-                  .filter((groupKey) => {
-                    // Filter groups based on search - show group if any items match
-                    if (!searchQuery.trim()) return true
-                    return groupedItems[groupKey] && groupedItems[groupKey].length > 0
-                  })
-                  .map((groupKey) => (
-                    <div
-                      key={groupKey}
-                      className={`h-8 flex items-center justify-center text-sm font-semibold transition-colors duration-200 ${
-                        activeGroup === groupKey ? 'text-bright-lake' : 'text-navy'
-                      }`}
-                    >
-                      {groupKey}
-                    </div>
-                  ))}
-              </div>
-            </div>
+          {/* Banner with animated collapse/expand */}
+          {banner && (
+            <motion.div
+              initial={false}
+              animate={{
+                height: showBanner ? 'auto' : 0,
+                opacity: showBanner ? 1 : 0,
+                marginBottom: showBanner ? 12 : 0,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: [0.4, 0, 0.2, 1],
+              }}
+              style={{ overflow: 'hidden' }}
+            >
+              {banner}
+            </motion.div>
+          )}
 
+          {/* Search Bar */}
+          <div>
+            <Input
+              type="text"
+              placeholder={`Search ${title.toLowerCase()}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full opacity-60 focus:opacity-100 transition-opacity"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Sidebar mirrors the header strategy so it can remain fixed without being
+          affected by section offsets. */}
+      <div
+        className="hidden fixed left-0 top-0 bottom-0 z-30 directory-sidebar-fixed"
+        style={{
+          paddingTop:
+            stickyHeaderHeight > 0
+              ? `calc(7rem + ${stickyHeaderHeight}px + 2rem)`
+              : 'calc(7rem + 2rem)',
+          paddingBottom: '2rem',
+        }}
+      >
+        <div className="h-full flex flex-col items-center justify-start pl-20 pr-4">
+          {sortedGroups
+            .filter((groupKey) => {
+              // Filter groups based on search - show group if any items match
+              if (!searchQuery.trim()) return true
+              return groupedItems[groupKey] && groupedItems[groupKey].length > 0
+            })
+            .map((groupKey) => (
+              <div
+                key={groupKey}
+                className={`flex items-center justify-center text-sm font-semibold transition-colors duration-200 mb-0.5 ${
+                  activeGroup === groupKey ? 'text-bright-lake' : 'text-navy/60'
+                }`}
+              >
+                <span
+                  className={`px-2 py-1 transition-colors duration-200 ${
+                    activeGroup === groupKey ? 'bg-bright-lake/10' : ''
+                  }`}
+                  style={{ borderRadius: '1px' }}
+                >
+                  {groupKey}
+                </span>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      <section
+        className={`gallery-section ${className}`}
+        style={{
+          paddingTop:
+            stickyHeaderHeight > 0 ? `calc(${stickyHeaderHeight}px + 1rem)` : 'calc(15rem + 1rem)',
+        }}
+      >
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            viewport={{ once: true }}
+          >
             {/* Main Content */}
-            <div className="flex-1 w-full">
+            <div className="w-full">
               {sortedGroups
                 .filter((groupKey) => {
                   // Filter groups based on search - show group if any items match
@@ -238,12 +302,12 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                     data-group-key={groupKey}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: groupIndex * 0.1 }}
+                    transition={{ duration: 0.3, delay: 0.05 }}
                     viewport={{ once: true }}
-                    className="mb-16"
+                    className="mb-8"
                   >
                     {/* Group Header */}
-                    <div className="mb-8">
+                    <div className="mb-4">
                       <h2 className="text-2xl font-bold text-bright-lake border-b border-bright-lake/30 pb-2">
                         {groupKey}
                       </h2>
@@ -256,7 +320,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                           item.href || (item.slug ? `/${title.toLowerCase()}/${item.slug}` : null)
                         const displayName = item.displayName || item.name || ''
                         const content = (
-                          <div className="border-b border-navy/20 py-6 hover:scale-[1.01] transition-all duration-700">
+                          <div className="border-b border-navy/20 py-4 hover:scale-[1.01] transition-all duration-700">
                             <div className="flex items-center justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-1">
@@ -270,7 +334,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                                       )
                                       return (
                                         <span
-                                          className={`inline-block px-3 py-1 ${bgClass} ${textClass} border border-bright-lake rounded text-sm font-semibold`}
+                                          className={`inline-block px-2 py-1 ${bgClass} ${textClass} border border-navy/10 rounded-tag text-sm font-semibold`}
                                         >
                                           {item.category}
                                         </span>
@@ -305,7 +369,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                             key={item.id || itemIndex}
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: itemIndex * 0.05 }}
+                            transition={{ duration: 0.25, delay: itemIndex * 0.01 }}
                             viewport={{ once: true }}
                             className="group"
                           >
@@ -323,9 +387,9 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                   </motion.div>
                 ))}
             </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+          </motion.div>
+        </div>
+      </section>
+    </>
   )
 }

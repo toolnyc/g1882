@@ -12,6 +12,7 @@ import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { revalidateHappening, revalidateDeleteHappening } from './hooks/revalidateHappening'
 
 export const Happenings: CollectionConfig = {
   slug: 'happenings',
@@ -162,4 +163,8 @@ export const Happenings: CollectionConfig = {
     },
     slugField(),
   ],
+  hooks: {
+    afterChange: [revalidateHappening],
+    afterDelete: [revalidateDeleteHappening],
+  },
 }

@@ -1,15 +1,25 @@
 'use client'
 import React from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Link from 'next/link'
 
-export const MissionSection: React.FC = () => {
+interface MissionSectionProps {
+  missionStatement?: string | null
+  missionCtaText?: string | null
+  missionCtaUrl?: string | null
+}
+
+export const MissionSection: React.FC<MissionSectionProps> = ({
+  missionStatement,
+  missionCtaText,
+  missionCtaUrl,
+}) => {
   const { scrollYProgress } = useScroll()
 
   // Animate border from 0 to 100% width
   const borderWidth = useTransform(scrollYProgress, [0, 0.2], ['0%', '100%'])
 
-  const statement =
-    'We believe art has the power to transform our understanding of place, to bridge the gap between human creativity and the natural world, and to inspire new ways of seeing the landscape we call home.'
+  const statement = missionStatement || ''
   const words = statement.split(' ').reduce<string[]>((acc, word, idx) => {
     if ((idx + 1) % 3 === 0 && idx !== 0) {
       acc[acc.length - 1] += ' ' + word
@@ -60,6 +70,21 @@ export const MissionSection: React.FC = () => {
 
           {/* Animated bright lake border */}
           <motion.div className="h-[.15em] bg-bright-lake mx-auto" style={{ width: borderWidth }} />
+
+          {/* CTA Button */}
+          {missionCtaText && missionCtaUrl && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              viewport={{ once: true }}
+              className="mt-10"
+            >
+              <Link href={missionCtaUrl} className="gallery-button-primary px-8 py-4 text-lg">
+                {missionCtaText}
+              </Link>
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </section>

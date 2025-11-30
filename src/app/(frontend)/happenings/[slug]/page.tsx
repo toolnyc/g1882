@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { getCachedHappeningBySlug } from '@/utilities/getHappeningBySlug'
 import RichText from '@/components/RichText'
 import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
 import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
+import { HappeningDetailSkeleton } from '@/components/SkeletonLoaders'
+
+// Revalidate every 60 seconds
+export const revalidate = 60
 
 type Args = {
   params: Promise<{
@@ -129,7 +133,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 return (
                   <div className="mb-8">
                     <span
-                      className={`inline-block px-4 py-2 ${bgClass} ${textClass} border border-bright-lake rounded text-sm font-semibold`}
+                      className={`inline-block px-2 py-1 ${bgClass} ${textClass} border border-navy/10 rounded-tag text-sm font-semibold`}
                     >
                       {happening.category}
                     </span>
@@ -139,8 +143,8 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
             {/* Description */}
             {happening.description && (
-              <div className="mb-12">
-                <RichText data={happening.description} />
+              <div className="mb-6">
+                <RichText data={happening.description} className="prose-p:my-2 prose-p:text-base" />
               </div>
             )}
 

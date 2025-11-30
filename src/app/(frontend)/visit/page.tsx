@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
+import { AnimatedBorder } from '@/components/AnimatedBorder'
 
 export default function VisitPage() {
   return (
@@ -14,9 +15,10 @@ export default function VisitPage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy border-b-4 border-bright-lake pb-4">
-              Visit
-            </h1>
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">Visit</h1>
+              <AnimatedBorder className="mt-4" />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -297,7 +299,7 @@ export default function VisitPage() {
                   </div>
                   <h3 className="text-xl font-bold text-navy mb-3">Historic Downtown</h3>
                   <p className="text-navy/80 text-sm">
-                    Explore Chesterton's charming downtown with local shops, restaurants, and
+                    Explore Chesterton&apos;s charming downtown with local shops, restaurants, and
                     historic architecture.
                   </p>
                 </div>

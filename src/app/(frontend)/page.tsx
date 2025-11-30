@@ -8,10 +8,13 @@ import { MissionSection } from '@/components/MissionSection'
 import { GalleryInfo } from '@/components/GalleryInfo'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { getCachedSpace } from '@/utilities/getSpace'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
-import type { Artist, Media } from '@/payload-types'
+import type { Artist, Media, Home } from '@/payload-types'
 
 export default async function HomePage() {
+  // Fetch home global data
+  const homeData = (await getCachedGlobal('home', 2)()) as Home
   const getHappenings = getCachedHappenings()
   const activeHappenings = await getHappenings()
 
@@ -30,7 +33,7 @@ export default async function HomePage() {
 
   const featuredHappening = featuredHappenings[0] || currentHappening
 
-  // Resolve featured artist from happening
+  // Resolve featured artist - prioritize home global, then fallback to happening
   let featuredArtistData: {
     id: string
     name: string
@@ -41,7 +44,34 @@ export default async function HomePage() {
     artistSlug: string
   } | null = null
 
-  if (featuredHappening) {
+  // Check if home global has a featured artist
+  if (homeData?.featuredArtist) {
+    const artist =
+      typeof homeData.featuredArtist === 'object' && homeData.featuredArtist
+        ? (homeData.featuredArtist as Artist)
+        : null
+
+    if (artist) {
+      const artistImage =
+        typeof artist.image === 'object' && artist.image ? (artist.image as Media) : null
+      const imageUrl = artistImage?.url
+        ? getMediaUrl(artistImage.url, artistImage.updatedAt)
+        : '/media/test-artist.jpg'
+
+      featuredArtistData = {
+        id: artist.id,
+        name: artist.name,
+        title: artist.name, // Use artist name as title when from home global
+        bio: artist.bio || '',
+        image: imageUrl,
+        exhibitionId: '', // No exhibition ID when from home global
+        artistSlug: artist.slug,
+      }
+    }
+  }
+
+  // Fallback to featured happening if no artist from home global
+  if (!featuredArtistData && featuredHappening) {
     const artist =
       typeof featuredHappening.featuredPerson === 'object' && featuredHappening.featuredPerson
         ? (featuredHappening.featuredPerson as Artist)
@@ -77,18 +107,32 @@ export default async function HomePage() {
     }
   }
 
-  // Construct visit section from space data
-  const visitSectionData = space
+  // Construct visit section - prioritize home global, then fallback to space data
+  const visitSectionData = homeData?.visitTitle
     ? {
-        title: 'Escape to the Duneland',
-        description:
-          space.description ||
-          'Located under an hours drive from Chicago, Gallery 1882, in the heart of Chesterton, Indiana is the gateway to the Indiana Dunes National Park. Always open, always free, always inspiring.',
-        image: '/media/test-space.jpg',
-        ctaText: 'Plan Your Visit',
-        ctaUrl: '/visit',
+        title: homeData.visitTitle,
+        description: homeData.visitDescription || '',
+        image:
+          homeData.visitImage && typeof homeData.visitImage === 'object'
+            ? getMediaUrl(
+                (homeData.visitImage as Media).url,
+                (homeData.visitImage as Media).updatedAt,
+              )
+            : '/media/test-space.jpg',
+        ctaText: homeData.visitCtaText || 'Plan Your Visit',
+        ctaUrl: homeData.visitCtaUrl || '/visit',
       }
-    : null
+    : space
+      ? {
+          title: 'Escape to the Duneland',
+          description:
+            space.description ||
+            'Located under an hours drive from Chicago, Gallery 1882, in the heart of Chesterton, Indiana is the gateway to the Indiana Dunes National Park. Always open, always free, always inspiring.',
+          image: '/media/test-space.jpg',
+          ctaText: 'Plan Your Visit',
+          ctaUrl: '/visit',
+        }
+      : null
 
   return (
     <main className="min-h-screen bg-off-white">
@@ -96,7 +140,11 @@ export default async function HomePage() {
       <GalleryHero />
 
       {/* Mission Section */}
-      <MissionSection />
+      <MissionSection
+        missionStatement={homeData?.missionStatement}
+        missionCtaText={homeData?.missionCtaText}
+        missionCtaUrl={homeData?.missionCtaUrl}
+      />
 
       {/* Current Happening */}
       {currentHappening && (

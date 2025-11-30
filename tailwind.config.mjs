@@ -57,7 +57,8 @@ const config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
         // Gallery 1882 refined border radius
-        gallery: '3px',
+        gallery: '1px',
+        tag: '2px',
       },
       colors: {
         // Gallery 1882 Design System Colors

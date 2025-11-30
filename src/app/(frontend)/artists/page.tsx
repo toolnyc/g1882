@@ -72,7 +72,7 @@ export default async function ArtistsPage() {
   })
 
   return (
-    <main className="min-h-screen bg-off-white">
+    <main className="bg-off-white">
       <DirectoryListing
         items={artistItems}
         title="Artists"

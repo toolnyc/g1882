@@ -14,7 +14,10 @@ export async function Footer() {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="relative z-20 mt-auto border-t border-lake bg-navy">
+    <footer
+      className="relative z-40 mt-auto border-t border-lake bg-navy"
+      style={{ minHeight: 'auto' }}
+    >
       <div className="container py-12" style={{ color: '#fffbeb' }}>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Gallery Info */}
@@ -27,10 +30,10 @@ export async function Footer() {
             </p>
             {space?.address && (
               <p className="text-sm text-off-white">
-                {space.address.split(',').map((line, i) => (
+                {space.address.split(',').map((line, i, arr) => (
                   <React.Fragment key={i}>
                     {line.trim()}
-                    {i < space.address.split(',').length - 1 && <br />}
+                    {i < arr.length - 1 && <br />}
                   </React.Fragment>
                 ))}
               </p>

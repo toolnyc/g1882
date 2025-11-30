@@ -120,7 +120,7 @@ export function SpacePageClient() {
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-12 text-center">
                   <h2 className="text-3xl font-bold text-off-white mb-4">Thank You!</h2>
                   <p className="text-lg text-off-white/90">
-                    We've received your rental inquiry and will get back to you soon.
+                    We&apos;ve received your rental inquiry and will get back to you soon.
                   </p>
                 </div>
               ) : (
@@ -128,7 +128,7 @@ export function SpacePageClient() {
                   <h2 className="text-3xl font-bold text-off-white mb-2">Rent the Space</h2>
                   <p className="text-lg text-off-white/90 mb-8">
                     Interested in renting Gallery 1882 for your event? Fill out the form below and
-                    we'll get back to you.
+                    we&apos;ll get back to you.
                   </p>
 
                   {error && (

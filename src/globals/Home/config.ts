@@ -1,10 +1,14 @@
 import type { GlobalConfig } from 'payload'
 import { hero } from '@/heros/config'
+import { revalidateHome } from './hooks/revalidateHome'
 
 export const Home: GlobalConfig = {
   slug: 'home',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateHome],
   },
   fields: [
     {

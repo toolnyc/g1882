@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 interface JournalBannerProps {
   headline: string
@@ -17,14 +18,34 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
   ctaUrl,
 }) => {
   const [email, setEmail] = useState('')
-  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email) {
-      // Here you would typically send the email to your backend
-      setIsSubscribed(true)
-      setEmail('')
+    if (!email) return
+
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success('You\'ve been added to the newsletter list!')
+        setEmail('')
+      } else {
+        toast.error(data.error || 'Failed to subscribe. Please try again.')
+      }
+    } catch (error) {
+      toast.error('An error occurred. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -65,29 +86,27 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
             viewport={{ once: true }}
             className="mb-8"
           >
-            {!isSubscribed ? (
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"
+            >
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                disabled={isLoading}
+                className="flex-1 w-full px-4 py-3 text-navy placeholder-navy/60 bg-off-white rounded-[3px] border-0 focus:outline-none focus:ring-2 focus:ring-off-white/50 disabled:opacity-50"
+              />
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="bg-navy text-off-white px-6 py-3 text-lg font-medium rounded-[3px] hover:bg-off-white hover:text-navy hover:scale-105 transition-all duration-300 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="flex-1 w-full px-4 py-3 text-navy placeholder-navy/60 bg-off-white rounded-[3px] border-0 focus:outline-none focus:ring-2 focus:ring-off-white/50"
-                />
-                <button
-                  type="submit"
-                  className="bg-navy text-off-white px-6 py-3 text-lg font-medium rounded-[3px] hover:bg-off-white hover:text-navy hover:scale-105 transition-all duration-300 whitespace-nowrap"
-                >
-                  Subscribe
-                </button>
-              </form>
-            ) : (
-              <div className="text-off-white text-lg font-medium">Thank you for subscribing!</div>
-            )}
+                {isLoading ? 'Subscribing...' : 'Subscribe'}
+              </button>
+            </form>
           </motion.div>
         </motion.div>
       </div>

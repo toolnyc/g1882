@@ -52,7 +52,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.2rem;
+    --radius: 0.0625rem;
 
     --success: 196 52% 74%;
     --warning: 34 89% 85%;
@@ -70,6 +70,10 @@
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
     font-family: 'Aktiv Grotesk', system-ui, sans-serif;
     cursor: none; /* Hide default cursor */
+    /* Disable scroll bounce */
+    overscroll-behavior: none;
+    /* Ensure locomotive scroll works properly */
+    overflow-x: hidden;
   }
 
   /* Hide cursor on all interactive elements */
@@ -98,7 +102,7 @@
 @layer components {
   .gallery-card {
     @apply aspect-[4/5] object-cover object-top;
-    border-radius: 3px;
+    border-radius: 1px;
     position: relative;
   }
 
@@ -114,26 +118,26 @@
     background-size: 20px 20px;
     opacity: 0.1;
     pointer-events: none;
-    border-radius: 3px;
+    border-radius: 1px;
   }
 
   .gallery-button-primary {
     @apply bg-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-bright-lake hover:scale-105;
-    border-radius: 3px;
+    border-radius: 1px;
     position: relative;
     overflow: hidden;
   }
 
   .gallery-button-secondary {
     @apply border border-lake text-navy px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:text-white hover:scale-105;
-    border-radius: 3px;
+    border-radius: 1px;
     position: relative;
     overflow: hidden;
   }
 
   .gallery-button-cta {
     @apply bg-bright-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:scale-105;
-    border-radius: 3px;
+    border-radius: 1px;
     position: relative;
     overflow: hidden;
   }
@@ -154,6 +158,7 @@
       radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0);
     background-size: 40px 40px;
     pointer-events: none;
+    /* No z-index to avoid overlapping custom cursor (z-[99999]) */
   }
 
   /* Hero video iframe styles */
@@ -169,6 +174,7 @@
     min-height: 100vh !important;
     min-width: 100vw !important;
     object-fit: cover !important;
+    pointer-events: none !important;
   }
 }
 
@@ -195,6 +201,28 @@
 
 html {
   opacity: 1;
+  /* Disable scroll bounce on macOS/iOS */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fixed directory sidebar - outside scroll container */
+.directory-sidebar-fixed {
+  position: fixed !important;
+  transform: none !important;
+  will-change: auto;
+  pointer-events: none;
+}
+
+.directory-sidebar-fixed > * {
+  pointer-events: auto;
+}
+
+/* Fixed directory header/banner - outside scroll container */
+.directory-header-fixed {
+  position: fixed !important;
+  transform: none !important;
+  will-change: auto;
 }
 
 /* Respect reduced motion preferences */

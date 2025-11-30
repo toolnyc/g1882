@@ -53,13 +53,21 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     return () => window.removeEventListener('scroll', controlNavbar)
   }, [lastScrollY])
 
+  const isHomepage = pathname === '/'
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <div className="bg-white/10 backdrop-blur-md border-b border-white/20">
+      <div
+        className={`border-b ${
+          isHomepage
+            ? 'bg-white/10 backdrop-blur-md border-white/20'
+            : 'bg-off-white border-navy/10'
+        }`}
+      >
         <div className="container relative z-20">
           <div className="py-8 flex justify-between items-center tracking-tight">
             <Link href="/">

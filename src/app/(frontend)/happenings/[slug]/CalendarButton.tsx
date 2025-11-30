@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { toast } from 'sonner'
 import { downloadCalendarEvent, type CalendarEvent } from '@/utilities/generateCalendarEvent'
 
 interface CalendarButtonProps {
@@ -10,6 +11,7 @@ interface CalendarButtonProps {
 export function CalendarButton({ happening }: CalendarButtonProps) {
   const handleAddToCalendar = () => {
     downloadCalendarEvent(happening)
+    toast.success('Event added to calendar!')
   }
 
   return (

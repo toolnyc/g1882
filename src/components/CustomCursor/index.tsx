@@ -7,37 +7,54 @@ export const CustomCursor: React.FC = () => {
   const [isHovering, setIsHovering] = useState(false)
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
+    if (typeof window === 'undefined') return
+
+    const interactiveSelector =
+      'a, button, [role="button"], input, textarea, select, [data-clickable]'
+
+    let frameId: number | null = null
+
+    const updateMousePosition = (event: PointerEvent) => {
+      if (frameId) window.cancelAnimationFrame(frameId)
+      frameId = window.requestAnimationFrame(() => {
+        setMousePosition({ x: event.clientX, y: event.clientY })
+      })
     }
 
-    const handleMouseEnter = () => setIsHovering(true)
-    const handleMouseLeave = () => setIsHovering(false)
+    const handlePointerOver = (event: PointerEvent) => {
+      const target = event.target as Element | null
+      if (target?.closest(interactiveSelector)) {
+        setIsHovering(true)
+      }
+    }
 
-    // Add event listeners
-    window.addEventListener('mousemove', updateMousePosition)
+    const handlePointerOut = (event: PointerEvent) => {
+      const target = event.target as Element | null
+      if (target?.closest(interactiveSelector)) {
+        setIsHovering(false)
+      }
+    }
 
-    // Add hover listeners to interactive elements
-    const interactiveElements = document.querySelectorAll(
-      'a, button, [role="button"], input, textarea, select',
-    )
-    interactiveElements.forEach((el) => {
-      el.addEventListener('mouseenter', handleMouseEnter)
-      el.addEventListener('mouseleave', handleMouseLeave)
-    })
+    const resetHoverState = () => setIsHovering(false)
+
+    window.addEventListener('pointermove', updateMousePosition, { passive: true })
+    document.addEventListener('pointerover', handlePointerOver, true)
+    document.addEventListener('pointerout', handlePointerOut, true)
+    document.addEventListener('visibilitychange', resetHoverState)
 
     return () => {
-      window.removeEventListener('mousemove', updateMousePosition)
-      interactiveElements.forEach((el) => {
-        el.removeEventListener('mouseenter', handleMouseEnter)
-        el.removeEventListener('mouseleave', handleMouseLeave)
-      })
+      if (frameId) window.cancelAnimationFrame(frameId)
+      window.removeEventListener('pointermove', updateMousePosition)
+      document.removeEventListener('pointerover', handlePointerOver, true)
+      document.removeEventListener('pointerout', handlePointerOut, true)
+      document.removeEventListener('visibilitychange', resetHoverState)
     }
   }, [])
 
   return (
     <motion.div
-      className="fixed pointer-events-none z-[9999]"
+      className="fixed pointer-events-none z-[99999]"
+      style={{ willChange: 'transform' }}
       animate={{
         x: mousePosition.x - (isHovering ? 8 : 6),
         y: mousePosition.y - (isHovering ? 8 : 6),

@@ -4,6 +4,7 @@ import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { revalidateArtist, revalidateDeleteArtist } from './hooks/revalidateArtist'
 
 export const Artists: CollectionConfig = {
   slug: 'artists',
@@ -50,4 +51,8 @@ export const Artists: CollectionConfig = {
       position: undefined,
     }),
   ],
+  hooks: {
+    afterChange: [revalidateArtist],
+    afterDelete: [revalidateDeleteArtist],
+  },
 }

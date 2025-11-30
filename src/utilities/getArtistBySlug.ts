@@ -23,10 +23,12 @@ async function getArtistBySlug(slug: string, depth = 2) {
 
 /**
  * Returns a cached function to fetch an artist by slug
+ * Revalidates every 60 seconds or when the artist tag is invalidated
  */
 export const getCachedArtistBySlug = (slug: string) =>
   unstable_cache(async () => getArtistBySlug(slug), ['artist', slug], {
-    tags: [`artist_${slug}`],
+    tags: [`artist_${slug}`, 'artists'],
+    revalidate: 60, // Revalidate every 60 seconds
   })
 
 export { getArtistBySlug }

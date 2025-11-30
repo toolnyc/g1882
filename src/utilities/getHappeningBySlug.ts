@@ -23,10 +23,12 @@ async function getHappeningBySlug(slug: string, depth = 2) {
 
 /**
  * Returns a cached function to fetch a happening by slug
+ * Revalidates every 60 seconds or when the happening tag is invalidated
  */
 export const getCachedHappeningBySlug = (slug: string) =>
   unstable_cache(async () => getHappeningBySlug(slug), ['happening', slug], {
-    tags: [`happening_${slug}`],
+    tags: [`happening_${slug}`, 'happenings'],
+    revalidate: 60, // Revalidate every 60 seconds
   })
 
 export { getHappeningBySlug }

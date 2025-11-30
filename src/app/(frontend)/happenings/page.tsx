@@ -98,7 +98,7 @@ export default async function HappeningsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-off-white">
+    <main className="bg-off-white">
       {/* Timeline View */}
       <DirectoryListing
         items={timelineHappenings.map((happening) => {

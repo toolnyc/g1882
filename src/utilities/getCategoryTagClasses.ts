@@ -9,7 +9,7 @@ export function getCategoryTagClasses(category: string | null | undefined): {
 } {
   if (!category) {
     return {
-      bgClass: 'bg-bright-lake/10',
+      bgClass: 'bg-bright-lake/5',
       textClass: 'text-bright-lake',
     }
   }
@@ -20,28 +20,28 @@ export function getCategoryTagClasses(category: string | null | undefined): {
   switch (normalizedCategory) {
     case 'exhibition':
       return {
-        bgClass: 'bg-lake/10',
+        bgClass: 'bg-lake/5',
         textClass: 'text-lake',
       }
     case 'event':
       return {
-        bgClass: 'bg-forest/50',
+        bgClass: 'bg-forest/30',
         textClass: 'text-off-white',
       }
     case 'workshop':
       return {
-        bgClass: 'bg-bright-lake/10',
+        bgClass: 'bg-bright-lake/5',
         textClass: 'text-bright-lake',
       }
     case 'talk':
     case 'lecture':
       return {
-        bgClass: 'bg-navy/10',
+        bgClass: 'bg-navy/5',
         textClass: 'text-navy',
       }
     default:
       return {
-        bgClass: 'bg-bright-lake/10',
+        bgClass: 'bg-bright-lake/5',
         textClass: 'text-bright-lake',
       }
   }

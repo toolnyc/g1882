@@ -97,8 +97,10 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening 
               <Image
                 src={getImageUrl()}
                 alt={getImageAlt()}
-                width={400}
-                height={500}
+                width={800}
+                height={1000}
+                quality={90}
+                sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 50vw, (max-width: 1376px) 50vw, 656px"
                 className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
               />
             </motion.div>

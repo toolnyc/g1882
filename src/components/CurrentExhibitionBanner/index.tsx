@@ -29,42 +29,41 @@ export const CurrentExhibitionBanner: React.FC<CurrentExhibitionBannerProps> = (
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
-      className="rounded-lg shadow-sm border border-bright-lake/10 p-6"
+      className="rounded-lg shadow-sm border border-bright-lake/10 overflow-hidden flex"
     >
-      <div className="flex items-center gap-6">
-        {/* Image */}
-        <div className="flex-shrink-0">
-          <div className="w-24 h-24 rounded-lg overflow-hidden group">
-            <Image
-              src={exhibition.image}
-              alt={`${exhibition.title} by ${exhibition.artist}`}
-              width={96}
-              height={96}
-              className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
+      {/* Image */}
+      <div className="flex-shrink-0">
+        <div className="w-32 h-full overflow-hidden group">
+          <Image
+            src={exhibition.image}
+            alt={`${exhibition.title} by ${exhibition.artist}`}
+            width={128}
+            height={128}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
         </div>
+      </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2">
-            <LiveIndicator size="sm" />
-            <span className="caption text-lake">On Now</span>
-            {exhibition.category && (() => {
+      {/* Content */}
+      <div className="flex-1 min-w-0 p-6">
+        <div className="flex items-center gap-3 mb-2">
+          <LiveIndicator size="sm" />
+          <span className="caption text-lake">On Now</span>
+          {exhibition.category &&
+            (() => {
               const { bgClass, textClass } = getCategoryTagClasses(exhibition.category)
               return (
-                <span className={`inline-block px-4 py-2 ${bgClass} ${textClass} border border-bright-lake rounded text-sm font-semibold`}>
+                <span
+                  className={`inline-block px-2 py-1 ${bgClass} ${textClass} border border-navy/10 rounded-tag text-sm font-semibold`}
+                >
                   {exhibition.category}
                 </span>
               )
             })()}
-          </div>
-          <h2 className="text-2xl font-bold text-navy mb-1 truncate">{exhibition.title}</h2>
-          <p className="text-sm text-navy/70 mb-2">by {exhibition.artist}</p>
-          <p className="text-sm text-navy/80 line-clamp-2">{exhibition.description}</p>
         </div>
-
-        {/* CTA */}
+        <h2 className="text-2xl font-bold text-navy mb-1 truncate">{exhibition.title}</h2>
+        <p className="text-sm text-navy/70 mb-2">by {exhibition.artist}</p>
+        <p className="text-sm text-navy/80 line-clamp-2">{exhibition.description}</p>
       </div>
     </motion.div>
   )
