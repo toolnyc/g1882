@@ -6,7 +6,7 @@ import RichText from '@/components/RichText'
 import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
-import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
+import { CategoryTag } from '@/components/CategoryTag'
 import { HappeningDetailSkeleton } from '@/components/SkeletonLoaders'
 
 // Revalidate every 60 seconds
@@ -127,19 +127,11 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             </div>
 
             {/* Category */}
-            {happening.category &&
-              (() => {
-                const { bgClass, textClass } = getCategoryTagClasses(happening.category)
-                return (
-                  <div className="mb-8">
-                    <span
-                      className={`inline-block px-2 py-1 ${bgClass} ${textClass} border border-navy/10 rounded-tag text-sm font-semibold`}
-                    >
-                      {happening.category}
-                    </span>
-                  </div>
-                )
-              })()}
+            {happening.category && (
+              <div className="mb-8">
+                <CategoryTag category={happening.category} />
+              </div>
+            )}
 
             {/* Description */}
             {happening.description && (

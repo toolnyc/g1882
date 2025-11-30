@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
+import { fadeUp, scaleIn, slideIn } from '@/utilities/animations'
 
 interface Happening {
   id?: string
@@ -79,19 +80,13 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening 
     <section className="py-32 gallery-section">
       <div className="container">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          {...fadeUp()}
           className="grid gap-20 lg:grid-cols-12 lg:items-center"
         >
           {/* Image - Asymmetrical Layout */}
           <div className="lg:col-span-6">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
+              {...scaleIn({ delay: 0.2, start: 0.95 })}
               className="gallery-card overflow-hidden group"
             >
               <Image
@@ -108,12 +103,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening 
 
           {/* Content - Asymmetrical Layout */}
           <div className="lg:col-span-5 lg:col-start-8">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
+            <motion.div {...slideIn({ delay: 0.3 })}>
               <div className="flex items-center gap-4 mb-6">
                 <LiveIndicator size="sm" />
                 <div className="caption text-lake flex items-center">On Now</div>

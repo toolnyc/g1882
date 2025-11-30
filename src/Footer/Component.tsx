@@ -14,11 +14,8 @@ export async function Footer() {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer
-      className="relative z-40 mt-auto border-t border-lake bg-navy"
-      style={{ minHeight: 'auto' }}
-    >
-      <div className="container py-12" style={{ color: '#fffbeb' }}>
+    <footer className="relative z-40 mt-auto border-t border-lake bg-navy min-h-0">
+      <div className="container py-12 text-off-white">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Gallery Info */}
           <div>
@@ -30,7 +27,7 @@ export async function Footer() {
             </p>
             {space?.address && (
               <p className="text-sm text-off-white">
-                {space.address.split(',').map((line, i, arr) => (
+                {space.address.split(',').map((line: string, i: number, arr: string[]) => (
                   <React.Fragment key={i}>
                     {line.trim()}
                     {i < arr.length - 1 && <br />}
@@ -58,12 +55,10 @@ export async function Footer() {
 
           {/* Visit Info */}
           <div>
-            <h4 className="mb-4 font-bold" style={{ color: '#fffbeb' }}>
-              Visit
-            </h4>
+            <h4 className="mb-4 font-bold text-off-white">Visit</h4>
             <div className="space-y-2 text-sm">
               {space?.hours ? (
-                space.hours.split(',').map((line, i) => (
+                space.hours.split(',').map((line: string, i: number) => (
                   <p key={i} className="text-off-white">
                     {line.trim()}
                   </p>
@@ -80,18 +75,14 @@ export async function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="mb-4 font-bold" style={{ color: '#fffbeb' }}>
-              Contact
-            </h4>
+            <h4 className="mb-4 font-bold text-off-white">Contact</h4>
             <div className="space-y-2 text-sm">
               {space?.phone && <p className="text-off-white">{space.phone}</p>}
               {space?.email && <p className="text-off-white">{space.email}</p>}
             </div>
           </div>
           <div>
-            <h4 className="mb-4 font-bold" style={{ color: '#fffbeb' }}>
-              The Journal
-            </h4>
+            <h4 className="mb-4 font-bold text-off-white">The Journal</h4>
             <div className="space-y-2 text-sm">
               <NewsletterForm />
             </div>

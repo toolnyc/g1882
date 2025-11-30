@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
-import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
+import { CategoryTag } from '@/components/CategoryTag'
 
 export interface FeatureBannerProps {
   image: string
@@ -55,17 +55,7 @@ export const FeatureBanner: React.FC<FeatureBannerProps> = ({
         <div className="flex items-center gap-3 mb-2">
           {showLiveIndicator && <LiveIndicator size="sm" />}
           <span className="caption text-lake">{label}</span>
-          {category &&
-            (() => {
-              const { bgClass, textClass } = getCategoryTagClasses(category)
-              return (
-                <span
-                  className={`inline-block px-2 py-1 ${bgClass} ${textClass} border border-navy/10 rounded-tag text-sm font-semibold`}
-                >
-                  {category}
-                </span>
-              )
-            })()}
+          {category && <CategoryTag category={category} />}
         </div>
         <h2 className="text-2xl font-bold text-navy mb-1 truncate">{title}</h2>
         {subtitle && <p className="text-sm text-lake font-medium mb-2">{subtitle}</p>}

@@ -20,6 +20,24 @@ async function getGlobal(slug: Global, depth = 0) {
   return global
 }
 
+const globalCache = new Map<string, ReturnType<typeof unstable_cache>>()
+const getCacheKey = (slug: Global, depth: number) => `${slug}-depth-${depth}`
+
+const ensureGlobalCache = (slug: Global, depth: number) => {
+  const key = getCacheKey(slug, depth)
+
+  if (!globalCache.has(key)) {
+    globalCache.set(
+      key,
+      unstable_cache(async () => getGlobal(slug, depth), [`global-${slug}`, `depth-${depth}`], {
+        tags: [`global_${slug}`],
+      }),
+    )
+  }
+
+  return globalCache.get(key)!
+}
+
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug
  * When draft mode is enabled, bypasses cache to always fetch fresh draft content
@@ -27,21 +45,12 @@ async function getGlobal(slug: Global, depth = 0) {
 export const getCachedGlobal = (slug: Global, depth = 0) => {
   return async () => {
     const { isEnabled } = await draftMode()
-    
+
     // When in draft mode, bypass cache to always get fresh draft content
     if (isEnabled) {
       return getGlobal(slug, depth)
     }
-    
-    // When not in draft mode, use cache
-    const cachedGetGlobal = unstable_cache(
-      async () => getGlobal(slug, depth),
-      [slug],
-      {
-        tags: [`global_${slug}`],
-      }
-    )
-    
-    return cachedGetGlobal()
+
+    return ensureGlobalCache(slug, depth)()
   }
 }

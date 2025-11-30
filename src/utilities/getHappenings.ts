@@ -115,10 +115,14 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
  * Returns a cached function to fetch happenings
  * Revalidates every 60 seconds or when the happenings tag is invalidated
  */
-export const getCachedHappenings = (filters: HappeningFilters = {}) =>
-  unstable_cache(async () => getHappenings(filters), ['happenings', JSON.stringify(filters)], {
-    tags: ['happenings'],
-    revalidate: 60, // Revalidate every 60 seconds
-  })
+export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1) =>
+  unstable_cache(
+    async () => getHappenings(filters, depth),
+    ['happenings', JSON.stringify(filters), `depth-${depth}`],
+    {
+      tags: ['happenings'],
+      revalidate: 60, // Revalidate every 60 seconds
+    },
+  )
 
 export { getHappenings }

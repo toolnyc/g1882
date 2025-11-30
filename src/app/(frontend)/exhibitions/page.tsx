@@ -2,19 +2,13 @@ import React from 'react'
 import { DirectoryListing } from '@/components/DirectoryListing'
 import { CurrentExhibitionBanner } from '@/components/CurrentExhibitionBanner'
 import { getCachedHappenings } from '@/utilities/getHappenings'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { formatDateRange } from '@/utilities/dateHelpers'
 import type { Happening, Media } from '@/payload-types'
 
 export default async function ExhibitionsPage() {
-  const happenings = await getCachedHappenings({})()
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
+  // Fetch with depth 2 to populate heroImage relation
+  const happenings = await getCachedHappenings({}, 2)()
 
   // Find the most recent happening
   const mostRecentHappening = [...happenings].sort(
@@ -23,17 +17,8 @@ export default async function ExhibitionsPage() {
 
   // Map happenings to DirectoryListing format
   const exhibitionItems = happenings.map((happening) => {
-    const heroImage =
-      typeof happening.heroImage === 'object' && happening.heroImage
-        ? (happening.heroImage as Media)
-        : null
-    const imageUrl = heroImage?.url
-      ? getMediaUrl(heroImage.url, heroImage.updatedAt)
-      : '/media/test-art.jpg'
-
-    const startDate = happening.startDate ? formatDate(happening.startDate) : ''
-    const endDate = happening.endDate ? formatDate(happening.endDate) : ''
-    const subtitle = startDate && endDate ? `${startDate} - ${endDate}` : startDate || ''
+    const imageUrl = resolveMediaUrl(happening.heroImage, '/media/test-art.jpg')
+    const subtitle = formatDateRange(happening.startDate, happening.endDate)
 
     // Get artist name
     const artistName =
@@ -77,13 +62,7 @@ export default async function ExhibitionsPage() {
         description: mostRecentHappening.description
           ? JSON.stringify(mostRecentHappening.description)
           : '',
-        image:
-          typeof mostRecentHappening.heroImage === 'object' && mostRecentHappening.heroImage
-            ? getMediaUrl(
-                (mostRecentHappening.heroImage as Media).url,
-                (mostRecentHappening.heroImage as Media).updatedAt,
-              )
-            : '/media/test-art.jpg',
+        image: resolveMediaUrl(mostRecentHappening.heroImage, '/media/test-art.jpg'),
         featured: mostRecentHappening.featured || false,
         category: mostRecentHappening.category || null,
       }

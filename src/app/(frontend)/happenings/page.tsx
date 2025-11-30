@@ -4,11 +4,12 @@ import { getCachedHappenings } from '@/utilities/getHappenings'
 import { FeaturedHappenings } from '@/components/FeaturedHappenings'
 import { UpcomingHappenings } from '@/components/UpcomingHappenings'
 import { FeatureBanner } from '@/components/FeatureBanner'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import type { Media } from '@/payload-types'
+import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { formatDate, formatDateRange } from '@/utilities/dateHelpers'
 
 export default async function HappeningsPage() {
-  const getHappenings = getCachedHappenings({})
+  // Fetch with depth 2 to populate heroImage and featuredPerson.image relations
+  const getHappenings = getCachedHappenings({}, 2)
   const allHappenings = await getHappenings()
 
   const now = new Date()
@@ -40,25 +41,6 @@ export default async function HappeningsPage() {
     return dateB - dateA
   })
 
-  const formatDate = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
-
-  const getHappeningSubtitle = (happening: any) => {
-    if (!happening.startDate) return ''
-    const startDate = formatDate(happening.startDate)
-    if (happening.endDate) {
-      const endDate = formatDate(happening.endDate)
-      return `${startDate} - ${endDate}`
-    }
-    return startDate
-  }
-
   const getFeaturedPersonName = (happening: any) => {
     if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
       return happening.featuredPerson.name
@@ -71,16 +53,12 @@ export default async function HappeningsPage() {
   let upcomingBanner = null
 
   if (upcomingBannerHappening) {
-    const happeningImage =
-      typeof upcomingBannerHappening.heroImage === 'object' && upcomingBannerHappening.heroImage
-        ? (upcomingBannerHappening.heroImage as Media)
-        : null
-    const imageUrl = happeningImage?.url
-      ? getMediaUrl(happeningImage.url, happeningImage.updatedAt)
-      : '/media/test-space.jpg'
-
+    const imageUrl = resolveMediaUrl(upcomingBannerHappening.heroImage, '/media/test-space.jpg')
     const personName = getFeaturedPersonName(upcomingBannerHappening)
-    const dateSubtitle = getHappeningSubtitle(upcomingBannerHappening)
+    const dateSubtitle = formatDateRange(
+      upcomingBannerHappening.startDate,
+      upcomingBannerHappening.endDate,
+    )
 
     upcomingBanner = (
       <FeatureBanner
@@ -102,7 +80,7 @@ export default async function HappeningsPage() {
       {/* Timeline View */}
       <DirectoryListing
         items={timelineHappenings.map((happening) => {
-          const subtitle = getHappeningSubtitle(happening)
+          const subtitle = formatDateRange(happening.startDate, happening.endDate)
           const personName = getFeaturedPersonName(happening)
           const fullSubtitle =
             personName && subtitle ? `${subtitle} • ${personName}` : subtitle || personName || ''

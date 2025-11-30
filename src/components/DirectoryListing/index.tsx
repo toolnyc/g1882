@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
-import { getCategoryTagClasses } from '@/utilities/getCategoryTagClasses'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
+import { CategoryTag } from '@/components/CategoryTag'
 
 interface DirectoryItem {
   id?: string
@@ -327,19 +327,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                                   <h3 className="text-xl font-semibold text-navy group-hover:text-bright-lake transition-colors duration-200">
                                     {displayName}
                                   </h3>
-                                  {item.category &&
-                                    (() => {
-                                      const { bgClass, textClass } = getCategoryTagClasses(
-                                        item.category,
-                                      )
-                                      return (
-                                        <span
-                                          className={`inline-block px-2 py-1 ${bgClass} ${textClass} border border-navy/10 rounded-tag text-sm font-semibold`}
-                                        >
-                                          {item.category}
-                                        </span>
-                                      )
-                                    })()}
+                                  {item.category && <CategoryTag category={item.category} />}
                                 </div>
                                 {item.subtitle && (
                                   <p className="text-sm text-navy/70 mt-1">{item.subtitle}</p>

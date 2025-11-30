@@ -2,6 +2,7 @@
 import React from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
+import { fadeUp } from '@/utilities/animations'
 
 interface MissionSectionProps {
   missionStatement?: string | null
@@ -32,20 +33,8 @@ export const MissionSection: React.FC<MissionSectionProps> = ({
   return (
     <section className="py-20 gallery-section">
       <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center max-w-5xl mx-auto"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="caption text-lake mb-6"
-          >
+        <motion.div {...fadeUp()} className="text-center max-w-5xl mx-auto">
+          <motion.div {...fadeUp({ delay: 0.2, distance: 20 })} className="caption text-lake mb-6">
             Our Mission
           </motion.div>
 
@@ -53,14 +42,7 @@ export const MissionSection: React.FC<MissionSectionProps> = ({
             {words.map((word, index) => (
               <motion.span
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.1,
-                  ease: 'easeOut',
-                }}
-                viewport={{ once: true }}
+                {...fadeUp({ delay: index * 0.1, distance: 20, duration: 0.5 })}
                 className="inline-block mr-2"
               >
                 {word}
@@ -73,13 +55,7 @@ export const MissionSection: React.FC<MissionSectionProps> = ({
 
           {/* CTA Button */}
           {missionCtaText && missionCtaUrl && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              viewport={{ once: true }}
-              className="mt-10"
-            >
+            <motion.div {...fadeUp({ delay: 0.6, distance: 20 })} className="mt-10">
               <Link href={missionCtaUrl} className="gallery-button-primary px-8 py-4 text-lg">
                 {missionCtaText}
               </Link>

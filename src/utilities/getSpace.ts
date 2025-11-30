@@ -16,6 +16,21 @@ async function getSpace(depth = 0) {
   return space
 }
 
+const spaceCache = new Map<number, ReturnType<typeof unstable_cache>>()
+
+const ensureSpaceCache = (depth: number) => {
+  if (!spaceCache.has(depth)) {
+    spaceCache.set(
+      depth,
+      unstable_cache(async () => getSpace(depth), ['space', `space-depth-${depth}`], {
+        tags: ['space'],
+      }),
+    )
+  }
+
+  return spaceCache.get(depth)!
+}
+
 /**
  * Returns a cached function to fetch the space global
  * When draft mode is enabled, bypasses cache to always fetch fresh draft content
@@ -23,22 +38,13 @@ async function getSpace(depth = 0) {
 export const getCachedSpace = (depth = 0) => {
   return async () => {
     const { isEnabled } = await draftMode()
-    
+
     // When in draft mode, bypass cache to always get fresh draft content
     if (isEnabled) {
       return getSpace(depth)
     }
-    
-    // When not in draft mode, use cache
-    const cachedGetSpace = unstable_cache(
-      async () => getSpace(depth),
-      ['space'],
-      {
-        tags: ['space'],
-      }
-    )
-    
-    return cachedGetSpace()
+
+    return ensureSpaceCache(depth)()
   }
 }
 

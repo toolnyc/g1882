@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { fadeUp } from '@/utilities/animations'
 
 interface JournalBannerProps {
   headline: string
@@ -52,40 +53,22 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
   return (
     <section className="py-24 bg-lake gallery-section">
       <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center max-w-4xl mx-auto"
-        >
+        <motion.div {...fadeUp()} className="text-center max-w-4xl mx-auto">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
+            {...fadeUp({ delay: 0.2, distance: 20 })}
             className="mb-6 text-4xl font-bold tracking-tight md:text-5xl text-off-white"
           >
             {headline}
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
+            {...fadeUp({ delay: 0.3, distance: 20 })}
             className="mb-10 text-xl leading-relaxed text-off-white/90"
           >
             {subheadline}
           </motion.p>
 
           {/* Email Signup Form */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="mb-8"
-          >
+          <motion.div {...fadeUp({ delay: 0.4, distance: 20 })} className="mb-8">
             <form
               onSubmit={handleSubmit}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto"

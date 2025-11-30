@@ -3,12 +3,12 @@ import { DirectoryListing } from '@/components/DirectoryListing'
 import { CurrentArtistBanner } from '@/components/CurrentArtistBanner'
 import { getCachedArtists } from '@/utilities/getArtists'
 import { getCachedHappenings } from '@/utilities/getHappenings'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import type { Artist, Happening, Media } from '@/payload-types'
+import { resolveArtist, resolveMediaUrl } from '@/utilities/mediaHelpers'
 
 export default async function ArtistsPage() {
   const artists = await getCachedArtists(1)()
-  const happenings = await getCachedHappenings({})()
+  // Fetch with depth 2 to populate featuredPerson.image relation
+  const happenings = await getCachedHappenings({}, 2)()
 
   // Find the most recent happening
   const mostRecentHappening = [...happenings].sort(
@@ -27,17 +27,10 @@ export default async function ArtistsPage() {
   let exhibitionTitle: string | undefined
 
   if (mostRecentHappening) {
-    const artist =
-      typeof mostRecentHappening.featuredPerson === 'object' && mostRecentHappening.featuredPerson
-        ? (mostRecentHappening.featuredPerson as Artist)
-        : null
+    const artist = resolveArtist(mostRecentHappening.featuredPerson)
 
     if (artist) {
-      const artistImage =
-        typeof artist.image === 'object' && artist.image ? (artist.image as Media) : null
-      const imageUrl = artistImage?.url
-        ? getMediaUrl(artistImage.url, artistImage.updatedAt)
-        : '/media/test-artist.jpg'
+      const imageUrl = resolveMediaUrl(artist.image, '/media/test-artist.jpg')
 
       associatedArtist = {
         id: artist.id,
@@ -53,11 +46,7 @@ export default async function ArtistsPage() {
 
   // Map artists to DirectoryListing format
   const artistItems = artists.map((artist) => {
-    const artistImage =
-      typeof artist.image === 'object' && artist.image ? (artist.image as Media) : null
-    const imageUrl = artistImage?.url
-      ? getMediaUrl(artistImage.url, artistImage.updatedAt)
-      : '/media/test-artist.jpg'
+    const imageUrl = resolveMediaUrl(artist.image, '/media/test-artist.jpg')
 
     return {
       id: artist.id,

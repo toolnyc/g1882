@@ -3,8 +3,9 @@ import type { Metadata } from 'next/types'
 import { DirectoryListing } from '@/components/DirectoryListing'
 import { getCachedPosts } from '@/utilities/getPosts'
 import { FeatureBanner } from '@/components/FeatureBanner'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import type { Media, Post } from '@/payload-types'
+import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { formatDate } from '@/utilities/dateHelpers'
+import type { Post } from '@/payload-types'
 import React from 'react'
 import PageClient from './page.client'
 
@@ -36,26 +37,8 @@ export default async function Page() {
   let recentBanner = null
 
   if (recentPost) {
-    const postImage =
-      typeof recentPost.heroImage === 'object' && recentPost.heroImage
-        ? (recentPost.heroImage as Media)
-        : null
-    const imageUrl = postImage?.url
-      ? getMediaUrl(postImage.url, postImage.updatedAt)
-      : '/media/test-art.jpg'
-
-    const formatDate = (dateString: string | Date) => {
-      const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    }
-
-    const publishedDate = recentPost.publishedAt
-      ? formatDate(recentPost.publishedAt as string)
-      : ''
+    const imageUrl = resolveMediaUrl(recentPost.heroImage, '/media/test-art.jpg')
+    const publishedDate = formatDate(recentPost.publishedAt, 'short')
 
     recentBanner = (
       <FeatureBanner
@@ -70,23 +53,12 @@ export default async function Page() {
     )
   }
 
-  const formatDate = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
-
   return (
     <main className="min-h-screen bg-off-white">
       <PageClient />
       <DirectoryListing
         items={sortedPosts.map((post) => {
-          const publishedDate = post.publishedAt
-            ? formatDate(post.publishedAt as string)
-            : ''
+          const publishedDate = formatDate(post.publishedAt, 'short')
 
           return {
             ...post,

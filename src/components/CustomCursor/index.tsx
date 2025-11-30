@@ -1,9 +1,8 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useEffect, useRef, useState } from 'react'
 
 export const CustomCursor: React.FC = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const cursorRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
 
   useEffect(() => {
@@ -14,10 +13,15 @@ export const CustomCursor: React.FC = () => {
 
     let frameId: number | null = null
 
-    const updateMousePosition = (event: PointerEvent) => {
+    const updateCursorPosition = (event: PointerEvent) => {
       if (frameId) window.cancelAnimationFrame(frameId)
+
       frameId = window.requestAnimationFrame(() => {
-        setMousePosition({ x: event.clientX, y: event.clientY })
+        if (cursorRef.current) {
+          cursorRef.current.style.transform = `translate(${event.clientX - 12}px, ${
+            event.clientY - 12
+          }px)`
+        }
       })
     }
 
@@ -37,14 +41,14 @@ export const CustomCursor: React.FC = () => {
 
     const resetHoverState = () => setIsHovering(false)
 
-    window.addEventListener('pointermove', updateMousePosition, { passive: true })
+    window.addEventListener('pointermove', updateCursorPosition, { passive: true })
     document.addEventListener('pointerover', handlePointerOver, true)
     document.addEventListener('pointerout', handlePointerOut, true)
     document.addEventListener('visibilitychange', resetHoverState)
 
     return () => {
       if (frameId) window.cancelAnimationFrame(frameId)
-      window.removeEventListener('pointermove', updateMousePosition)
+      window.removeEventListener('pointermove', updateCursorPosition)
       document.removeEventListener('pointerover', handlePointerOver, true)
       document.removeEventListener('pointerout', handlePointerOut, true)
       document.removeEventListener('visibilitychange', resetHoverState)
@@ -52,31 +56,16 @@ export const CustomCursor: React.FC = () => {
   }, [])
 
   return (
-    <motion.div
-      className="fixed pointer-events-none z-[99999]"
-      style={{ willChange: 'transform' }}
-      animate={{
-        x: mousePosition.x - (isHovering ? 8 : 6),
-        y: mousePosition.y - (isHovering ? 8 : 6),
-      }}
-      transition={{
-        type: 'spring',
-        stiffness: 350,
-        damping: 25,
-        mass: 0.5,
-      }}
+    <div
+      ref={cursorRef}
+      className="fixed pointer-events-none z-[99999] transition-transform duration-150 ease-out"
+      style={{ willChange: 'transform', transform: 'translate(-9999px, -9999px)' }}
     >
-      <motion.div
-        className={`rounded-full bg-bright-lake w-6 h-6`}
-        animate={{
-          scale: isHovering ? 1.2 : 1,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 400,
-          damping: 25,
-        }}
+      <div
+        className={`rounded-full bg-bright-lake w-6 h-6 transition-transform duration-150 ease-out ${
+          isHovering ? 'scale-125' : 'scale-100'
+        }`}
       />
-    </motion.div>
+    </div>
   )
 }
