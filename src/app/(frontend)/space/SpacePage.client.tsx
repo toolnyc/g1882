@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
+import { AnimatedBorder } from '@/components/AnimatedBorder'
 
 interface RentalFormData {
   name: string
@@ -35,15 +36,13 @@ export function SpacePageClient() {
     setError(undefined)
 
     try {
-      // For now, we'll log the data. In production, you'd send this to an API endpoint
-      // Similar to how FormBlock submits to /api/form-submissions
       const response = await fetch(`${getClientSideURL()}/api/form-submissions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          form: 'rental-inquiry', // This would be a form ID if using Payload form builder
+          form: 'rental-inquiry',
           submissionData: [
             { field: 'name', value: data.name },
             { field: 'email', value: data.email },
@@ -72,198 +71,344 @@ export function SpacePageClient() {
   }
 
   return (
-    <main className="relative  w-full overflow-hidden">
-      {/* Cloudflare Stream Video Background */}
-      <div className="fixed inset-0 z-0">
-        <div className="relative h-full w-full overflow-hidden">
-          <iframe
-            src="https://customer-dz4f40f4nnmmdd6e.cloudflarestream.com/8aa90e2afac27de9b53b72d6feda8fc5/iframe?muted=true&preload=true&loop=true&autoplay=true&controls=false&poster=https%3A%2F%2Fcustomer-dz4f40f4nnmmdd6e.cloudflarestream.com%2F8aa90e2afac27de9b53b72d6feda8fc5%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600"
-            loading="lazy"
-            className="hero-video-iframe"
-            allow="accelerometer; gyroscope; autoplay; encrypted-media;"
-            allowFullScreen={true}
-          />
-        </div>
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/20" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Header */}
-        <section className="py-32 mt-12 gallery-section">
-          <div className="container">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-off-white border-b-4 border-bright-lake pb-4">
-                Space
+    <main className="min-h-screen bg-off-white">
+      {/* Header */}
+      <section className="pt-32 mt-12 gallery-section">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                Rent Our Space
               </h1>
-            </motion.div>
-          </div>
-        </section>
+              <AnimatedBorder className="mt-4" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Hero Form Section */}
-        <section className="pt-0 pb-32 gallery-section">
-          <div className="container">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="max-w-4xl mx-auto"
-            >
-              {hasSubmitted ? (
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-12 text-center">
-                  <h2 className="text-3xl font-bold text-off-white mb-4">Thank You!</h2>
-                  <p className="text-lg text-off-white/90">
-                    We&apos;ve received your rental inquiry and will get back to you soon.
-                  </p>
+      {/* Hero Image */}
+      <section className="py-0">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative overflow-hidden rounded-lg"
+          >
+            <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
+              <img
+                src="/media/placeholder.svg"
+                alt="Gallery 1882 space"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* About the Space Section */}
+      <section className="py-10 gallery-section">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="grid gap-20 lg:grid-cols-12"
+          >
+            <div className="lg:col-span-7">
+              <div className="caption text-lake mb-6">Our Venue</div>
+              <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
+                A Unique Space for Your Event
+              </h2>
+              <div className="space-y-6 text-lg leading-relaxed text-navy/80">
+                <p>
+                  Gallery 1882 offers a contemporary, versatile space perfect for private events,
+                  corporate gatherings, weddings, and art-centric celebrations. Our gallery combines
+                  modern aesthetics with the natural beauty of the Indiana Dunes region.
+                </p>
+                <p>
+                  Whether you&apos;re planning an intimate gathering or a larger celebration, our
+                  space can accommodate a variety of events while providing a sophisticated backdrop
+                  of contemporary art.
+                </p>
+              </div>
+            </div>
+            <div className="lg:col-span-5 lg:col-start-8">
+              <div className="bg-lake/5 p-8 rounded-lg">
+                <h3 className="text-2xl font-bold text-navy mb-6">Space Capacity</h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="font-semibold text-navy mb-2">Standing Reception</p>
+                    <p className="text-navy/80">Up to 150 guests</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-navy mb-2">Seated Dinner</p>
+                    <p className="text-navy/80">Up to 80 guests</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-navy mb-2">Meeting / Presentation</p>
+                    <p className="text-navy/80">Up to 60 guests</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-6 pt-4 pb-8 lg:px-8 lg:pt-6 lg:pb-12">
-                  <h2 className="text-3xl font-bold text-off-white mb-2">Rent the Space</h2>
-                  <p className="text-lg text-off-white/90 mb-8">
-                    Interested in renting Gallery 1882 for your event? Fill out the form below and
-                    we&apos;ll get back to you.
-                  </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-                  {error && (
-                    <div className="mb-6 p-4 bg-red-500/20 backdrop-blur-sm border border-red-400/30 rounded text-red-200">
-                      {error}
-                    </div>
-                  )}
+      {/* Amenities Section */}
+      <section className="py-20 gallery-section">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center max-w-5xl mx-auto"
+          >
+            <div className="caption text-lake mb-6">Amenities</div>
+            <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+              What We Offer
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8 mt-12">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-lake"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-navy mb-3">Modern Facilities</h3>
+                <p className="text-navy/80 text-sm">
+                  Climate-controlled space with professional lighting, AV equipment, and high-speed
+                  WiFi throughout.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-lake"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-navy mb-3">Catering Options</h3>
+                <p className="text-navy/80 text-sm">
+                  Full catering kitchen available. Work with our preferred caterers or bring your
+                  own.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-lake"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-navy mb-3">Flexible Scheduling</h3>
+                <p className="text-navy/80 text-sm">
+                  Available for day and evening events, with flexible scheduling to accommodate your
+                  needs.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Name */}
-                      <div>
-                        <Label htmlFor="name" className="text-off-white">
-                          Full Name <span className="text-red-400">*</span>
-                        </Label>
-                        <Input
-                          id="name"
-                          type="text"
-                          className="mt-2"
-                          {...register('name', { required: 'Name is required' })}
-                        />
-                        {errors.name && (
-                          <p className="mt-1 text-sm text-red-300">{errors.name.message}</p>
-                        )}
-                      </div>
+      {/* Rental Inquiry Form Section */}
+      <section className="py-20 gallery-section bg-navy/5">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="text-center mb-12">
+              <div className="caption text-lake mb-6">Inquire</div>
+              <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                Request Information
+              </h2>
+              <p className="text-lg text-navy/80">
+                Interested in renting Gallery 1882 for your event? Fill out the form below and
+                we&apos;ll get back to you within 48 hours.
+              </p>
+            </div>
 
-                      {/* Email */}
-                      <div>
-                        <Label htmlFor="email" className="text-off-white">
-                          Email <span className="text-red-400">*</span>
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          className="mt-2"
-                          {...register('email', {
-                            required: 'Email is required',
-                            pattern: {
-                              value: /^\S[^\s@]*@\S+$/,
-                              message: 'Please enter a valid email address',
-                            },
-                          })}
-                        />
-                        {errors.email && (
-                          <p className="mt-1 text-sm text-red-300">{errors.email.message}</p>
-                        )}
-                      </div>
-                    </div>
+            {hasSubmitted ? (
+              <div className="bg-lake/5 border border-lake/20 rounded-lg p-12 text-center">
+                <h3 className="text-3xl font-bold text-navy mb-4">Thank You!</h3>
+                <p className="text-lg text-navy/80">
+                  We&apos;ve received your rental inquiry and will get back to you soon.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-off-white border border-navy/10 rounded-lg p-8 lg:p-12">
+                {error && (
+                  <div className="mb-6 p-4 bg-red-500/10 border border-red-400/30 rounded text-red-700">
+                    {error}
+                  </div>
+                )}
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Phone */}
-                      <div>
-                        <Label htmlFor="phone" className="text-off-white">
-                          Phone
-                        </Label>
-                        <Input id="phone" type="tel" className="mt-2" {...register('phone')} />
-                      </div>
-
-                      {/* Event Date */}
-                      <div>
-                        <Label htmlFor="eventDate" className="text-off-white">
-                          Event Date
-                        </Label>
-                        <Input
-                          id="eventDate"
-                          type="date"
-                          className="mt-2"
-                          {...register('eventDate')}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Number of Guests */}
-                      <div>
-                        <Label htmlFor="numberOfGuests" className="text-off-white">
-                          Number of Guests
-                        </Label>
-                        <Input
-                          id="numberOfGuests"
-                          type="number"
-                          min="1"
-                          className="mt-2"
-                          {...register('numberOfGuests')}
-                        />
-                      </div>
-
-                      {/* Event Type */}
-                      <div>
-                        <Label htmlFor="eventType" className="text-off-white">
-                          Event Type
-                        </Label>
-                        <Input
-                          id="eventType"
-                          type="text"
-                          placeholder="e.g., Wedding, Corporate Event, Art Show"
-                          className="mt-2"
-                          {...register('eventType')}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Message */}
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Name */}
                     <div>
-                      <Label htmlFor="message" className="text-off-white">
-                        Message / Event Details <span className="text-red-400">*</span>
+                      <Label htmlFor="name" className="text-navy">
+                        Full Name <span className="text-red-600">*</span>
                       </Label>
-                      <Textarea
-                        id="message"
-                        rows={6}
+                      <Input
+                        id="name"
+                        type="text"
                         className="mt-2"
-                        {...register('message', { required: 'Message is required' })}
+                        {...register('name', { required: 'Name is required' })}
                       />
-                      {errors.message && (
-                        <p className="mt-1 text-sm text-red-300">{errors.message.message}</p>
+                      {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
                       )}
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="pt-4">
-                      <Button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full md:w-auto px-8 py-6 text-lg bg-navy text-off-white hover:bg-navy/90"
-                      >
-                        {isLoading ? 'Submitting...' : 'Submit Inquiry'}
-                      </Button>
+                    {/* Email */}
+                    <div>
+                      <Label htmlFor="email" className="text-navy">
+                        Email <span className="text-red-600">*</span>
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        className="mt-2"
+                        {...register('email', {
+                          required: 'Email is required',
+                          pattern: {
+                            value: /^\S[^\s@]*@\S+$/,
+                            message: 'Please enter a valid email address',
+                          },
+                        })}
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                      )}
                     </div>
-                  </form>
-                </div>
-              )}
-            </motion.div>
-          </div>
-        </section>
-      </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Phone */}
+                    <div>
+                      <Label htmlFor="phone" className="text-navy">
+                        Phone
+                      </Label>
+                      <Input id="phone" type="tel" className="mt-2" {...register('phone')} />
+                    </div>
+
+                    {/* Event Date */}
+                    <div>
+                      <Label htmlFor="eventDate" className="text-navy">
+                        Event Date
+                      </Label>
+                      <Input
+                        id="eventDate"
+                        type="date"
+                        className="mt-2"
+                        {...register('eventDate')}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Number of Guests */}
+                    <div>
+                      <Label htmlFor="numberOfGuests" className="text-navy">
+                        Number of Guests
+                      </Label>
+                      <Input
+                        id="numberOfGuests"
+                        type="number"
+                        min="1"
+                        className="mt-2"
+                        {...register('numberOfGuests')}
+                      />
+                    </div>
+
+                    {/* Event Type */}
+                    <div>
+                      <Label htmlFor="eventType" className="text-navy">
+                        Event Type
+                      </Label>
+                      <Input
+                        id="eventType"
+                        type="text"
+                        placeholder="e.g., Wedding, Corporate Event, Art Show"
+                        className="mt-2"
+                        {...register('eventType')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  <div>
+                    <Label htmlFor="message" className="text-navy">
+                      Message / Event Details <span className="text-red-600">*</span>
+                    </Label>
+                    <Textarea
+                      id="message"
+                      rows={6}
+                      className="mt-2"
+                      {...register('message', { required: 'Message is required' })}
+                    />
+                    {errors.message && (
+                      <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
+                    )}
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-4">
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full md:w-auto px-8 py-6 text-lg bg-navy text-off-white hover:bg-navy/90"
+                    >
+                      {isLoading ? 'Submitting...' : 'Submit Inquiry'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </section>
     </main>
   )
 }

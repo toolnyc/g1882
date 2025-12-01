@@ -18,6 +18,7 @@ interface Happening {
   heroImage?: { url?: string; alt?: string } | string | null
   featured?: boolean
   isActive?: boolean
+  category?: string | null
 }
 
 interface CurrentExhibitionProps {
@@ -39,6 +40,17 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening 
       return happening.featuredPerson.name
     }
     return happening.featuredPersonName || ''
+  }
+
+  const getButtonText = () => {
+    const category = happening.category?.toLowerCase() || ''
+    if (category.includes('exhibition')) {
+      return 'View Exhibition'
+    }
+    if (category.includes('event')) {
+      return 'View Event'
+    }
+    return 'View Happening'
   }
 
   const getImageUrl = () => {
@@ -123,7 +135,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening 
                     href={`/happenings/${happening.slug}`}
                     className="gallery-button-primary px-8 py-4 text-lg"
                   >
-                    View Happening
+                    {getButtonText()}
                   </Link>
                 )}
               </div>

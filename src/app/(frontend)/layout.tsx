@@ -10,6 +10,7 @@ import { CustomCursor } from '@/components/CustomCursor'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
+import { LayoutClient } from '@/components/LayoutClient'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
@@ -40,11 +41,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               }}
             />
           </div>
-          <div>
-            <Header />
-            {children}
-            <Footer />
-          </div>
+          <LayoutClient>
+            <div>
+              <Header />
+              {children}
+              <Footer />
+            </div>
+          </LayoutClient>
         </Providers>
       </body>
     </html>

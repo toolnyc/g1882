@@ -7,13 +7,12 @@ export default function VisitPage() {
   return (
     <main className="min-h-screen bg-off-white">
       {/* Header */}
-      <section className="py-32 mt-12 gallery-section">
+      <section className="pt-32 mt-12 gallery-section">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
           >
             <div className="mb-8">
               <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">Visit</h1>
@@ -28,9 +27,8 @@ export default function VisitPage() {
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
             className="relative overflow-hidden rounded-lg"
           >
             <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">

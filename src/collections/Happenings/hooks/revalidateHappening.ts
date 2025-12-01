@@ -48,3 +48,4 @@ export const revalidateDeleteHappening: CollectionAfterDeleteHook<Happening> = (
   return doc
 }
 
+

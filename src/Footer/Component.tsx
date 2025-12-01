@@ -77,8 +77,20 @@ export async function Footer() {
           <div>
             <h4 className="mb-4 font-bold text-off-white">Contact</h4>
             <div className="space-y-2 text-sm">
-              {space?.phone && <p className="text-off-white">{space.phone}</p>}
-              {space?.email && <p className="text-off-white">{space.email}</p>}
+              {space?.phone && (
+                <p className="text-off-white">
+                  <a href={`tel:${space.phone}`} className="hover:text-lake transition-colors">
+                    {space.phone}
+                  </a>
+                </p>
+              )}
+              {space?.email && (
+                <p className="text-off-white">
+                  <a href={`mailto:${space.email}`} className="hover:text-lake transition-colors">
+                    {space.email}
+                  </a>
+                </p>
+              )}
             </div>
           </div>
           <div>
@@ -90,7 +102,9 @@ export async function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-lake/20 text-center text-sm">
-          <p className="text-off-white">&copy; 2024 Gallery 1882. All rights reserved.</p>
+          <p className="text-off-white">
+            &copy; {new Date().getFullYear()} Gallery 1882. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

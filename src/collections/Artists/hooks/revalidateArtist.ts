@@ -48,3 +48,4 @@ export const revalidateDeleteArtist: CollectionAfterDeleteHook<Artist> = ({
   return doc
 }
 
+

@@ -14,6 +14,7 @@ interface Happening {
   endDate?: string | Date | null
   description?: any
   featured?: boolean
+  category?: string | null
 }
 
 interface UpcomingHappeningsProps {
@@ -35,6 +36,17 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
       return happening.featuredPerson.name
     }
     return happening.featuredPersonName || ''
+  }
+
+  const getButtonText = (happening: Happening) => {
+    const category = happening.category?.toLowerCase() || ''
+    if (category.includes('exhibition')) {
+      return 'View Exhibition'
+    }
+    if (category.includes('event')) {
+      return 'View Event'
+    }
+    return 'View Happening'
   }
 
   // Show only the 3 most upcoming happenings
@@ -120,7 +132,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                               href={`/happenings/${happening.slug}`}
                               className="inline-flex items-center text-lg font-semibold text-bright-lake hover:text-lake transition-colors duration-200 group/link"
                             >
-                              View Happening
+                              {getButtonText(happening)}
                               <svg
                                 className="ml-2 w-5 h-5 transform group-hover/link:translate-x-1 transition-transform duration-200"
                                 fill="none"

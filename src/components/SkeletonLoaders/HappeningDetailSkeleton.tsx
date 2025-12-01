@@ -1,14 +1,31 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 
 export const HappeningDetailSkeleton: React.FC = () => {
   return (
-    <main className="min-h-screen bg-off-white">
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-off-white"
+    >
       <article className="pb-24">
         {/* Hero Image Skeleton */}
-        <div className="relative w-full h-[60vh] min-h-[400px] mb-16 bg-navy/10 animate-pulse rounded-none" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="relative w-full h-[60vh] min-h-[400px] mb-16 bg-navy/10 animate-pulse rounded-none"
+        />
 
         <div className="container">
-          <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="max-w-4xl mx-auto"
+          >
             {/* Title and Featured Person Skeleton */}
             <div className="mb-8">
               <div className="h-16 bg-navy/20 animate-pulse rounded w-4/5 mb-4" />
@@ -47,10 +64,11 @@ export const HappeningDetailSkeleton: React.FC = () => {
             <div className="mt-12 pt-8 border-t border-navy/20">
               <div className="h-12 bg-navy/20 animate-pulse rounded w-48" />
             </div>
-          </div>
+          </motion.div>
         </div>
       </article>
-    </main>
+    </motion.main>
   )
 }
+
 
