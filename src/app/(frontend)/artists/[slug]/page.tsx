@@ -3,10 +3,8 @@ import Image from 'next/image'
 import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
-import Link from 'next/link'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { ArtistDetailSkeleton } from '@/components/SkeletonLoaders'
 import { RelatedHappenings } from './RelatedHappenings'
 
 // Revalidate every 60 seconds

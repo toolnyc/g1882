@@ -82,7 +82,7 @@ describe('ArtistPage', () => {
   it('renders not found message when artist does not exist', async () => {
     const { getCachedArtistBySlug } = await import('@/utilities/getArtistBySlug')
 
-    vi.mocked(getCachedArtistBySlug).mockReturnValue(async () => null)
+    vi.mocked(getCachedArtistBySlug).mockReturnValue(async () => null as unknown as Artist)
 
     const component = await ArtistPage({
       params: Promise.resolve({ slug: 'non-existent' }),

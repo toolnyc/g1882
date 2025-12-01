@@ -15,7 +15,7 @@ interface DirectoryItem {
   subtitle?: string
   href?: string | null
   category?: string | null
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface DirectoryListingProps {
@@ -88,9 +88,11 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
           return (a.displayName || a.name || '').localeCompare(b.displayName || b.name || '')
         } else {
           // For chronological, sort by date (newest first)
+          const aDate = String(a.startDate || a.date || a.publishedAt || '')
+          const bDate = String(b.startDate || b.date || b.publishedAt || '')
           return (
-            new Date(b.startDate || b.date || b.publishedAt || '').getTime() -
-            new Date(a.startDate || a.date || a.publishedAt || '').getTime()
+            new Date(bDate).getTime() -
+            new Date(aDate).getTime()
           )
         }
       })
@@ -295,7 +297,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                   if (!searchQuery.trim()) return true
                   return groupedItems[groupKey] && groupedItems[groupKey].length > 0
                 })
-                .map((groupKey, groupIndex) => (
+                .map((groupKey, _groupIndex) => (
                   <motion.div
                     key={groupKey}
                     ref={setGroupRef(groupKey)}

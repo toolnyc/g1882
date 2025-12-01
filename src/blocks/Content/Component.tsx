@@ -1,11 +1,28 @@
+// TODO: This block is currently commented out because it's not registered in any collection.
+// To enable it, add the Content block from '@/blocks/Content/config' to a collection's
+// BlocksFeature in the Payload config, then uncomment this file and the import in RenderBlocks.tsx
+
 import { cn } from '@/utilities/ui'
 import React from 'react'
 import RichText from '@/components/RichText'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
-import type { ContentBlock as ContentBlockProps } from '@/payload-types'
+// TODO: Uncomment when block is registered in Payload config
+// import type { ContentBlock as ContentBlockProps } from '@/payload-types'
 
-import { CMSLink } from '../../components/Link'
+import { CMSLink, type CMSLinkType } from '../../components/Link'
 
+// Temporary interface until the block is registered
+interface ContentBlockProps {
+  columns?: Array<{
+    enableLink?: boolean
+    link?: CMSLinkType
+    richText?: DefaultTypedEditorState
+    size?: 'full' | 'half' | 'oneThird' | 'twoThirds'
+  }>
+}
+
+// Temporarily exporting to avoid unused file warnings
 export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   const { columns } = props
 

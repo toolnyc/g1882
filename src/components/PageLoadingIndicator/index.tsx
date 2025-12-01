@@ -2,9 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 
-export const PageLoadingIndicator = () => {
+const PageLoadingIndicatorInner = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
@@ -23,7 +23,7 @@ export const PageLoadingIndicator = () => {
     } else {
       setIsLoading(false)
     }
-  }, [pathname, searchParams])
+  }, [pathname, searchParams, isLoading])
 
   useEffect(() => {
     // Listen for clicks on links to show loading state
@@ -121,5 +121,13 @@ export const PageLoadingIndicator = () => {
         </motion.div>
       )}
     </AnimatePresence>
+  )
+}
+
+export const PageLoadingIndicator = () => {
+  return (
+    <Suspense fallback={null}>
+      <PageLoadingIndicatorInner />
+    </Suspense>
   )
 }

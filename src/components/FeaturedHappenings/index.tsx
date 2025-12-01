@@ -14,7 +14,7 @@ interface Happening {
   featuredPersonName?: string | null
   startDate?: string | Date | null
   endDate?: string | Date | null
-  description?: any
+  description?: string | { root?: { type?: string; text?: string; children?: unknown[] } } | null
   heroImage?: { url?: string; alt?: string } | string | null
   featured?: boolean
   isActive?: boolean

@@ -1,11 +1,10 @@
 import React from 'react'
 import { DirectoryListing } from '@/components/DirectoryListing'
 import { getCachedHappenings } from '@/utilities/getHappenings'
-import { FeaturedHappenings } from '@/components/FeaturedHappenings'
-import { UpcomingHappenings } from '@/components/UpcomingHappenings'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
-import { formatDate, formatDateRange } from '@/utilities/dateHelpers'
+import { formatDateRange } from '@/utilities/dateHelpers'
+import type { Happening } from '@/payload-types'
 
 export default async function HappeningsPage() {
   // Fetch with depth 2 to populate heroImage and featuredPerson.image relations
@@ -41,7 +40,7 @@ export default async function HappeningsPage() {
     return dateB - dateA
   })
 
-  const getFeaturedPersonName = (happening: any) => {
+  const getFeaturedPersonName = (happening: Happening) => {
     if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
       return happening.featuredPerson.name
     }

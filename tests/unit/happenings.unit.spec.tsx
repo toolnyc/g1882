@@ -74,7 +74,16 @@ describe('HappeningPage', () => {
       id: '1',
       title: 'Test Happening',
       slug: 'test-happening',
-      description: 'Test description',
+      description: {
+        root: {
+          type: 'root',
+          children: [],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          version: 1,
+        },
+      },
       startDate: '2024-01-01T10:00:00Z',
       endDate: '2024-01-31T18:00:00Z',
       category: 'exhibition',
@@ -101,7 +110,7 @@ describe('HappeningPage', () => {
   it('renders not found message when happening does not exist', async () => {
     const { getCachedHappeningBySlug } = await import('@/utilities/getHappeningBySlug')
 
-    vi.mocked(getCachedHappeningBySlug).mockReturnValue(async () => null)
+    vi.mocked(getCachedHappeningBySlug).mockReturnValue(async () => null as unknown as Happening)
 
     const component = await HappeningPage({
       params: Promise.resolve({ slug: 'non-existent' }),
@@ -119,7 +128,16 @@ describe('HappeningPage', () => {
       id: '1',
       title: 'Test Happening',
       slug: 'test-happening',
-      description: 'Test description',
+      description: {
+        root: {
+          type: 'root',
+          children: [],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          version: 1,
+        },
+      },
       startDate: '2024-01-01T10:00:00Z',
       heroImage: null,
     }

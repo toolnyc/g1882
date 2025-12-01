@@ -4,7 +4,6 @@ import { CurrentExhibitionBanner } from '@/components/CurrentExhibitionBanner'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatDateRange } from '@/utilities/dateHelpers'
-import type { Happening, Media } from '@/payload-types'
 
 export default async function ExhibitionsPage() {
   // Fetch with depth 2 to populate heroImage relation

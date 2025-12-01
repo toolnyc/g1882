@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import React, { Suspense } from 'react'
+import React from 'react'
 import { getCachedHappeningBySlug } from '@/utilities/getHappeningBySlug'
 import RichText from '@/components/RichText'
 import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
-import { HappeningDetailSkeleton } from '@/components/SkeletonLoaders'
 
 // Revalidate every 60 seconds
 export const revalidate = 60
@@ -154,10 +153,10 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                         typeof happening.description === 'object' &&
                         happening.description?.root
                       ) {
-                        const extractText = (node: any): string => {
+                        const extractText = (node: { type?: string; text?: string; children?: unknown[] }): string => {
                           if (node.type === 'text') return node.text || ''
                           if (node.children) {
-                            return node.children.map(extractText).join(' ')
+                            return node.children.map((child) => extractText(child as { type?: string; text?: string; children?: unknown[] })).join(' ')
                           }
                           return ''
                         }

@@ -1,7 +1,6 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getCachedSpace } from '@/utilities/getSpace'
 import React from 'react'
-import payload from 'payload'
 
 import type { Footer } from '@/payload-types'
 import { NewsletterForm } from './NewsletterForm'

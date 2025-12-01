@@ -30,6 +30,9 @@ export const generateMeta = async (args: {
     ? doc?.meta?.title + ' | Payload Website Template'
     : 'Payload Website Template'
 
+  // Type guard to check if doc has slug property
+  const docSlug = doc && 'slug' in doc ? doc.slug : undefined
+  
   return {
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
@@ -42,7 +45,7 @@ export const generateMeta = async (args: {
           ]
         : undefined,
       title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
+      url: Array.isArray(docSlug) ? docSlug.join('/') : '/',
     }),
     title,
   }

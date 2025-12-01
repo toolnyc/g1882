@@ -28,7 +28,7 @@ export function NewsletterForm() {
       } else {
         toast.error(data.error || 'Failed to subscribe. Please try again.')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)

@@ -1,4 +1,4 @@
-import type { Artist, Happening, Home, Media, Space } from '@/payload-types'
+import type { Happening, Home, Media, Space } from '@/payload-types'
 
 import { resolveArtist, resolveMediaUrl } from './mediaHelpers'
 

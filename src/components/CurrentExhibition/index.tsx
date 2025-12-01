@@ -14,7 +14,7 @@ interface Happening {
   featuredPersonName?: string | null
   startDate?: string | Date | null
   endDate?: string | Date | null
-  description?: any
+  description?: string | { root?: { type?: string; text?: string; children?: unknown[] } } | null
   heroImage?: { url?: string; alt?: string } | string | null
   featured?: boolean
   isActive?: boolean
@@ -26,15 +26,6 @@ interface CurrentExhibitionProps {
 }
 
 export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening }) => {
-  const formatDate = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
-
   const getFeaturedPersonName = () => {
     if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
       return happening.featuredPerson.name
@@ -76,10 +67,10 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({ happening 
     }
     // For rich text, extract text content (simplified)
     if (typeof happening.description === 'object' && happening.description?.root) {
-      const extractText = (node: any): string => {
+      const extractText = (node: { type?: string; text?: string; children?: unknown[] }): string => {
         if (node.type === 'text') return node.text || ''
         if (node.children) {
-          return node.children.map(extractText).join(' ')
+          return node.children.map((child) => extractText(child as { type?: string; text?: string; children?: unknown[] })).join(' ')
         }
         return ''
       }

@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { getCachedHappenings } from '@/utilities/getHappenings'
-import type { Artist } from '@/payload-types'
 
 type RelatedHappeningsProps = {
   artistId: string

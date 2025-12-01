@@ -12,7 +12,7 @@ interface Happening {
   featuredPersonName?: string | null
   startDate?: string | Date | null
   endDate?: string | Date | null
-  description?: any
+  description?: string | { root?: { type?: string; text?: string; children?: unknown[] } } | null
   featured?: boolean
   category?: string | null
 }
@@ -74,7 +74,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
           <div className="mb-20 text-center">
             <div className="caption text-bright-lake mb-6">Upcoming</div>
             <h2 className="text-4xl font-bold tracking-tight md:text-5xl text-off-white">
-              Upcoming Events
+              What&apos;s Happening?
             </h2>
           </div>
 

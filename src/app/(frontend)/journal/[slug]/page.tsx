@@ -114,7 +114,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       ...post,
       meta: {
         title: post.title || undefined,
-        description: post.excerpt || undefined,
+        description: post.meta?.description || undefined,
         image: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage : undefined,
       },
     },

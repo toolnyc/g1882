@@ -1,5 +1,5 @@
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, Where } from 'payload'
 import { unstable_cache } from 'next/cache'
 
 type HappeningFilters = {
@@ -12,10 +12,10 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
   const payload = await getPayload({ config: configPromise })
   const now = new Date()
 
-  const where: any = {}
+  const where: Where = {}
 
   // Build date range conditions for active filter
-  const activeDateConditions: any[] = []
+  const activeDateConditions: Where[] = []
   if (filters.active) {
     // Filter by date ranges instead of isActive field, since isActive is calculated dynamically
     // Active happenings: startDate <= now AND (endDate >= now OR endDate is null)
@@ -41,7 +41,7 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
   }
 
   // Combine all conditions
-  const allConditions: any[] = []
+  const allConditions: Where[] = []
 
   if (filters.featured !== undefined) {
     allConditions.push({

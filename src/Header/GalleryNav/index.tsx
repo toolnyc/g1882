@@ -1,12 +1,11 @@
 'use client'
 import React, { useState } from 'react'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Header } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 
-export const GalleryNav: React.FC<{ data: Header }> = ({ data }) => {
+export const GalleryNav: React.FC<{ data: Header }> = ({ data: _data }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 

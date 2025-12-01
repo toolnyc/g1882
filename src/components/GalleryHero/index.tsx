@@ -6,7 +6,7 @@ import { LiveIndicator } from '../LiveIndicator'
 import { useState, useEffect } from 'react'
 
 export const GalleryHero: React.FC = () => {
-  const [loading, setLoading] = useState(true)
+  const [_loading, setLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState<string>('')
   // Format time in Central Time (Chicago)
   const formatCentralTime = (): string => {

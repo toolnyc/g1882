@@ -1,10 +1,24 @@
+// TODO: This block is currently commented out because it's not registered in any collection.
+// To enable it, add the CallToAction block from '@/blocks/CallToAction/config' to a collection's
+// BlocksFeature in the Payload config, then uncomment this file and the import in RenderBlocks.tsx
+
 import React from 'react'
 
-import type { CallToActionBlock as CTABlockProps } from '@/payload-types'
+// TODO: Uncomment when block is registered in Payload config
+// import type { CallToActionBlock as CTABlockProps } from '@/payload-types'
 
 import RichText from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
 
+// Temporary interface until the block is registered
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface CTABlockProps {
+  links?: { link: any }[]
+  richText?: any
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+// Temporarily exporting to avoid unused file warnings
 export const CallToActionBlock: React.FC<CTABlockProps> = ({ links, richText }) => {
   return (
     <div className="container">

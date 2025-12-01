@@ -15,12 +15,12 @@ interface ArtistFeatureProps {
 }
 
 export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
-  id,
+  id: _id,
   name,
   title,
   bio,
   image,
-  exhibitionId,
+  exhibitionId: _exhibitionId,
   artistSlug,
 }) => {
   return (

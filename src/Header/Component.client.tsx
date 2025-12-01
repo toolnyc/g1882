@@ -1,12 +1,12 @@
 'use client'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
-import { Logo } from '@/components/Logo/Logo'
 import { GalleryNav } from './GalleryNav'
 
 interface HeaderClientProps {
@@ -71,7 +71,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         <div className="container relative z-20">
           <div className="py-8 flex justify-between items-center tracking-tight">
             <Link href="/">
-              <img src="Icon-Navy-Flat.png" alt="Gallery 1882" className="max-w-16" />
+              <Image src="/Icon-Navy-Flat.png" alt="Gallery 1882" width={64} height={64} className="max-w-16" />
             </Link>
             <GalleryNav data={data} />
           </div>

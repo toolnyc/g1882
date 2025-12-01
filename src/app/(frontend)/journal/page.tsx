@@ -5,7 +5,6 @@ import { getCachedPosts } from '@/utilities/getPosts'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatDate } from '@/utilities/dateHelpers'
-import type { Post } from '@/payload-types'
 import React from 'react'
 import PageClient from './page.client'
 

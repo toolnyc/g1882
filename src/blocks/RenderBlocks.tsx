@@ -1,18 +1,22 @@
 import React, { Fragment } from 'react'
 
-import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
+// TODO: Uncomment these when blocks are added to a collection's BlocksFeature in the Payload config
+// import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
+// import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+// import { ContentBlock } from '@/blocks/Content/Component'
+
 import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CodeBlock } from '@/blocks/Code/Component'
-import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 
-const blockComponents = {
-  archive: ArchiveBlock,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const blockComponents: Record<string, React.ComponentType<any>> = {
+  // TODO: Uncomment these when blocks are added to a collection's BlocksFeature in the Payload config
+  // archive: ArchiveBlock,
+  // cta: CallToActionBlock,
+  // content: ContentBlock,
   banner: BannerBlock,
-  content: ContentBlock,
-  cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   code: CodeBlock,
@@ -42,7 +46,6 @@ export const RenderBlocks: React.FC<{
             if (Block) {
               return (
                 <div className="my-16" key={index}>
-                  {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>
               )

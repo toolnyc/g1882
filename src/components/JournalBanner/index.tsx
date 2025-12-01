@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { toast } from 'sonner'
 import { fadeUp } from '@/utilities/animations'
 
@@ -15,8 +14,8 @@ interface JournalBannerProps {
 export const JournalBanner: React.FC<JournalBannerProps> = ({
   headline,
   subheadline,
-  ctaText,
-  ctaUrl,
+  ctaText: _ctaText,
+  ctaUrl: _ctaUrl,
 }) => {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +42,7 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
       } else {
         toast.error(data.error || 'Failed to subscribe. Please try again.')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)

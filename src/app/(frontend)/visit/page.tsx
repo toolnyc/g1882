@@ -1,5 +1,6 @@
 'use client'
 import React from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
 
@@ -32,9 +33,11 @@ export default function VisitPage() {
             className="relative overflow-hidden rounded-lg"
           >
             <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
-              <img
+              <Image
                 src="/media/placeholder.svg"
                 alt="Gallery 1882 placeholder image"
+                width={1920}
+                height={1080}
                 className="h-full w-full object-cover object-center"
               />
             </div>

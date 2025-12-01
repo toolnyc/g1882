@@ -11,7 +11,7 @@ interface WeatherData {
 export const WeatherWidget: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [currentTime, setCurrentTime] = useState<string>('')
+  const [_currentTime, setCurrentTime] = useState<string>('')
 
   // Format time in Central Time (Chicago)
   const formatCentralTime = (): string => {
