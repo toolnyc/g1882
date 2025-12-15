@@ -1,16 +1,17 @@
 import React from 'react'
-import { GalleryHero } from '@/components/GalleryHero'
-import { CurrentExhibition } from '@/components/CurrentExhibition'
-import { VisitSection } from '@/components/VisitSection'
-import { ArtistFeature } from '@/components/ArtistFeature'
-import { UpcomingHappenings } from '@/components/UpcomingHappenings'
-import { MissionSection } from '@/components/MissionSection'
+import { HomePageClient } from '@/components/HomePage/HomePageClient'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { getCachedSpace } from '@/utilities/getSpace'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { transformFeaturedArtist, transformVisitSection } from '@/utilities/dataTransformers'
 import type { Happening, Home } from '@/payload-types'
+
+type FormattedHappening = Omit<Happening, 'heroImage'> & {
+  heroImage: { url: string; alt?: string } | string | null
+  featured: boolean
+  isActive: boolean
+}
 
 export default async function HomePage() {
   // Fetch home global data
@@ -37,7 +38,9 @@ export default async function HomePage() {
   const featuredArtistData = transformFeaturedArtist(homeData, featuredHappening)
   const visitSectionData = transformVisitSection(homeData, space)
 
-  const formatHeroImage = (heroImage: Happening['heroImage']) => {
+  const formatHeroImage = (
+    heroImage: Happening['heroImage'],
+  ): { url: string; alt?: string } | string | null => {
     if (typeof heroImage === 'object' && heroImage) {
       return {
         url: resolveMediaUrl(heroImage, '/media/test-art.jpg'),
@@ -48,47 +51,25 @@ export default async function HomePage() {
     return (heroImage as string | null) || null
   }
 
+  const formattedCurrentHappening: FormattedHappening | undefined = currentHappening
+    ? {
+        ...currentHappening,
+        heroImage: formatHeroImage(currentHappening.heroImage),
+        featured: currentHappening.featured ?? false,
+        isActive: currentHappening.isActive ?? false,
+      }
+    : undefined
+
   return (
-    <main className="min-h-screen bg-off-white">
-      {/* Hero Section */}
-      <GalleryHero />
-
-      {/* Mission Section */}
-      <MissionSection
-        missionStatement={homeData?.missionStatement}
-        missionCtaText={homeData?.missionCtaText}
-        missionCtaUrl={homeData?.missionCtaUrl}
-      />
-
-      {/* Current Happening */}
-      {currentHappening && (
-        <CurrentExhibition
-          happening={{
-            ...currentHappening,
-            heroImage: formatHeroImage(currentHappening.heroImage),
-            featured: currentHappening.featured ?? false,
-            isActive: currentHappening.isActive ?? false,
-          }}
-        />
-      )}
-
-      {/* Visit Section */}
-      {visitSectionData && <VisitSection {...visitSectionData} />}
-
-      {/* Artist Feature */}
-      {featuredArtistData && <ArtistFeature {...featuredArtistData} />}
-
-      {/* Upcoming Happenings */}
-      {upcomingHappenings.length > 0 && (
-        <UpcomingHappenings
-          happenings={upcomingHappenings.slice(0, 3).map((h) => ({
-            ...h,
-            featured: h.featured ?? false,
-          }))}
-        />
-      )}
-
-      {/* Gallery Info */}
-    </main>
+    <HomePageClient
+      homeData={homeData}
+      currentHappening={formattedCurrentHappening}
+      upcomingHappenings={upcomingHappenings.slice(0, 3).map((h) => ({
+        ...h,
+        featured: h.featured ?? false,
+      }))}
+      featuredArtistData={featuredArtistData}
+      visitSectionData={visitSectionData}
+    />
   )
 }

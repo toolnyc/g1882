@@ -26,17 +26,15 @@ export function NewsletterGateProvider({ children }: { children: React.ReactNode
     setHasSignedUp(true)
   }
 
-  // Don't render modal on admin routes or before hydration
-  if (isAdminRoute || !isReady) {
-    return <>{children}</>
-  }
+  const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
 
-  const showModal =
-    !hasSignedUp &&
-    process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+  // Don't show gate features on admin routes or before hydration
+  const shouldBypassGate = isAdminRoute || !isReady
+  const isInLanderMode = !shouldBypassGate && hasSignedUp && gateEnabled
+  const showModal = !shouldBypassGate && !hasSignedUp && gateEnabled
 
   return (
-    <NewsletterGateContext.Provider value={{ hasSignedUp, markAsSignedUp }}>
+    <NewsletterGateContext.Provider value={{ hasSignedUp, markAsSignedUp, isInLanderMode }}>
       {children}
       {showModal && <NewsletterGateModal />}
     </NewsletterGateContext.Provider>

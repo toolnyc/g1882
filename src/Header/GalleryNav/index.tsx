@@ -8,6 +8,12 @@ import { CMSLink } from '@/components/Link'
 export const GalleryNav: React.FC<{ data: Header }> = ({ data: _data }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+
+  // Hide navigation when gate is active (nav items are CMS-controlled)
+  if (gateEnabled) {
+    return null
+  }
 
   // Use Payload navigation data, fallback to default if none
   const navigationItems = [

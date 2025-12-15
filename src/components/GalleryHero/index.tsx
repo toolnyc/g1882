@@ -5,7 +5,15 @@ import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
 import { LiveIndicator } from '../LiveIndicator'
 import { useState, useEffect } from 'react'
 
-export const GalleryHero: React.FC = () => {
+interface GalleryHeroProps {
+  statusText?: string
+  statusIndicatorColor?: string
+}
+
+export const GalleryHero: React.FC<GalleryHeroProps> = ({
+  statusText = 'Open',
+  statusIndicatorColor = 'bg-bright-lake',
+}) => {
   const [_loading, setLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState<string>('')
   // Format time in Central Time (Chicago)
@@ -62,14 +70,14 @@ export const GalleryHero: React.FC = () => {
       >
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-6 pt-4   ">
           <div className="flex items-center">
-            <LiveIndicator size="sm" colorClassName="bg-bright-lake" />
+            <LiveIndicator size="sm" colorClassName={statusIndicatorColor} />
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.4 }}
               className="text-lg text-off-white tracking-tight pl-4"
             >
-              Open
+              {statusText}
             </motion.p>
           </div>
           <span className="text-xs text-off-white">{currentTime}</span>

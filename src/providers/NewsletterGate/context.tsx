@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react'
 interface NewsletterGateContextType {
   hasSignedUp: boolean
   markAsSignedUp: () => void
+  isInLanderMode: boolean
 }
 
 export const NewsletterGateContext = createContext<NewsletterGateContextType | null>(null)

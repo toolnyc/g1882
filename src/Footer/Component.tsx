@@ -5,6 +5,7 @@ import React from 'react'
 import type { Footer } from '@/payload-types'
 import { NewsletterForm } from './NewsletterForm'
 import { CMSLink } from '@/components/Link'
+import { FooterClientWrapper } from './Component.client'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
@@ -13,7 +14,8 @@ export async function Footer() {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="relative z-40 mt-auto border-t border-lake bg-navy min-h-0">
+    <FooterClientWrapper>
+      <footer className="relative z-40 mt-auto border-t border-lake bg-navy min-h-0">
       <div className="container py-12 text-off-white">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Gallery Info */}
@@ -107,5 +109,6 @@ export async function Footer() {
         </div>
       </div>
     </footer>
+    </FooterClientWrapper>
   )
 }

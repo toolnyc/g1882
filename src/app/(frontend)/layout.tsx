@@ -11,6 +11,7 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { LayoutClient } from '@/components/LayoutClient'
+import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
@@ -33,21 +34,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <Providers>
-          <CustomCursor />
-          <div className="fixed top-0 left-0 right-0 z-[100]">
-            <AdminBar
-              adminBarProps={{
-                preview: isEnabled,
-              }}
-            />
-          </div>
-          <LayoutClient>
-            <div>
-              <Header />
-              {children}
-              <Footer />
+          <LanderModeGuard>
+            <CustomCursor />
+            <div className="fixed top-0 left-0 right-0 z-[100]">
+              <AdminBar
+                adminBarProps={{
+                  preview: isEnabled,
+                }}
+              />
             </div>
-          </LayoutClient>
+            <LayoutClient>
+              <div>
+                <Header />
+                {children}
+                <Footer />
+              </div>
+            </LayoutClient>
+          </LanderModeGuard>
         </Providers>
       </body>
     </html>

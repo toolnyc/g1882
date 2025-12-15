@@ -19,6 +19,10 @@ vi.mock('@/utilities/getSpace', () => ({
   getCachedSpace: vi.fn(() => async () => null),
 }))
 
+vi.mock('@/utilities/getGlobals', () => ({
+  getCachedGlobal: vi.fn(() => async () => ({})),
+}))
+
 vi.mock('@/utilities/getMediaUrl', () => ({
   getMediaUrl: vi.fn((url: string) => url),
 }))
@@ -66,10 +70,12 @@ describe('HomePage', () => {
   it('renders without errors', async () => {
     const { getCachedHappenings } = await import('@/utilities/getHappenings')
     const { getCachedSpace } = await import('@/utilities/getSpace')
+    const { getCachedGlobal } = await import('@/utilities/getGlobals')
 
     // Mock empty data
     vi.mocked(getCachedHappenings).mockReturnValue(async () => [])
     vi.mocked(getCachedSpace).mockReturnValue(async () => null)
+    vi.mocked(getCachedGlobal).mockReturnValue(async () => ({} as any))
 
     const component = await HomePage()
     const { container } = render(component)
@@ -82,6 +88,7 @@ describe('HomePage', () => {
   it('renders with happenings data', async () => {
     const { getCachedHappenings } = await import('@/utilities/getHappenings')
     const { getCachedSpace } = await import('@/utilities/getSpace')
+    const { getCachedGlobal } = await import('@/utilities/getGlobals')
 
     const mockHappening: Partial<Happening> = {
       id: '1',
@@ -96,6 +103,7 @@ describe('HomePage', () => {
       id: '1',
       description: 'Test space description',
     }))
+    vi.mocked(getCachedGlobal).mockReturnValue(async () => ({} as any))
 
     const component = await HomePage()
     const { container } = render(component)
@@ -107,9 +115,11 @@ describe('HomePage', () => {
   it('handles missing data gracefully', async () => {
     const { getCachedHappenings } = await import('@/utilities/getHappenings')
     const { getCachedSpace } = await import('@/utilities/getSpace')
+    const { getCachedGlobal } = await import('@/utilities/getGlobals')
 
     vi.mocked(getCachedHappenings).mockReturnValue(async () => [])
     vi.mocked(getCachedSpace).mockReturnValue(async () => null)
+    vi.mocked(getCachedGlobal).mockReturnValue(async () => ({} as any))
 
     const component = await HomePage()
     const { container } = render(component)

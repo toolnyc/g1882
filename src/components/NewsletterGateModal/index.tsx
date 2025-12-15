@@ -37,7 +37,7 @@ export function NewsletterGateModal() {
       } else {
         toast.error(data.error || 'Failed to subscribe. Please try again.')
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
@@ -46,7 +46,7 @@ export function NewsletterGateModal() {
 
   const handleDismiss = () => {
     setIsDismissed(true)
-    // Modal will reappear on refresh until signup completes
+    // Modal will reappear on refresh (state doesn't persist)
   }
 
   return (
@@ -77,9 +77,9 @@ export function NewsletterGateModal() {
             </button>
 
             {/* Content */}
-            <h2 className="text-2xl font-bold mb-3">Stay Updated</h2>
+            <h2 className="text-2xl font-bold mb-3">Opening Soon</h2>
             <p className="text-navy/70 mb-6">
-              Join our newsletter for exclusive updates on exhibitions, artists, and happenings.
+              Gallery 1882 is preparing to open its doors. Sign up to be notified when we launch and receive exclusive updates about our inaugural exhibitions and artists.
             </p>
 
             {/* Form */}
