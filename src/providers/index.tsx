@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 
 import { HeaderThemeProvider } from './HeaderTheme'
+import { NewsletterGateProvider } from './NewsletterGate'
 
 function ScrollAwareToaster() {
   const [position, setPosition] = useState<'top-center' | 'bottom-center'>('top-center')
@@ -44,8 +45,10 @@ export const Providers: React.FC<{
 }> = ({ children }) => {
   return (
     <HeaderThemeProvider>
-      {children}
-      <ScrollAwareToaster />
+      <NewsletterGateProvider>
+        {children}
+        <ScrollAwareToaster />
+      </NewsletterGateProvider>
     </HeaderThemeProvider>
   )
 }
