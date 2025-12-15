@@ -49,3 +49,7 @@ export const revalidateDeleteArtist: CollectionAfterDeleteHook<Artist> = ({
 }
 
 
+
+
+
+

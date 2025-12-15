@@ -49,3 +49,7 @@ export const revalidateDeleteHappening: CollectionAfterDeleteHook<Happening> = (
 }
 
 
+
+
+
+
