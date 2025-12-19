@@ -1,12 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { GalleryHero } from '@/components/GalleryHero'
 import { CurrentExhibition } from '@/components/CurrentExhibition'
 import { VisitSection } from '@/components/VisitSection'
 import { ArtistFeature } from '@/components/ArtistFeature'
 import { UpcomingHappenings } from '@/components/UpcomingHappenings'
 import { MissionSection } from '@/components/MissionSection'
+import { useHeaderTheme } from '@/providers/HeaderTheme'
 import type { Happening, Home } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
@@ -30,7 +31,13 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   featuredArtistData,
   visitSectionData,
 }) => {
+  const { setHeaderTheme } = useHeaderTheme()
   const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+
+  // Set header theme for glassy navbar effect on homepage
+  useEffect(() => {
+    setHeaderTheme('glassy')
+  }, [setHeaderTheme])
 
   // Two states:
   // 1. Gate enabled (pre-launch) -> show only video/logo/weather with "Coming Soon"

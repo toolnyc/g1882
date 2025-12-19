@@ -53,7 +53,9 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     return () => window.removeEventListener('scroll', controlNavbar)
   }, [lastScrollY])
 
-  const isHomepage = pathname === '/'
+  // Use headerTheme for glassy effect (more reliable than pathname in production builds)
+  // Fall back to pathname check for backwards compatibility
+  const isGlassy = headerTheme === 'glassy' || pathname === '/'
 
   return (
     <header
@@ -63,7 +65,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     >
       <div
         className={`border-b ${
-          isHomepage
+          isGlassy
             ? 'bg-white/10 backdrop-blur-md border-white/20'
             : 'bg-off-white border-navy/10'
         }`}
