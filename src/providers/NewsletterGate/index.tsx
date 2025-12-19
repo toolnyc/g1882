@@ -6,7 +6,12 @@ import { NewsletterGateContext } from './context'
 import { NewsletterGateModal } from '@/components/NewsletterGateModal'
 import { checkNewsletterSignupStatus, setNewsletterSignupStatus } from '@/utilities/newsletterGate'
 
-export function NewsletterGateProvider({ children }: { children: React.ReactNode }) {
+interface NewsletterGateProviderProps {
+  children: React.ReactNode
+  isAdmin?: boolean
+}
+
+export function NewsletterGateProvider({ children, isAdmin = false }: NewsletterGateProviderProps) {
   const pathname = usePathname()
   const [hasSignedUp, setHasSignedUp] = useState(false)
   const [isReady, setIsReady] = useState(false)
@@ -27,9 +32,10 @@ export function NewsletterGateProvider({ children }: { children: React.ReactNode
   }
 
   const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+  const adminPreviewEnabled = process.env.NEXT_PUBLIC_ENABLE_ADMIN_PREVIEW === 'true'
 
-  // Don't show gate features on admin routes or before hydration
-  const shouldBypassGate = isAdminRoute || !isReady
+  // Don't show gate features on admin routes, before hydration, or for authenticated admins
+  const shouldBypassGate = isAdminRoute || !isReady || (adminPreviewEnabled && isAdmin)
   const isInLanderMode = !shouldBypassGate && hasSignedUp && gateEnabled
   const showModal = !shouldBypassGate && !hasSignedUp && gateEnabled
 

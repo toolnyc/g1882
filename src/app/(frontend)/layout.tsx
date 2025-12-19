@@ -13,6 +13,7 @@ import { Providers } from '@/providers'
 import { LayoutClient } from '@/components/LayoutClient'
 import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getAuthStatus } from '@/utilities/getAuthStatus'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
@@ -20,6 +21,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  const { isAuthenticated } = await getAuthStatus()
 
   return (
     <html
@@ -33,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body>
-        <Providers>
+        <Providers isAdmin={isAuthenticated}>
           <LanderModeGuard>
             <CustomCursor />
             <div className="fixed top-0 left-0 right-0 z-[100]">

@@ -42,10 +42,11 @@ function ScrollAwareToaster() {
 
 export const Providers: React.FC<{
   children: React.ReactNode
-}> = ({ children }) => {
+  isAdmin?: boolean
+}> = ({ children, isAdmin = false }) => {
   return (
     <HeaderThemeProvider>
-      <NewsletterGateProvider>
+      <NewsletterGateProvider isAdmin={isAdmin}>
         {children}
         <ScrollAwareToaster />
       </NewsletterGateProvider>
