@@ -39,8 +39,11 @@ export function NewsletterGateProvider({ children, isAdmin = false }: Newsletter
   const isInLanderMode = !shouldBypassGate && hasSignedUp && gateEnabled
   const showModal = !shouldBypassGate && !hasSignedUp && gateEnabled
 
+  // Should show full site content (not lander) when gate is disabled OR admin is previewing
+  const shouldShowFullSite = !gateEnabled || (adminPreviewEnabled && isAdmin)
+
   return (
-    <NewsletterGateContext.Provider value={{ hasSignedUp, markAsSignedUp, isInLanderMode }}>
+    <NewsletterGateContext.Provider value={{ hasSignedUp, markAsSignedUp, isInLanderMode, shouldShowFullSite }}>
       {children}
       {showModal && <NewsletterGateModal />}
     </NewsletterGateContext.Provider>

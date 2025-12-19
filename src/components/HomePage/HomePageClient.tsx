@@ -8,6 +8,7 @@ import { ArtistFeature } from '@/components/ArtistFeature'
 import { UpcomingHappenings } from '@/components/UpcomingHappenings'
 import { MissionSection } from '@/components/MissionSection'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { useNewsletterGate } from '@/providers/NewsletterGate/context'
 import type { Happening, Home } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
@@ -32,7 +33,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   visitSectionData,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
-  const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+  const { shouldShowFullSite } = useNewsletterGate()
 
   // Set header theme for glassy navbar effect on homepage
   useEffect(() => {
@@ -40,10 +41,10 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   }, [setHeaderTheme])
 
   // Two states:
-  // 1. Gate enabled (pre-launch) -> show only video/logo/weather with "Coming Soon"
-  // 2. Gate disabled (launched) -> show full site
-  const showLanderContent = gateEnabled
-  const showFullSite = !gateEnabled
+  // 1. Gate enabled (pre-launch) and not admin -> show only video/logo/weather with "Coming Soon"
+  // 2. Gate disabled OR admin previewing -> show full site
+  const showFullSite = shouldShowFullSite
+  const showLanderContent = !shouldShowFullSite
 
   return (
     <main className="min-h-screen bg-off-white">

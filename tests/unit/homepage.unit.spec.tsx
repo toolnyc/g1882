@@ -58,6 +58,16 @@ vi.mock('@/components/MissionSection', () => ({
   MissionSection: () => <div data-testid="mission-section">Mission Section</div>,
 }))
 
+// Mock NewsletterGate context
+vi.mock('@/providers/NewsletterGate/context', () => ({
+  useNewsletterGate: () => ({
+    hasSignedUp: false,
+    markAsSignedUp: vi.fn(),
+    isInLanderMode: false,
+    shouldShowFullSite: true,
+  }),
+}))
+
 describe('HomePage', () => {
   beforeEach(() => {
     vi.clearAllMocks()

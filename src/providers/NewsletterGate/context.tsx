@@ -6,6 +6,7 @@ interface NewsletterGateContextType {
   hasSignedUp: boolean
   markAsSignedUp: () => void
   isInLanderMode: boolean
+  shouldShowFullSite: boolean
 }
 
 export const NewsletterGateContext = createContext<NewsletterGateContextType | null>(null)
