@@ -16,6 +16,8 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       payload.logger.info(`Revalidating post at path: ${path}`)
 
       revalidatePath(path)
+      revalidateTag(`post_${doc.slug}`)
+      revalidateTag('posts')
       revalidateTag('posts-sitemap')
     }
 
@@ -26,6 +28,8 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       payload.logger.info(`Revalidating old post at path: ${oldPath}`)
 
       revalidatePath(oldPath)
+      revalidateTag(`post_${previousDoc.slug}`)
+      revalidateTag('posts')
       revalidateTag('posts-sitemap')
     }
   }
@@ -33,10 +37,12 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
 }
 
 export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { context } }) => {
-  if (!context.disableRevalidate) {
-    const path = `/journal/${doc?.slug}`
+  if (!context.disableRevalidate && doc?.slug) {
+    const path = `/journal/${doc.slug}`
 
     revalidatePath(path)
+    revalidateTag(`post_${doc.slug}`)
+    revalidateTag('posts')
     revalidateTag('posts-sitemap')
   }
 
