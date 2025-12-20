@@ -5,55 +5,8 @@
 This is a site for Gallery 1882, a Chesterton, IN art gallery.  The goal of the site is to clearly direct users to core information about the gallery, allow them to browse events and exhibitions with ease, and stay up-to-date with gallery happenings.
 
 
-## Technology Stack
-
-- **Backend CMS**: Payload CMS 3.59.1 with MongoDB adapter
-- **Frontend**: Next.js 15.4.10 (App Router) + React 19.1.0
-- **Styling**: TailwindCSS with shadcn/ui components
-- **Rich Text**: Lexical editor (@payloadcms/richtext-lexical)
-- **Testing**: Vitest (unit/integration) + Playwright (E2E)
-- **Package Manager**: pnpm (required)
-- **Node Version**: ^18.20.2 || >=20.9.0
-
-## Development Commands
-
-### Core Development
-```bash
-pnpm dev                  # Start development server on http://localhost:3000
-pnpm build                # Build for production (Next.js + sitemap generation)
-pnpm start                # Start production server
-pnpm dev:prod             # Clean build and start production locally
-```
-
-### Testing
-```bash
-pnpm test                 # Run all tests (unit + integration + E2E)
-pnpm test:unit            # Run unit tests (Vitest)
-pnpm test:int             # Run integration tests (Vitest)
-pnpm test:e2e             # Run E2E tests (Playwright)
-pnpm test:pre-deploy      # Lint + unit + integration tests
-```
-
-Unit and integration tests are located in `tests/unit/` and `tests/int/` respectively with `.unit.spec.tsx` and `.int.spec.ts` extensions. E2E tests are in `tests/e2e/` with `.e2e.spec.ts` extension.
-
-### Code Quality
-```bash
-pnpm lint                 # Run ESLint
-pnpm lint:fix             # Run ESLint and auto-fix issues
-```
-
-### Payload CMS
-```bash
-pnpm payload              # Run Payload CLI commands
-pnpm generate:types       # Generate TypeScript types from Payload config
-pnpm generate:importmap   # Generate import map for Payload
-```
-
-### Package Management
-```bash
-pnpm ii                   # Install dependencies (ignores workspace)
-pnpm reinstall            # Clean reinstall (removes node_modules and lockfile)
-```
+## Your Directives
+Always plan before implementing. Always use DRY-code and look for ways to clean up the codebase and improve efficiency while making changes. Always use Payload and Next.JS standards.
 
 ## Architecture
 
