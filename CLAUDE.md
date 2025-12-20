@@ -8,6 +8,27 @@ This is a site for Gallery 1882, a Chesterton, IN art gallery.  The goal of the 
 ## Your Directives
 Always plan before implementing. Always use DRY-code and look for ways to clean up the codebase and improve efficiency while making changes. Always use Payload and Next.JS standards.
 
+## Git Branching Strategy
+
+### Main Branches
+- **prod** - Production branch. Deploys to the production domain. Only stable, tested code.
+- **preview** - Staging/preview branch. Deploys to the preview environment for testing.
+
+### Feature & Fix Branches
+- **feature/*** - New features. Branch from `preview`, merge back to `preview` when complete.
+- **fix/*** - Bug fixes. Branch from the affected branch (`preview` or `prod`), merge back when resolved.
+
+### Workflow
+1. Create feature/fix branch from `preview`
+2. Develop and test locally
+3. Merge to `preview` for staging review
+4. Once validated, merge `preview` to `prod` for production release
+
+### Notes
+- The `main` branch exists for backwards compatibility but should not be used for new work
+- Always test in `preview` before promoting to `prod`
+- Vercel auto-deploys: `prod` -> production, `preview` -> preview environment
+
 ## Architecture
 
 ### Dual Application Structure
