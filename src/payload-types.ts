@@ -107,12 +107,14 @@ export interface Config {
     footer: Footer;
     space: Space;
     home: Home;
+    visit: Visit;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
+    visit: VisitSelect<false> | VisitSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1421,6 +1423,109 @@ export interface Home {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visit".
+ */
+export interface Visit {
+  id: string;
+  heroImage?: (string | null) | Media;
+  hours?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+    regularHours?:
+      | {
+          day: string;
+          hours: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Note about last admission, holidays, etc.
+     */
+    note?: string | null;
+    specialHoursTitle?: string | null;
+    specialHours?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  admission?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+    generalAdmissionTitle?: string | null;
+    generalAdmissionDescription?: string | null;
+    generalAdmissionFeatures?:
+      | {
+          feature: string;
+          id?: string | null;
+        }[]
+      | null;
+    groupVisitTitle?: string | null;
+    groupVisitDescription?: string | null;
+    groupVisitFeatures?:
+      | {
+          feature: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  location?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Multi-line address
+     */
+    address?: string | null;
+    parkingDescription?: string | null;
+    parkingFeatures?:
+      | {
+          feature: string;
+          id?: string | null;
+        }[]
+      | null;
+    directions?:
+      | {
+          title: string;
+          content: string;
+          style?: ('default' | 'lake' | 'dark') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  chesterton?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+    features?:
+      | {
+          title: string;
+          description: string;
+          icon?: ('location' | 'building' | 'heart') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faqsSection?: {
+    caption?: string | null;
+    title?: string | null;
+    faqs?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1522,6 +1627,113 @@ export interface HomeSelect<T extends boolean = true> {
   visitImage?: T;
   visitCtaText?: T;
   visitCtaUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visit_select".
+ */
+export interface VisitSelect<T extends boolean = true> {
+  heroImage?: T;
+  hours?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+        regularHours?:
+          | T
+          | {
+              day?: T;
+              hours?: T;
+              id?: T;
+            };
+        note?: T;
+        specialHoursTitle?: T;
+        specialHours?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  admission?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+        generalAdmissionTitle?: T;
+        generalAdmissionDescription?: T;
+        generalAdmissionFeatures?:
+          | T
+          | {
+              feature?: T;
+              id?: T;
+            };
+        groupVisitTitle?: T;
+        groupVisitDescription?: T;
+        groupVisitFeatures?:
+          | T
+          | {
+              feature?: T;
+              id?: T;
+            };
+      };
+  location?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+        address?: T;
+        parkingDescription?: T;
+        parkingFeatures?:
+          | T
+          | {
+              feature?: T;
+              id?: T;
+            };
+        directions?:
+          | T
+          | {
+              title?: T;
+              content?: T;
+              style?: T;
+              id?: T;
+            };
+      };
+  chesterton?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+        features?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  faqsSection?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        faqs?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

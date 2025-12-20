@@ -16,6 +16,7 @@ import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Home } from './globals/Home/config'
 import { Space } from './globals/Space/config'
+import { Visit } from './globals/Visit/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -67,7 +68,7 @@ export default buildConfig({
   }),
   collections: [Posts, Media, Categories, Users, Artists, Happenings],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Space, Home],
+  globals: [Header, Footer, Space, Home, Visit],
   plugins: [
     ...plugins,
     vercelBlobStorage({
