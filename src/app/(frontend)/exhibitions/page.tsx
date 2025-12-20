@@ -1,5 +1,9 @@
 import React from 'react'
+
 import { DirectoryListing } from '@/components/DirectoryListing'
+
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 import { CurrentExhibitionBanner } from '@/components/CurrentExhibitionBanner'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'

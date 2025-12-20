@@ -1,6 +1,9 @@
 import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
+
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'

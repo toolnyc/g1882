@@ -1,6 +1,10 @@
 import React from 'react'
+
 import { HomePageClient } from '@/components/HomePage/HomePageClient'
 import { getCachedHappenings } from '@/utilities/getHappenings'
+
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 import { getCachedSpace } from '@/utilities/getSpace'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'

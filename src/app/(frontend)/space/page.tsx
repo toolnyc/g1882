@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import React from 'react'
+
 import { getCachedSpace } from '@/utilities/getSpace'
+
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 import { generateMeta } from '@/utilities/generateMeta'
 import { SpacePageClient } from './SpacePage.client'
 
