@@ -3,34 +3,15 @@ import Image from 'next/image'
 import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import { RelatedHappenings } from './RelatedHappenings'
 
-// Revalidate every 60 seconds
-export const revalidate = 60
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 
 type Args = {
   params: Promise<{
     slug: string
   }>
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'artists',
-    limit: 1000,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  return result.docs.map((artist) => ({
-    slug: artist.slug || '',
-  }))
 }
 
 export default async function ArtistPage({ params: paramsPromise }: Args) {

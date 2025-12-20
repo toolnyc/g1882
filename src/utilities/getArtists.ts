@@ -11,7 +11,12 @@ async function getArtists(depth = 1) {
     pagination: false,
     limit: 1000,
     sort: 'name',
-    overrideAccess: false,
+    overrideAccess: true,
+    where: {
+      _status: {
+        equals: 'published',
+      },
+    },
   })
 
   return result.docs

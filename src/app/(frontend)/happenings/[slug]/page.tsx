@@ -8,22 +8,13 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
 
-// Revalidate every 60 seconds
-export const revalidate = 60
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 
 type Args = {
   params: Promise<{
     slug: string
   }>
-}
-
-export async function generateStaticParams() {
-  const { getHappenings } = await import('@/utilities/getHappenings')
-  const happenings = await getHappenings()
-
-  return happenings.map((happening) => ({
-    slug: happening.slug || '',
-  }))
 }
 
 export default async function HappeningPage({ params: paramsPromise }: Args) {

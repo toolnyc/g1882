@@ -69,6 +69,14 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
     Object.assign(where, allConditions[0])
   }
 
+  // Add published status filter since happenings uses drafts
+  const publishedFilter: Where = { _status: { equals: 'published' } }
+  if (Object.keys(where).length > 0) {
+    where.and = [...(where.and || []), publishedFilter]
+  } else {
+    Object.assign(where, publishedFilter)
+  }
+
   const result = await payload.find({
     collection: 'happenings',
     depth,
@@ -76,7 +84,7 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
     sort: '-startDate',
     limit: 1000,
     pagination: false,
-    overrideAccess: false,
+    overrideAccess: true,
   })
 
   // Calculate isActive dynamically if not overridden

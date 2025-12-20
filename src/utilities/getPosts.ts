@@ -11,7 +11,7 @@ async function getPosts(depth = 1) {
     sort: '-publishedAt',
     limit: 1000,
     pagination: false,
-    overrideAccess: false,
+    overrideAccess: true,
     where: {
       _status: {
         equals: 'published',

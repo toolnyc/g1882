@@ -3,33 +3,16 @@ import Image from 'next/image'
 import React from 'react'
 import { getCachedPostBySlug } from '@/utilities/getPostBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import RichText from '@/components/RichText'
+
+// Force dynamic rendering since layout reads headers (draftMode, auth)
+export const dynamic = 'force-dynamic'
 
 type Args = {
   params: Promise<{
     slug: string
   }>
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'posts',
-    limit: 1000,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  return result.docs.map((post) => ({
-    slug: post.slug || '',
-  }))
 }
 
 export default async function PostPage({ params: paramsPromise }: Args) {
