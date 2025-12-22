@@ -29,6 +29,42 @@ Always plan before implementing. Always use DRY-code and look for ways to clean 
 - Always test in `preview` before promoting to `prod`
 - Vercel auto-deploys: `prod` -> production, `preview` -> preview environment
 
+### Git Worktree Workflow (Required for Parallel Work)
+
+**Always use git worktrees** when running multiple Claude instances or agents in parallel. This prevents git conflicts and allows each instance to work on separate branches simultaneously.
+
+#### Setup
+```bash
+# Create a worktree for a new feature branch
+git worktree add ../g1882-feature-name feature/feature-name
+
+# Create a worktree from an existing branch
+git worktree add ../g1882-fix-bug fix/bug-name
+
+# List all worktrees
+git worktree list
+```
+
+#### Conventions
+- Worktree directories should be named `g1882-<branch-short-name>` and placed as siblings to the main repo
+- Each Claude instance/agent should work in its own worktree
+- Run `pnpm install` in each new worktree before starting work
+
+#### Cleanup
+```bash
+# Remove a worktree when done
+git worktree remove ../g1882-feature-name
+
+# Prune stale worktree references
+git worktree prune
+```
+
+#### Benefits
+- No git lock conflicts between parallel instances
+- Each instance has isolated working directory state
+- Branches can be developed and tested independently
+- Easy to context-switch between tasks
+
 ## Architecture
 
 ### Dual Application Structure
