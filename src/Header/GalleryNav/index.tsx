@@ -1,40 +1,44 @@
 'use client'
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Header } from '@/payload-types'
-import { CMSLink } from '@/components/Link'
 
-export const GalleryNav: React.FC<{ data: Header }> = ({ data: _data }) => {
+// Static navigation items - always show these three
+const NAV_ITEMS = [
+  { label: 'Happenings', url: '/happenings' },
+  { label: 'Artists', url: '/artists' },
+  { label: 'Visit', url: '/visit' },
+] as const
+
+export const GalleryNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
 
-  // Hide navigation when gate is active (nav items are CMS-controlled)
+  // Hide navigation when gate is active
   if (gateEnabled) {
     return null
   }
-
-  // Use Payload navigation data, fallback to default if none
-  const navigationItems = [
-    { link: { label: 'Happenings', url: '/happenings' } },
-    { link: { label: 'Visit', url: '/visit' } },
-    { link: { label: 'Artists', url: '/artists' } },
-  ]
 
   return (
     <>
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-8">
-        {navigationItems.map((item, index) => (
-          <CMSLink
-            key={index}
-            {...item.link}
-            className={`nav-link text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
-              pathname === item.link?.url ? 'text-lake font-semibold' : 'text-navy font-medium'
-            }`}
-          />
-        ))}
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.url
+          return (
+            <Link
+              key={item.url}
+              href={item.url}
+              className={`nav-link text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
+                isActive ? 'text-lake font-semibold' : 'text-navy font-medium'
+              }`}
+            >
+              {item.label}
+            </Link>
+          )
+        })}
       </nav>
 
       {/* Mobile Menu Button */}
@@ -64,16 +68,21 @@ export const GalleryNav: React.FC<{ data: Header }> = ({ data: _data }) => {
             className="absolute top-full left-0 right-0 bg-white/20 backdrop-blur-md border-t border-white/30 md:hidden"
           >
             <nav className="container py-4 space-y-4">
-              {navigationItems.map((item, index) => (
-                <div key={index} onClick={() => setIsOpen(false)}>
-                  <CMSLink
-                    {...item.link}
-                    className={`nav-link block text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
-                      pathname === item.link?.url ? 'text-lake' : 'text-navy'
-                    }`}
-                  />
-                </div>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname === item.url
+                return (
+                  <div key={item.url} onClick={() => setIsOpen(false)}>
+                    <Link
+                      href={item.url}
+                      className={`nav-link block text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
+                        isActive ? 'text-lake' : 'text-navy'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </div>
+                )
+              })}
             </nav>
           </motion.div>
         )}
