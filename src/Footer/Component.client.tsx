@@ -1,14 +1,16 @@
 'use client'
 
+import { useNewsletterGate } from '@/providers/NewsletterGate/context'
+
 interface FooterClientWrapperProps {
   children: React.ReactNode
 }
 
 export const FooterClientWrapper: React.FC<FooterClientWrapperProps> = ({ children }) => {
-  const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+  const { shouldShowFullSite } = useNewsletterGate()
 
-  // Hide footer entirely when gate is active (it's CMS-controlled content)
-  if (gateEnabled) {
+  // Hide footer when gate is active and user shouldn't see full site
+  if (!shouldShowFullSite) {
     return null
   }
 

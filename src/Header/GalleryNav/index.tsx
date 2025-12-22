@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNewsletterGate } from '@/providers/NewsletterGate/context'
 
 // Static navigation items - always show these three
 const NAV_ITEMS = [
@@ -14,10 +15,10 @@ const NAV_ITEMS = [
 export const GalleryNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
+  const { shouldShowFullSite } = useNewsletterGate()
 
-  // Hide navigation when gate is active
-  if (gateEnabled) {
+  // Hide navigation when gate is active and user shouldn't see full site
+  if (!shouldShowFullSite) {
     return null
   }
 
