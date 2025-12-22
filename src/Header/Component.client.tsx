@@ -5,15 +5,9 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import type { Header } from '@/payload-types'
-
 import { GalleryNav } from './GalleryNav'
 
-interface HeaderClientProps {
-  data: Header
-}
-
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export const HeaderClient: React.FC = () => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(true)
@@ -75,7 +69,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
             <Link href="/">
               <Image src="/Icon-Navy-Flat.png" alt="Gallery 1882" width={64} height={64} className="max-w-16" />
             </Link>
-            <GalleryNav data={data} />
+            <GalleryNav />
           </div>
         </div>
       </div>

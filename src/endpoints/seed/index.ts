@@ -9,7 +9,7 @@ import { mockGalleryInfo } from './mockData'
 
 const collections: CollectionSlug[] = ['media', 'artists', 'happenings', 'posts']
 
-const globals: GlobalSlug[] = ['header', 'footer', 'space', 'home']
+const globals: GlobalSlug[] = ['space', 'home']
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -34,18 +34,7 @@ export const seed = async ({
   // Clear globals
   await Promise.all(
     globals.map((global) => {
-      if (global === 'header' || global === 'footer') {
-        return payload.updateGlobal({
-          slug: global,
-          data: {
-            navItems: [],
-          },
-          depth: 0,
-          context: {
-            disableRevalidate: true,
-          },
-        })
-      } else if (global === 'space') {
+      if (global === 'space') {
         // Space requires 'name' field, provide minimal valid data
         return payload.updateGlobal({
           slug: global,
@@ -93,7 +82,7 @@ export const seed = async ({
   payload.logger.info(`— Seeding posts...`)
   await seedPosts(payload, req, artistMap, happeningMap, mediaMap)
 
-  // Seed globals (header, footer, space, home)
+  // Seed globals (space, home)
   payload.logger.info(`— Seeding globals...`)
   await seedGlobals(payload)
 
