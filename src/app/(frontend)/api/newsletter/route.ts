@@ -1,7 +1,14 @@
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazily initialize Resend to avoid build-time errors when API key is not set
+let _resend: Resend | null = null
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY)
+  }
+  return _resend
+}
 
 // Simple in-memory rate limiter: max 5 requests per IP per 15-minute window
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
@@ -49,7 +56,7 @@ export async function POST(request: Request) {
     // Try to add contact to audience if audience ID is configured
     if (process.env.RESEND_AUDIENCE_ID) {
       try {
-        const { error } = await resend.contacts.create({
+        const { error } = await getResend().contacts.create({
           email,
           audienceId: process.env.RESEND_AUDIENCE_ID,
         })
@@ -68,7 +75,7 @@ export async function POST(request: Request) {
     // Fallback: send confirmation email
     // Note: Update 'onboarding@resend.dev' with your verified domain email
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
         to: email,
         subject: 'Welcome to our newsletter!',
