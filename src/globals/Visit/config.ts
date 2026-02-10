@@ -1,11 +1,17 @@
 import type { GlobalConfig } from 'payload'
 import { revalidateVisit } from './hooks/revalidateVisit'
+import { getServerSideURL } from '../../utilities/getURL'
 
 export const Visit: GlobalConfig = {
   slug: 'visit',
   access: {
     read: () => true,
     update: ({ req: { user } }) => Boolean(user),
+  },
+  admin: {
+    livePreview: {
+      url: () => `${getServerSideURL()}/visit`,
+    },
   },
   hooks: {
     afterChange: [revalidateVisit],

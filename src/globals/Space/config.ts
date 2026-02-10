@@ -1,10 +1,20 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateSpace } from './hooks/revalidateSpace'
+import { getServerSideURL } from '../../utilities/getURL'
 
 export const Space: GlobalConfig = {
   slug: 'space',
   access: {
     read: () => true,
     update: ({ req: { user } }) => Boolean(user),
+  },
+  admin: {
+    livePreview: {
+      url: () => `${getServerSideURL()}/space`,
+    },
+  },
+  hooks: {
+    afterChange: [revalidateSpace],
   },
   fields: [
     {

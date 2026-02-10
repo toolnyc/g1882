@@ -22,15 +22,25 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  admin: {
+    defaultColumns: ['filename', 'alt', 'updatedAt'],
+    useAsTitle: 'filename',
+  },
   fields: [
     {
       name: 'alt',
       type: 'text',
       //required: true,
+      admin: {
+        description: 'Describe the image for screen readers and SEO (e.g. "Artist painting in gallery studio")',
+      },
     },
     {
       name: 'caption',
       type: 'richText',
+      admin: {
+        description: 'Optional caption displayed below the image when shown on the site',
+      },
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]

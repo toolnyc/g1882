@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { slugField } from 'payload'
+import { revalidateCategory } from './hooks/revalidateCategory'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -14,6 +15,10 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'updatedAt'],
+  },
+  hooks: {
+    afterChange: [revalidateCategory],
   },
   fields: [
     {
@@ -22,7 +27,7 @@ export const Categories: CollectionConfig = {
       required: true,
     },
     slugField({
-      position: undefined,
+      position: 'sidebar',
     }),
   ],
 }

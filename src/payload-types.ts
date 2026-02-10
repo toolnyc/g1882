@@ -202,7 +202,13 @@ export interface Post {
  */
 export interface Media {
   id: string;
+  /**
+   * Describe the image for screen readers and SEO (e.g. "Artist painting in gallery studio")
+   */
   alt?: string | null;
+  /**
+   * Optional caption displayed below the image when shown on the site
+   */
   caption?: {
     root: {
       type: string;
@@ -339,8 +345,6 @@ export interface Happening {
    * Exhibitions have date ranges; events are single-day occurrences
    */
   type: 'exhibition' | 'event';
-  startDate: string;
-  endDate?: string | null;
   description?: {
     root: {
       type: string;
@@ -356,24 +360,21 @@ export interface Happening {
     };
     [k: string]: unknown;
   } | null;
+  heroImage?: (string | null) | Media;
   /**
-   * Artists involved in this happening (supports multiple for group shows)
-   */
-  artists?: (string | Artist)[] | null;
-  /**
-   * Deprecated — use the "type" field instead
+   * Deprecated -- use the "type" field instead
    */
   category?: string | null;
   /**
-   * Deprecated — use the "artists" field instead
+   * Deprecated -- use the "artists" field instead
    */
   featuredPerson?: (string | null) | Artist;
   /**
-   * Deprecated — use the "artists" field instead
+   * Deprecated -- use the "artists" field instead
    */
   featuredPersonName?: string | null;
-  heroImage?: (string | null) | Media;
-  featured?: boolean | null;
+  startDate: string;
+  endDate?: string | null;
   /**
    * Enable to manually override automatic isActive calculation
    */
@@ -382,6 +383,11 @@ export interface Happening {
    * Automatically calculated based on dates unless overridden
    */
   isActive?: boolean | null;
+  /**
+   * Artists involved in this happening (supports multiple for group shows)
+   */
+  artists?: (string | Artist)[] | null;
+  featured?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1073,17 +1079,17 @@ export interface ArtistsSelect<T extends boolean = true> {
 export interface HappeningsSelect<T extends boolean = true> {
   title?: T;
   type?: T;
-  startDate?: T;
-  endDate?: T;
   description?: T;
-  artists?: T;
+  heroImage?: T;
   category?: T;
   featuredPerson?: T;
   featuredPersonName?: T;
-  heroImage?: T;
-  featured?: T;
+  startDate?: T;
+  endDate?: T;
   isActiveOverride?: T;
   isActive?: T;
+  artists?: T;
+  featured?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;

@@ -58,82 +58,149 @@ export const Happenings: CollectionConfig = {
       },
     },
     {
-      name: 'startDate',
-      type: 'date',
-      required: true,
-      admin: {
-        date: {
-          pickerAppearance: 'dayAndTime',
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Details',
+          fields: [
+            {
+              name: 'description',
+              type: 'richText',
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                    HorizontalRuleFeature(),
+                  ]
+                },
+              }),
+            },
+            {
+              name: 'heroImage',
+              type: 'upload',
+              relationTo: 'media',
+              required: false,
+            },
+            {
+              name: 'category',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Deprecated -- use the "type" field instead',
+              },
+            },
+            {
+              name: 'featuredPerson',
+              type: 'relationship',
+              relationTo: 'artists',
+              required: false,
+              admin: {
+                position: 'sidebar',
+                description: 'Deprecated -- use the "artists" field instead',
+              },
+            },
+            {
+              name: 'featuredPersonName',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Deprecated -- use the "artists" field instead',
+                position: 'sidebar',
+              },
+            },
+          ],
         },
-      },
-    },
-    {
-      name: 'endDate',
-      type: 'date',
-      required: false,
-      admin: {
-        date: {
-          pickerAppearance: 'dayAndTime',
+        {
+          label: 'Schedule',
+          fields: [
+            {
+              name: 'startDate',
+              type: 'date',
+              required: true,
+              admin: {
+                date: {
+                  pickerAppearance: 'dayAndTime',
+                },
+              },
+            },
+            {
+              name: 'endDate',
+              type: 'date',
+              required: false,
+              admin: {
+                date: {
+                  pickerAppearance: 'dayAndTime',
+                },
+              },
+            },
+            {
+              name: 'isActiveOverride',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: {
+                description: 'Enable to manually override automatic isActive calculation',
+              },
+            },
+            {
+              name: 'isActive',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: {
+                description: 'Automatically calculated based on dates unless overridden',
+              },
+              hooks: {
+                beforeChange: [
+                  ({ siblingData, value }) => {
+                    // If override is enabled, use the manually set value
+                    if (siblingData.isActiveOverride) {
+                      return value
+                    }
+
+                    // Auto-calculate based on dates
+                    const now = new Date()
+                    const startDate = siblingData.startDate
+                      ? new Date(siblingData.startDate as string)
+                      : null
+                    const endDate = siblingData.endDate
+                      ? new Date(siblingData.endDate as string)
+                      : null
+
+                    if (!startDate) {
+                      return false
+                    }
+
+                    // Active if current date is between start and end (or after start if no end date)
+                    if (endDate) {
+                      return now >= startDate && now <= endDate
+                    } else {
+                      return now >= startDate
+                    }
+                  },
+                ],
+              },
+            },
+          ],
         },
-      },
-    },
-    {
-      name: 'description',
-      type: 'richText',
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-            HorizontalRuleFeature(),
-          ]
+        {
+          label: 'People',
+          fields: [
+            {
+              name: 'artists',
+              type: 'relationship',
+              relationTo: 'artists',
+              hasMany: true,
+              required: false,
+              admin: {
+                description:
+                  'Artists involved in this happening (supports multiple for group shows)',
+              },
+            },
+          ],
         },
-      }),
-    },
-    {
-      name: 'artists',
-      type: 'relationship',
-      relationTo: 'artists',
-      hasMany: true,
-      required: false,
-      admin: {
-        description: 'Artists involved in this happening (supports multiple for group shows)',
-      },
-    },
-    {
-      name: 'category',
-      type: 'text',
-      required: false,
-      admin: {
-        description: 'Deprecated — use the "type" field instead',
-      },
-    },
-    {
-      name: 'featuredPerson',
-      type: 'relationship',
-      relationTo: 'artists',
-      required: false,
-      admin: {
-        position: 'sidebar',
-        description: 'Deprecated — use the "artists" field instead',
-      },
-    },
-    {
-      name: 'featuredPersonName',
-      type: 'text',
-      required: false,
-      admin: {
-        description: 'Deprecated — use the "artists" field instead',
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'heroImage',
-      type: 'upload',
-      relationTo: 'media',
-      required: false,
+      ],
     },
     {
       name: 'featured',
@@ -141,52 +208,6 @@ export const Happenings: CollectionConfig = {
       defaultValue: false,
       admin: {
         position: 'sidebar',
-      },
-    },
-    {
-      name: 'isActiveOverride',
-      type: 'checkbox',
-      defaultValue: false,
-      admin: {
-        description: 'Enable to manually override automatic isActive calculation',
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'isActive',
-      type: 'checkbox',
-      defaultValue: false,
-      admin: {
-        description: 'Automatically calculated based on dates unless overridden',
-        position: 'sidebar',
-      },
-      hooks: {
-        beforeChange: [
-          ({ siblingData, value }) => {
-            // If override is enabled, use the manually set value
-            if (siblingData.isActiveOverride) {
-              return value
-            }
-
-            // Auto-calculate based on dates
-            const now = new Date()
-            const startDate = siblingData.startDate
-              ? new Date(siblingData.startDate as string)
-              : null
-            const endDate = siblingData.endDate ? new Date(siblingData.endDate as string) : null
-
-            if (!startDate) {
-              return false
-            }
-
-            // Active if current date is between start and end (or after start if no end date)
-            if (endDate) {
-              return now >= startDate && now <= endDate
-            } else {
-              return now >= startDate
-            }
-          },
-        ],
       },
     },
     slugField(),
