@@ -100,6 +100,7 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
             className="hero-video-iframe"
             allow="accelerometer; gyroscope; autoplay; encrypted-media;"
             allowFullScreen={true}
+            sandbox="allow-scripts allow-same-origin"
           />
         </div>
         {/* Subtle gradient overlay */}

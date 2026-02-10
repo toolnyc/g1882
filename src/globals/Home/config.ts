@@ -6,6 +6,7 @@ export const Home: GlobalConfig = {
   slug: 'home',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   hooks: {
     afterChange: [revalidateHome],

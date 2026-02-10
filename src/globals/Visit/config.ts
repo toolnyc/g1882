@@ -5,6 +5,7 @@ export const Visit: GlobalConfig = {
   slug: 'visit',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   hooks: {
     afterChange: [revalidateVisit],

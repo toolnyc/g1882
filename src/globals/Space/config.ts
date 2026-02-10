@@ -4,6 +4,7 @@ export const Space: GlobalConfig = {
   slug: 'space',
   access: {
     read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
   },
   fields: [
     {

@@ -3,7 +3,7 @@ export function setNewsletterSignupStatus() {
   oneYear.setFullYear(oneYear.getFullYear() + 1)
 
   // Set cookie for Vercel preview persistence
-  document.cookie = `newsletter_signup_status=completed; expires=${oneYear.toUTCString()}; path=/; SameSite=Lax`
+  document.cookie = `newsletter_signup_status=completed; expires=${oneYear.toUTCString()}; path=/; SameSite=Lax; Secure`
 
   // Set localStorage for fast client-side checks
   if (typeof window !== 'undefined') {
