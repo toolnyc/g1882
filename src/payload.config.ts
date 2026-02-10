@@ -22,6 +22,10 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+if (!process.env.PREVIEW_SECRET) {
+  throw new Error('PREVIEW_SECRET environment variable is required')
+}
+
 export default buildConfig({
   admin: {
     components: {

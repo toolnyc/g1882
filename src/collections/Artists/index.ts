@@ -35,6 +35,7 @@ export const Artists: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      maxLength: 255,
     },
     {
       type: 'tabs',
@@ -46,6 +47,7 @@ export const Artists: CollectionConfig = {
               name: 'bio',
               type: 'textarea',
               required: false,
+              maxLength: 5000,
             },
             {
               name: 'image',
@@ -76,11 +78,13 @@ export const Artists: CollectionConfig = {
                   name: 'title',
                   type: 'text',
                   required: false,
+                  maxLength: 255,
                 },
                 {
                   name: 'caption',
                   type: 'text',
                   required: false,
+                  maxLength: 1000,
                 },
               ],
             },
@@ -94,6 +98,9 @@ export const Artists: CollectionConfig = {
               type: 'text',
               label: 'Website URL',
               required: false,
+              maxLength: 2048,
+              validate: (value: string | null | undefined) =>
+                !value || /^https?:\/\/.+/.test(value) || 'Must be a valid URL starting with http:// or https://',
               admin: {
                 description: "Artist's personal website",
               },
@@ -119,6 +126,9 @@ export const Artists: CollectionConfig = {
                   name: 'url',
                   type: 'text',
                   required: true,
+                  maxLength: 2048,
+                  validate: (value: string | null | undefined) =>
+                    !value || /^https?:\/\/.+/.test(value) || 'Must be a valid URL starting with http:// or https://',
                 },
               ],
             },

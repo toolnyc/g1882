@@ -1,7 +1,41 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+const formRateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const FORM_RATE_LIMIT_MAX = 5
+const FORM_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000
+
+function isFormRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = formRateLimitMap.get(ip)
+
+  if (!entry || now > entry.resetAt) {
+    formRateLimitMap.set(ip, { count: 1, resetAt: now + FORM_RATE_LIMIT_WINDOW_MS })
+    return false
+  }
+
+  entry.count++
+  return entry.count > FORM_RATE_LIMIT_MAX
+}
+
+setInterval(() => {
+  const now = Date.now()
+  for (const [ip, entry] of formRateLimitMap) {
+    if (now > entry.resetAt) formRateLimitMap.delete(ip)
+  }
+}, FORM_RATE_LIMIT_WINDOW_MS)
+
 export function middleware(_request: NextRequest) {
+  if (_request.method === 'POST' && _request.nextUrl.pathname === '/api/form-submissions') {
+    const ip = _request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+    if (isFormRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      )
+    }
+  }
+
   const response = NextResponse.next()
 
   // Security headers

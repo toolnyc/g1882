@@ -42,6 +42,7 @@ export const Happenings: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      maxLength: 255,
     },
     {
       name: 'type',
@@ -88,6 +89,7 @@ export const Happenings: CollectionConfig = {
               name: 'category',
               type: 'text',
               required: false,
+              maxLength: 255,
               admin: {
                 description: 'Deprecated -- use the "type" field instead',
               },
@@ -106,6 +108,7 @@ export const Happenings: CollectionConfig = {
               name: 'featuredPersonName',
               type: 'text',
               required: false,
+              maxLength: 255,
               admin: {
                 description: 'Deprecated -- use the "artists" field instead',
                 position: 'sidebar',

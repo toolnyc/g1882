@@ -51,7 +51,7 @@ export function generateCalendarEvent(event: CalendarEvent): string {
 
   // Event
   lines.push('BEGIN:VEVENT')
-  lines.push(`UID:${Date.now()}-${Math.random().toString(36).substring(7)}@gallery1882.org`)
+  lines.push(`UID:${crypto.randomUUID()}@gallery1882.org`)
   lines.push(`DTSTAMP:${formatICSDate(new Date())}`)
   lines.push(`DTSTART:${formatICSDate(event.startDate)}`)
 
