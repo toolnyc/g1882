@@ -140,7 +140,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 /* Events on a single day: show date once with time range */
                 <div className="space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
                       Date:
                     </span>
                     <span className="text-lg text-navy">
@@ -148,7 +148,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                     </span>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
                       Time:
                     </span>
                     <span className="text-lg text-navy">
@@ -160,7 +160,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 /* Events spanning multiple days: show full start and end */
                 <div className="space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
                       Start:
                     </span>
                     <span className="text-lg text-navy">
@@ -169,7 +169,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                   </div>
                   {endDate && (
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                      <span className="text-sm font-semibold text-navy/70 tracking-wide">
                         End:
                       </span>
                       <span className="text-lg text-navy">
@@ -182,7 +182,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 /* Exhibitions: show date range */
                 <div className="space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
                       Opens:
                     </span>
                     <span className="text-lg text-navy">
@@ -191,7 +191,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                   </div>
                   {endDate && (
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                      <span className="text-sm font-semibold text-navy/70 tracking-wide">
                         Closes:
                       </span>
                       <span className="text-lg text-navy">

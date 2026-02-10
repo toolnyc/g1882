@@ -73,7 +73,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
     if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
       return happening.heroImage.url
     }
-    if (typeof happening.heroImage === 'string') {
+    if (typeof happening.heroImage === 'string' && happening.heroImage) {
       return happening.heroImage
     }
     return ''
@@ -118,7 +118,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
                 {/* Hover overlay with gradient and exhibition info */}
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                   <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-off-white text-sm font-medium uppercase tracking-wider">{happening.title}</p>
+                    <p className="text-off-white text-sm font-medium tracking-wider">{happening.title}</p>
                     {artists.length > 0 && (
                       <p className="text-off-white/80 text-xs mt-1">
                         {artists.map((a) => a.name).join(', ')}

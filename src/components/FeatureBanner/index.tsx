@@ -38,17 +38,19 @@ export const FeatureBanner: React.FC<FeatureBannerProps> = ({
       className="rounded-lg shadow-sm border border-bright-lake/10 overflow-hidden flex"
     >
       {/* Image */}
-      <div className="flex-shrink-0">
-        <div className="w-32 h-full overflow-hidden group">
-          <Image
-            src={image}
-            alt={imageAlt || title}
-            width={128}
-            height={128}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
+      {image && (
+        <div className="flex-shrink-0">
+          <div className="w-32 h-full overflow-hidden group">
+            <Image
+              src={image}
+              alt={imageAlt || title}
+              width={128}
+              height={128}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Content */}
       <div className="flex-1 min-w-0 p-6">

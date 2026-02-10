@@ -45,7 +45,7 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
     if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
       return happening.heroImage.url
     }
-    if (typeof happening.heroImage === 'string') {
+    if (typeof happening.heroImage === 'string' && happening.heroImage) {
       return happening.heroImage
     }
     return '/media/test-art.jpg'

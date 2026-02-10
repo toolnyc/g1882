@@ -136,7 +136,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                           <div className="text-3xl lg:text-4xl font-bold text-off-white mb-2 leading-tight">
                             {formatDateDisplay(happening)}
                           </div>
-                          <div className="text-sm font-semibold text-off-white/80 uppercase tracking-wide">
+                          <div className="text-sm font-semibold text-off-white/80 tracking-wide">
                             {getTypeLabel(happening)}
                           </div>
                         </div>

@@ -94,7 +94,7 @@
 
   /* Caption styles */
   .caption {
-    @apply font-medium uppercase text-sm;
+    @apply font-medium text-sm;
   }
 }
 
@@ -128,7 +128,6 @@
     overflow: hidden;
     border: 1px solid transparent;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     font-size: 0.8125rem;
   }
 
@@ -139,7 +138,7 @@
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--gallery-warm-accent);
+    background: var(--gallery-lake);
     transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
@@ -160,7 +159,6 @@
     position: relative;
     overflow: hidden;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     font-size: 0.8125rem;
   }
 
@@ -189,16 +187,15 @@
     border-radius: 1px;
     position: relative;
     overflow: hidden;
-    background: var(--gallery-warm-accent);
+    background: var(--gallery-lake);
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     font-size: 0.8125rem;
     border: 1px solid transparent;
   }
 
   .gallery-button-cta:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(183, 148, 71, 0.3);
+    box-shadow: 0 4px 12px rgba(31, 159, 204, 0.3);
     filter: brightness(1.08);
   }
 
@@ -315,7 +312,7 @@ html {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--gallery-warm-accent), var(--gallery-warm-accent-light));
+  background: linear-gradient(90deg, var(--gallery-lake), var(--gallery-bright-lake));
   transition: width 0.3s ease;
 }
 

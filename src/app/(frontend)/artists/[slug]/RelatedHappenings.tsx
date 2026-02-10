@@ -50,7 +50,7 @@ export async function RelatedHappenings({ artistId, artistName }: RelatedHappeni
             <h3 className="text-xl font-semibold text-navy mb-2">{happening.title}</h3>
             <div className="flex items-center gap-3 text-sm text-navy/70">
               {happening.type && (
-                <span className="px-2 py-0.5 bg-lake/10 text-lake rounded text-xs font-medium uppercase">
+                <span className="px-2 py-0.5 bg-lake/10 text-lake rounded text-xs font-medium">
                   {happening.type}
                 </span>
               )}

@@ -67,7 +67,7 @@ export const UpcomingExhibitions: React.FC<UpcomingExhibitionsProps> = ({ exhibi
                       <div className="text-3xl lg:text-4xl font-bold text-off-white mb-2 leading-tight">
                         {formatOpeningDate(exhibition.startDate)}
                       </div>
-                      <div className="text-sm font-semibold text-off-white/80 uppercase tracking-wide">
+                      <div className="text-sm font-semibold text-off-white/80 tracking-wide">
                         Opening
                       </div>
                     </div>

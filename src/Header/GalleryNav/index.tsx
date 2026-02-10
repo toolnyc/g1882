@@ -38,7 +38,7 @@ export const GalleryNav: React.FC = () => {
             >
               {item.label}
               {isActive && (
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-warm-accent rounded-full" />
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-lake rounded-full" />
               )}
             </Link>
           )
@@ -79,7 +79,7 @@ export const GalleryNav: React.FC = () => {
                     <Link
                       href={item.url}
                       className={`nav-link block text-lg font-medium transition-all duration-300 py-1 ${
-                        isActive ? 'text-navy font-semibold border-l-2 border-warm-accent pl-3' : 'text-navy/70 hover:text-navy'
+                        isActive ? 'text-navy font-semibold border-l-2 border-lake pl-3' : 'text-navy/70 hover:text-navy'
                       }`}
                     >
                       {item.label}

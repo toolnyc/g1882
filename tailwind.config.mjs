@@ -25,8 +25,8 @@ const config = {
     'border-warning',
     'bg-warning/30',
     'text-off-white',
-    'bg-warm-accent',
-    'border-warm-accent',
+    'bg-lake',
+    'border-lake',
   ],
   theme: {
     container: {

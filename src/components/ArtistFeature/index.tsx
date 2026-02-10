@@ -77,7 +77,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                 {/* Hover overlay with gradient and caption */}
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                   <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-off-white text-sm font-medium uppercase tracking-wider">{name}</p>
+                    <p className="text-off-white text-sm font-medium tracking-wider">{name}</p>
                     {title && <p className="text-off-white/80 text-xs mt-1">{title}</p>}
                   </div>
                 </div>

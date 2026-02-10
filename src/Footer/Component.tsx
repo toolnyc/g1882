@@ -30,7 +30,7 @@ export async function Footer() {
     <FooterClientWrapper>
       <footer className="relative z-40 mt-auto bg-navy min-h-0">
         {/* Decorative top accent line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-warm-accent to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-lake to-transparent" />
         <div className="container py-12 text-off-white">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-off-white/10">
             {/* Gallery Info */}
@@ -61,7 +61,7 @@ export async function Footer() {
                   <Link
                     key={item.url}
                     href={item.url}
-                    className="block text-sm hover:text-warm-accent-light text-off-white transition-colors"
+                    className="block text-sm hover:text-bright-lake text-off-white transition-colors"
                   >
                     {item.label}
                   </Link>
