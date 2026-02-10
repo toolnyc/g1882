@@ -51,6 +51,7 @@ export const Artists: CollectionConfig = {
       name: 'works',
       type: 'array',
       label: 'Works',
+      maxRows: 50,
       admin: {
         description: 'Gallery of artist works with images and captions',
       },
@@ -86,6 +87,7 @@ export const Artists: CollectionConfig = {
       name: 'socialLinks',
       type: 'array',
       label: 'Social Links',
+      maxRows: 10,
       fields: [
         {
           name: 'platform',

@@ -8,7 +8,7 @@ export async function getRedirects(depth = 1) {
   const { docs: redirects } = await payload.find({
     collection: 'redirects',
     depth,
-    limit: 0,
+    limit: 500,
     pagination: false,
   })
 

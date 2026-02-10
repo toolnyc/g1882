@@ -1,6 +1,7 @@
 import configPromise from '@payload-config'
 import { getPayload, Where } from 'payload'
 import { unstable_cache } from 'next/cache'
+import type { Happening } from '@/payload-types'
 
 type HappeningFilters = {
   featured?: boolean
@@ -10,7 +11,24 @@ type HappeningFilters = {
   sortDirection?: 'asc' | 'desc'
 }
 
-async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
+/** Default select projection for list queries — excludes heavy rich text fields */
+const defaultListSelect: Partial<Record<keyof Happening, true>> = {
+  title: true,
+  slug: true,
+  startDate: true,
+  endDate: true,
+  featured: true,
+  type: true,
+  artists: true,
+  heroImage: true,
+  isActive: true,
+  isActiveOverride: true,
+  category: true,
+  featuredPerson: true,
+  featuredPersonName: true,
+}
+
+async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) {
   const payload = await getPayload({ config: configPromise })
   const now = new Date()
 
@@ -99,6 +117,7 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
     limit: 1000,
     pagination: false,
     overrideAccess: true,
+    ...(select ? { select } : { select: defaultListSelect }),
   })
 
   // Calculate isActive dynamically if not overridden
@@ -137,10 +156,10 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
  * Returns a cached function to fetch happenings
  * Revalidates every 60 seconds or when the happenings tag is invalidated
  */
-export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1) =>
+export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) =>
   unstable_cache(
-    async () => getHappenings(filters, depth),
-    ['happenings', JSON.stringify(filters), `depth-${depth}`],
+    async () => getHappenings(filters, depth, select),
+    ['happenings', JSON.stringify(filters), `depth-${depth}`, select ? JSON.stringify(select) : 'default'],
     {
       tags: ['happenings'],
       revalidate: 60, // Revalidate every 60 seconds

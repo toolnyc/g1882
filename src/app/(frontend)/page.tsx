@@ -20,41 +20,46 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 export default async function HomePage() {
   // Fetch home global data
   const homeData = (await getCachedGlobal('home', 2)()) as Home
-  // Fetch with depth 2 to populate artists and images
-  const getHappenings = getCachedHappenings({}, 2)
-  const activeHappenings = await getHappenings()
+  // Fetch all published happenings once at depth 2, then filter in memory
+  // This consolidates what was previously 3 separate DB queries into 1
+  const allHappenings = await getCachedHappenings({}, 2)()
 
   // Fetch space global for structured hours and visit section
   const space = await getCachedSpace()()
 
+  const now = new Date()
+
   // Find current active exhibition (prefer exhibitions over events for "On Now")
-  const activeExhibitions = activeHappenings.filter(
+  const activeExhibitions = allHappenings.filter(
     (h) => h.isActive && (h.type === 'exhibition' || (!h.type && h.endDate)),
   )
   const currentHappening =
     activeExhibitions.find((h) => h.featured) ||
     activeExhibitions[0] ||
-    activeHappenings.find((h) => h.isActive && h.featured) ||
-    activeHappenings.find((h) => h.isActive)
+    allHappenings.find((h) => h.isActive && h.featured) ||
+    allHappenings.find((h) => h.isActive)
 
   // If nothing is active, find the soonest upcoming exhibition for "Up Next"
   let displayHappening = currentHappening
   let isUpNext = false
   if (!displayHappening) {
-    const getUpcomingExhibitions = getCachedHappenings(
-      { upcoming: true, type: 'exhibition', sortDirection: 'asc' },
-      2,
-    )
-    const upcomingExhibitions = await getUpcomingExhibitions()
+    const upcomingExhibitions = allHappenings
+      .filter((h) => {
+        if (!h.startDate) return false
+        const startDate = new Date(h.startDate as string)
+        return startDate > now && (h.type === 'exhibition' || (!h.type && h.endDate))
+      })
+      .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
     if (upcomingExhibitions.length > 0) {
       displayHappening = upcomingExhibitions[0]
       isUpNext = true
     }
   }
 
-  // Get upcoming happenings (not active, future dates)
-  const getUpcoming = getCachedHappenings({ upcoming: true, sortDirection: 'asc' }, 2)
-  const upcomingHappenings = await getUpcoming()
+  // Get upcoming happenings from the same dataset (future start dates, sorted ascending)
+  const upcomingHappenings = allHappenings
+    .filter((h) => h.startDate && new Date(h.startDate as string) > now)
+    .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
 
   const featuredArtistData = transformFeaturedArtist(homeData)
   const visitSectionData = transformVisitSection(homeData, space)
