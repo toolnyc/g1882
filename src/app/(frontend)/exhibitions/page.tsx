@@ -10,8 +10,23 @@ import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatDateRange } from '@/utilities/dateHelpers'
 
 export default async function ExhibitionsPage() {
-  // Fetch with depth 2 to populate heroImage relation
-  const happenings = await getCachedHappenings({}, 2)()
+  // Fetch with depth 2 to populate heroImage relation, include description for banner
+  const happenings = await getCachedHappenings({}, 2, {
+    title: true,
+    slug: true,
+    startDate: true,
+    endDate: true,
+    featured: true,
+    type: true,
+    artists: true,
+    heroImage: true,
+    isActive: true,
+    isActiveOverride: true,
+    category: true,
+    featuredPerson: true,
+    featuredPersonName: true,
+    description: true,
+  })()
 
   // Find the most recent happening
   const mostRecentHappening = [...happenings].sort(

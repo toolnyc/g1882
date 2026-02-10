@@ -17,6 +17,12 @@ async function getArtists(depth = 1) {
         equals: 'published',
       },
     },
+    select: {
+      name: true,
+      slug: true,
+      bio: true,
+      image: true,
+    },
   })
 
   return result.docs
@@ -28,6 +34,7 @@ async function getArtists(depth = 1) {
 export const getCachedArtists = (depth = 1) =>
   unstable_cache(async () => getArtists(depth), ['artists'], {
     tags: ['artists'],
+    revalidate: 60,
   })
 
 export { getArtists }

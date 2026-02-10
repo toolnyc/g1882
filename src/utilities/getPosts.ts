@@ -17,6 +17,12 @@ async function getPosts(depth = 1) {
         equals: 'published',
       },
     },
+    select: {
+      title: true,
+      slug: true,
+      publishedAt: true,
+      heroImage: true,
+    },
   })
 
   return result.docs
@@ -28,6 +34,7 @@ async function getPosts(depth = 1) {
 export const getCachedPosts = (depth = 1) =>
   unstable_cache(async () => getPosts(depth), ['posts'], {
     tags: ['posts'],
+    revalidate: 60,
   })
 
 export { getPosts }

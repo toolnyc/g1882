@@ -123,6 +123,7 @@ export const Happenings: CollectionConfig = {
               name: 'startDate',
               type: 'date',
               required: true,
+              index: true,
               admin: {
                 date: {
                   pickerAppearance: 'dayAndTime',

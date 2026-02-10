@@ -7,29 +7,34 @@ import { User } from 'src/payload-types'
 // So we use an alternative `populatedAuthors` field to populate the user data, hidden from the admin UI
 export const populateAuthors: CollectionAfterReadHook = async ({ doc, req: _req, req: { payload } }) => {
   if (doc?.authors && doc?.authors?.length > 0) {
-    const authorDocs: User[] = []
+    // Collect all author IDs to batch load in a single query instead of N+1
+    const authorIds: string[] = doc.authors
+      .map((author: string | { id: string }) => (typeof author === 'object' ? author?.id : author))
+      .filter(Boolean)
 
-    for (const author of doc.authors) {
-      try {
-        const authorDoc = await payload.findByID({
-          id: typeof author === 'object' ? author?.id : author,
-          collection: 'users',
-          depth: 0,
-        })
+    if (authorIds.length === 0) return doc
 
-        if (authorDoc) {
-          authorDocs.push(authorDoc)
-        }
+    try {
+      const result = await payload.find({
+        collection: 'users',
+        depth: 0,
+        where: {
+          id: { in: authorIds },
+        },
+        limit: authorIds.length,
+        pagination: false,
+      })
 
-        if (authorDocs.length > 0) {
-          doc.populatedAuthors = authorDocs.map((authorDoc) => ({
-            id: authorDoc.id,
-            name: authorDoc.name,
-          }))
-        }
-      } catch {
-        // swallow error
+      const authorDocs: User[] = result.docs
+
+      if (authorDocs.length > 0) {
+        doc.populatedAuthors = authorDocs.map((authorDoc) => ({
+          id: authorDoc.id,
+          name: authorDoc.name,
+        }))
       }
+    } catch {
+      // swallow error
     }
   }
 
