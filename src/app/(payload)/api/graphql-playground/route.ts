@@ -1,7 +1,12 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+/* Modified to restrict access in production. */
 import config from '@payload-config'
 import '@payloadcms/next/css'
 import { GRAPHQL_PLAYGROUND_GET } from '@payloadcms/next/routes'
+import { NextResponse } from 'next/server'
 
-export const GET = GRAPHQL_PLAYGROUND_GET(config)
+const handler = GRAPHQL_PLAYGROUND_GET(config)
+
+export const GET = process.env.NODE_ENV === 'production'
+  ? () => NextResponse.json({ error: 'Not available' }, { status: 404 })
+  : handler
