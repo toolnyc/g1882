@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     const { email } = await request.json()
 
-    if (!email || typeof email !== 'string' || !email.includes('@') || email.length > 254) {
+    if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 

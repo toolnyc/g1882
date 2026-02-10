@@ -14,6 +14,8 @@ import { authenticated } from '../access/authenticated'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const MAX_FILE_SIZE = 50 * 1024 * 1024
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
@@ -21,6 +23,16 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    beforeValidate: [
+      ({ req }) => {
+        const file = req.file
+        if (file && file.size > MAX_FILE_SIZE) {
+          throw new Error(`File size exceeds maximum of ${MAX_FILE_SIZE / (1024 * 1024)}MB`)
+        }
+      },
+    ],
   },
   fields: [
     {
@@ -43,6 +55,7 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'],
     imageSizes: [
       {
         name: 'thumbnail',
