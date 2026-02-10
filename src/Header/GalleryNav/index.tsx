@@ -27,16 +27,19 @@ export const GalleryNav: React.FC = () => {
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-8">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.url
+          const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
           return (
             <Link
               key={item.url}
               href={item.url}
-              className={`nav-link text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
-                isActive ? 'text-lake font-semibold' : 'text-navy font-medium'
+              className={`nav-link text-lg font-medium transition-all duration-300 relative ${
+                isActive ? 'text-navy font-semibold' : 'text-navy/70 font-medium hover:text-navy'
               }`}
             >
               {item.label}
+              {isActive && (
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-warm-accent rounded-full" />
+              )}
             </Link>
           )
         })}
@@ -75,8 +78,8 @@ export const GalleryNav: React.FC = () => {
                   <div key={item.url} onClick={() => setIsOpen(false)}>
                     <Link
                       href={item.url}
-                      className={`nav-link block text-lg font-medium transition-all duration-300 hover:bg-white/20 hover:px-3 hover:py-1 hover:rounded ${
-                        isActive ? 'text-lake' : 'text-navy'
+                      className={`nav-link block text-lg font-medium transition-all duration-300 py-1 ${
+                        isActive ? 'text-navy font-semibold border-l-2 border-warm-accent pl-3' : 'text-navy/70 hover:text-navy'
                       }`}
                     >
                       {item.label}

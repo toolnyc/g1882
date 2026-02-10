@@ -1,5 +1,3 @@
-@import url('https://use.typekit.net/your-aktiv-grotesk-kit-id.css'); /* Replace with actual Adobe Fonts kit ID */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,6 +20,8 @@
     --gallery-bright-lake: #25c1f8;
     --gallery-off-white: #fffbeb;
     --gallery-forest: #214731;
+    --gallery-warm-accent: #b79447;
+    --gallery-warm-accent-light: #d4b86a;
 
     /* Keep existing shadcn variables for compatibility */
     --background: 0 0% 100%;
@@ -68,7 +68,7 @@
   
   body {
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
-    font-family: 'Aktiv Grotesk', system-ui, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
     cursor: none; /* Hide default cursor */
     /* Disable scroll bounce */
     overscroll-behavior: none;
@@ -116,30 +116,90 @@
     background-image: 
     radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0);
     background-size: 20px 20px;
-    opacity: 0.1;
+    opacity: 0.15;
     pointer-events: none;
     border-radius: 1px;
   }
 
   .gallery-button-primary {
-    @apply bg-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-bright-lake hover:scale-105;
+    @apply bg-navy text-off-white px-6 py-3 font-medium transition-all duration-300;
     border-radius: 1px;
     position: relative;
     overflow: hidden;
+    border: 1px solid transparent;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+  }
+
+  .gallery-button-primary::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gallery-warm-accent);
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .gallery-button-primary:hover {
+    @apply bg-navy/90;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 35, 58, 0.25);
+  }
+
+  .gallery-button-primary:hover::after {
+    width: 100%;
   }
 
   .gallery-button-secondary {
-    @apply border border-lake text-navy px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:text-white hover:scale-105;
+    @apply border text-navy px-6 py-3 font-medium transition-all duration-300;
+    border-color: var(--gallery-navy);
     border-radius: 1px;
     position: relative;
     overflow: hidden;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+  }
+
+  .gallery-button-secondary::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: var(--gallery-navy);
+    transition: height 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: -1;
+  }
+
+  .gallery-button-secondary:hover {
+    @apply text-off-white;
+  }
+
+  .gallery-button-secondary:hover::after {
+    height: 100%;
   }
 
   .gallery-button-cta {
-    @apply bg-bright-lake text-white px-6 py-3 font-medium transition-all duration-300 hover:bg-lake hover:scale-105;
+    @apply text-navy px-6 py-3 font-medium transition-all duration-300;
     border-radius: 1px;
     position: relative;
     overflow: hidden;
+    background: var(--gallery-warm-accent);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    border: 1px solid transparent;
+  }
+
+  .gallery-button-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(183, 148, 71, 0.3);
+    filter: brightness(1.08);
   }
 
   /* Subtle grain effect for sections */
@@ -155,7 +215,7 @@
     right: 0;
     bottom: 0;
     background-image: 
-      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
     background-size: 40px 40px;
     pointer-events: none;
     /* No z-index to avoid overlapping custom cursor (z-[99999]) */
@@ -255,7 +315,7 @@ html {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #1f9fcc, #25c1f8);
+  background: linear-gradient(90deg, var(--gallery-warm-accent), var(--gallery-warm-accent-light));
   transition: width 0.3s ease;
 }
 

@@ -28,11 +28,13 @@ export async function Footer() {
 
   return (
     <FooterClientWrapper>
-      <footer className="relative z-40 mt-auto border-t border-lake bg-navy min-h-0">
+      <footer className="relative z-40 mt-auto bg-navy min-h-0">
+        {/* Decorative top accent line */}
+        <div className="h-px bg-gradient-to-r from-transparent via-warm-accent to-transparent" />
         <div className="container py-12 text-off-white">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-off-white/10">
             {/* Gallery Info */}
-            <div>
+            <div className="lg:pr-6">
               <h3 className="mb-4 text-xl font-bold text-off-white">
                 {space?.name || 'Gallery 1882'}
               </h3>
@@ -52,14 +54,14 @@ export async function Footer() {
             </div>
 
             {/* Sitemap Links */}
-            <div>
+            <div className="lg:px-6">
               <h4 className="mb-4 font-bold text-off-white">Sitemap</h4>
               <nav className="space-y-2">
                 {SITEMAP_LINKS.map((item) => (
                   <Link
                     key={item.url}
                     href={item.url}
-                    className="block text-sm hover:text-lake text-off-white transition-colors"
+                    className="block text-sm hover:text-warm-accent-light text-off-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -68,7 +70,7 @@ export async function Footer() {
             </div>
 
             {/* Hours */}
-            <div>
+            <div className="lg:px-6">
               <h4 className="mb-4 font-bold text-off-white">Our Hours</h4>
               <div className="space-y-2 text-sm">
                 {regularHours ? (
@@ -89,7 +91,7 @@ export async function Footer() {
             </div>
 
             {/* Contact */}
-            <div>
+            <div className="lg:px-6">
               <h4 className="mb-4 font-bold text-off-white">Contact</h4>
               <div className="space-y-2 text-sm">
                 {space?.phone && (
@@ -110,7 +112,7 @@ export async function Footer() {
             </div>
 
             {/* Newsletter */}
-            <div>
+            <div className="lg:pl-6">
               <h4 className="mb-4 font-bold text-off-white">News</h4>
               <div className="space-y-2 text-sm">
                 <NewsletterForm />
@@ -118,7 +120,7 @@ export async function Footer() {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-lake/20 text-center text-sm">
+          <div className="mt-8 pt-8 border-t border-off-white/10 text-center text-sm">
             <p className="text-off-white">
               &copy; {new Date().getFullYear()} {space?.name || 'Gallery 1882'}. All rights reserved.
             </p>

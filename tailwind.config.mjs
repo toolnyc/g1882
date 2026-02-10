@@ -24,7 +24,9 @@ const config = {
     'bg-success/30',
     'border-warning',
     'bg-warning/30',
-    'text-off-white', // Add this line
+    'text-off-white',
+    'bg-warm-accent',
+    'border-warm-accent',
   ],
   theme: {
     container: {
@@ -67,6 +69,9 @@ const config = {
         'bright-lake': '#25c1f8',
         'off-white': '#fffbeb',
         forest: '#214731',
+        // Warm accent for highlights and refined details
+        'warm-accent': '#b79447',
+        'warm-accent-light': '#d4b86a',
 
         // Keep existing shadcn colors for compatibility
         accent: {
@@ -107,8 +112,8 @@ const config = {
         warning: 'hsl(var(--warning))',
       },
       fontFamily: {
-        // Gallery 1882 Typography - Aktiv Grotesk with system fallbacks
-        sans: ['Aktiv Grotesk', 'system-ui', 'sans-serif'],
+        // Gallery 1882 Typography - Geist Sans with refined system fallbacks
+        sans: ['var(--font-geist-sans)', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['var(--font-geist-mono)'],
       },
       keyframes: {

@@ -63,7 +63,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
                 viewport={{ once: true }}
-                className="gallery-card overflow-hidden group"
+                className="gallery-card overflow-hidden group relative"
               >
                 <Image
                   src={image}
@@ -74,6 +74,13 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                   sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 33vw, (max-width: 1376px) 33vw, 430px"
                   className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
+                {/* Hover overlay with gradient and caption */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    <p className="text-off-white text-sm font-medium uppercase tracking-wider">{name}</p>
+                    {title && <p className="text-off-white/80 text-xs mt-1">{title}</p>}
+                  </div>
+                </div>
               </motion.div>
             </div>
           )}
