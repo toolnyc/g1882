@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { fadeUp } from '@/utilities/animations'
 
 interface MissionSectionProps {
+  missionCaption?: string | null
   missionStatement?: string | null
   missionCtaText?: string | null
   missionCtaUrl?: string | null
 }
 
 export const MissionSection: React.FC<MissionSectionProps> = ({
+  missionCaption,
   missionStatement,
   missionCtaText,
   missionCtaUrl,
@@ -35,7 +37,7 @@ export const MissionSection: React.FC<MissionSectionProps> = ({
       <div className="container">
         <motion.div {...fadeUp()} className="text-center max-w-5xl mx-auto">
           <motion.div {...fadeUp({ delay: 0.2, distance: 20 })} className="caption text-lake mb-6">
-            Our Mission
+            {missionCaption || 'Our Mission'}
           </motion.div>
 
           <motion.h2 className="mb-10 text-3xl md:text-4xl text-navy leading-tight">

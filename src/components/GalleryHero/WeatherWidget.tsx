@@ -5,47 +5,48 @@ import { motion } from 'framer-motion'
 interface WeatherData {
   temperature: number
   condition: string
-  location: string
+}
+
+// WMO Weather interpretation codes to human-readable conditions
+const weatherCodeToCondition = (code: number): string => {
+  if (code === 0) return 'Clear'
+  if (code <= 3) return 'Partly Cloudy'
+  if (code <= 48) return 'Foggy'
+  if (code <= 57) return 'Drizzle'
+  if (code <= 67) return 'Rain'
+  if (code <= 77) return 'Snow'
+  if (code <= 82) return 'Showers'
+  if (code <= 86) return 'Snow Showers'
+  if (code <= 99) return 'Thunderstorm'
+  return 'Unknown'
 }
 
 export const WeatherWidget: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [_currentTime, setCurrentTime] = useState<string>('')
-
-  // Format time in Central Time (Chicago)
-  const formatCentralTime = (): string => {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Chicago',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    })
-    return `${formatter.format(new Date())} Central Time`
-  }
 
   useEffect(() => {
-    // Mock weather data for now - replace with real API call
-    const mockWeather: WeatherData = {
-      temperature: 72,
-      condition: 'Partly Cloudy',
-      location: 'Chesterton, IN',
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch(
+          'https://api.open-meteo.com/v1/forecast?latitude=41.6109&longitude=-87.0642&current=temperature_2m,weather_code&temperature_unit=fahrenheit',
+        )
+        if (!res.ok) throw new Error('Weather fetch failed')
+        const data = await res.json()
+        setWeather({
+          temperature: Math.round(data.current.temperature_2m),
+          condition: weatherCodeToCondition(data.current.weather_code),
+        })
+      } catch {
+        // Silently fail — widget just won't show
+      } finally {
+        setLoading(false)
+      }
     }
 
-    setTimeout(() => {
-      setWeather(mockWeather)
-      setLoading(false)
-    }, 1000)
-
-    // Set initial time
-    setCurrentTime(formatCentralTime())
-
-    // Update time every minute
-    const interval = setInterval(() => {
-      setCurrentTime(formatCentralTime())
-    }, 60000) // 60 seconds
-
-    // Cleanup interval on unmount
+    fetchWeather()
+    // Refresh weather every 10 minutes
+    const interval = setInterval(fetchWeather, 600000)
     return () => clearInterval(interval)
   }, [])
 

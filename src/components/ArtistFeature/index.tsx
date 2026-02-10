@@ -10,17 +10,14 @@ interface ArtistFeatureProps {
   title: string
   bio: string
   image: string
-  exhibitionId: string
   artistSlug: string
 }
 
 export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
-  id: _id,
   name,
   title,
   bio,
   image,
-  exhibitionId: _exhibitionId,
   artistSlug,
 }) => {
   return (
@@ -44,38 +41,42 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               <div className="caption text-lake mb-6">Featured Artist</div>
               <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">{name}</h2>
               <p className="mb-8 text-xl font-medium text-lake">{title}</p>
-              <p className="mb-8 text-lg leading-relaxed text-navy/80">{bio}</p>
+              {bio && <p className="mb-8 text-lg leading-relaxed text-navy/80">{bio}</p>}
               <div className="flex flex-col gap-4 sm:flex-row">
-                <Link
-                  href={`/artists/${artistSlug}`}
-                  className="gallery-button-primary px-8 py-4 text-lg"
-                >
-                  More About {name.split(' ')[0]}
-                </Link>
+                {artistSlug && (
+                  <Link
+                    href={`/artists/${artistSlug}`}
+                    className="gallery-button-primary px-8 py-4 text-lg"
+                  >
+                    More About {name.split(' ')[0]}
+                  </Link>
+                )}
               </div>
             </motion.div>
           </div>
 
           {/* Image - Asymmetrical Layout (Right Side) */}
-          <div className="lg:col-span-4 lg:col-start-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="gallery-card overflow-hidden group"
-            >
-              <Image
-                src={image}
-                alt={`${name} - ${title}`}
-                width={800}
-                height={1000}
-                quality={90}
-                sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 33vw, (max-width: 1376px) 33vw, 430px"
-                className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-              />
-            </motion.div>
-          </div>
+          {image && (
+            <div className="lg:col-span-4 lg:col-start-8">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="gallery-card overflow-hidden group"
+              >
+                <Image
+                  src={image}
+                  alt={`${name} - ${title}`}
+                  width={800}
+                  height={1000}
+                  quality={90}
+                  sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 33vw, (max-width: 1376px) 33vw, 430px"
+                  className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                />
+              </motion.div>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

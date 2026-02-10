@@ -23,6 +23,9 @@ interface HomePageClientProps {
   upcomingHappenings: (Happening & { featured: boolean })[]
   featuredArtistData: ReturnType<typeof import('@/utilities/dataTransformers').transformFeaturedArtist>
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
+  heroVideoUrl?: string | null
+  structuredHours?: { day: string; open: string; close: string }[] | null
+  isUpNext?: boolean
 }
 
 export const HomePageClient: React.FC<HomePageClientProps> = ({
@@ -31,6 +34,9 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   upcomingHappenings,
   featuredArtistData,
   visitSectionData,
+  heroVideoUrl,
+  structuredHours,
+  isUpNext = false,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const { shouldShowFullSite } = useNewsletterGate()
@@ -40,9 +46,6 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
     setHeaderTheme('glassy')
   }, [setHeaderTheme])
 
-  // Two states:
-  // 1. Gate enabled (pre-launch) and not admin -> show only video/logo/weather with "Coming Soon"
-  // 2. Gate disabled OR admin previewing -> show full site
   const showFullSite = shouldShowFullSite
   const showLanderContent = !shouldShowFullSite
 
@@ -50,27 +53,42 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
     <main className="min-h-screen bg-off-white">
       {/* Gate enabled (pre-launch): show only video with "Coming Soon" */}
       {showLanderContent && (
-        <GalleryHero statusText="Coming Soon" statusIndicatorColor="bg-lake" />
+        <GalleryHero
+          statusText="Coming Soon"
+          statusIndicatorColor="bg-lake"
+          heroVideoUrl={heroVideoUrl}
+          structuredHours={structuredHours}
+        />
       )}
 
       {/* Gate disabled (launched): show full site */}
       {showFullSite && (
         <>
-          <GalleryHero statusText="Open" statusIndicatorColor="bg-bright-lake" />
+          <GalleryHero
+            statusText="Open"
+            statusIndicatorColor="bg-bright-lake"
+            heroVideoUrl={heroVideoUrl}
+            structuredHours={structuredHours}
+          />
 
           <MissionSection
+            missionCaption={homeData?.missionCaption}
             missionStatement={homeData?.missionStatement}
             missionCtaText={homeData?.missionCtaText}
             missionCtaUrl={homeData?.missionCtaUrl}
           />
 
-          {currentHappening && <CurrentExhibition happening={currentHappening} />}
-
-          {visitSectionData && <VisitSection {...visitSectionData} />}
+          {currentHappening && (
+            <CurrentExhibition happening={currentHappening} isUpNext={isUpNext} />
+          )}
 
           {featuredArtistData && <ArtistFeature {...featuredArtistData} />}
 
           {upcomingHappenings.length > 0 && <UpcomingHappenings happenings={upcomingHappenings} />}
+
+          {visitSectionData && homeData?.visitSectionEnabled !== false && (
+            <VisitSection {...visitSectionData} />
+          )}
         </>
       )}
     </main>

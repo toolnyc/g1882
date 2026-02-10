@@ -20,34 +20,53 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 export default async function HomePage() {
   // Fetch home global data
   const homeData = (await getCachedGlobal('home', 2)()) as Home
-  // Fetch with depth 2 to populate featuredPerson.image relation
+  // Fetch with depth 2 to populate artists and images
   const getHappenings = getCachedHappenings({}, 2)
   const activeHappenings = await getHappenings()
 
-  // Get the most active happening (or first featured)
-  const currentHappening = activeHappenings.find((h) => h.featured) || activeHappenings[0]
-  // Get upcoming happenings (not active, future dates)
-  const getUpcoming = getCachedHappenings({ upcoming: true }, 2)
-  const upcomingHappenings = await getUpcoming()
-
-  // Fetch space global for visit section
+  // Fetch space global for structured hours and visit section
   const space = await getCachedSpace()()
 
-  // Get featured happening for artist feature
-  const getFeaturedHappenings = getCachedHappenings({ featured: true }, 2)
-  const featuredHappenings = await getFeaturedHappenings()
+  // Find current active exhibition (prefer exhibitions over events for "On Now")
+  const activeExhibitions = activeHappenings.filter(
+    (h) => h.isActive && (h.type === 'exhibition' || (!h.type && h.endDate)),
+  )
+  const currentHappening =
+    activeExhibitions.find((h) => h.featured) ||
+    activeExhibitions[0] ||
+    activeHappenings.find((h) => h.isActive && h.featured) ||
+    activeHappenings.find((h) => h.isActive)
 
-  const featuredHappening = featuredHappenings[0] || currentHappening
+  // If nothing is active, find the soonest upcoming exhibition for "Up Next"
+  let displayHappening = currentHappening
+  let isUpNext = false
+  if (!displayHappening) {
+    const getUpcomingExhibitions = getCachedHappenings(
+      { upcoming: true, type: 'exhibition', sortDirection: 'asc' },
+      2,
+    )
+    const upcomingExhibitions = await getUpcomingExhibitions()
+    if (upcomingExhibitions.length > 0) {
+      displayHappening = upcomingExhibitions[0]
+      isUpNext = true
+    }
+  }
 
-  const featuredArtistData = transformFeaturedArtist(homeData, featuredHappening)
+  // Get upcoming happenings (not active, future dates)
+  const getUpcoming = getCachedHappenings({ upcoming: true, sortDirection: 'asc' }, 2)
+  const upcomingHappenings = await getUpcoming()
+
+  const featuredArtistData = transformFeaturedArtist(homeData)
   const visitSectionData = transformVisitSection(homeData, space)
 
   const formatHeroImage = (
     heroImage: Happening['heroImage'],
   ): { url: string; alt?: string } | string | null => {
     if (typeof heroImage === 'object' && heroImage) {
+      const url = resolveMediaUrl(heroImage)
+      if (!url) return null
       return {
-        url: resolveMediaUrl(heroImage, '/media/test-art.jpg'),
+        url,
         alt: heroImage.alt || undefined,
       }
     }
@@ -55,14 +74,21 @@ export default async function HomePage() {
     return (heroImage as string | null) || null
   }
 
-  const formattedCurrentHappening: FormattedHappening | undefined = currentHappening
+  const formattedCurrentHappening: FormattedHappening | undefined = displayHappening
     ? {
-        ...currentHappening,
-        heroImage: formatHeroImage(currentHappening.heroImage),
-        featured: currentHappening.featured ?? false,
-        isActive: currentHappening.isActive ?? false,
+        ...displayHappening,
+        heroImage: formatHeroImage(displayHappening.heroImage),
+        featured: displayHappening.featured ?? false,
+        isActive: displayHappening.isActive ?? false,
       }
     : undefined
+
+  // Extract structured hours for open/closed calculation
+  const structuredHours = space?.structuredHours?.map((h: { day: string; open: string; close: string }) => ({
+    day: h.day,
+    open: h.open,
+    close: h.close,
+  })) || null
 
   return (
     <HomePageClient
@@ -74,6 +100,9 @@ export default async function HomePage() {
       }))}
       featuredArtistData={featuredArtistData}
       visitSectionData={visitSectionData}
+      heroVideoUrl={homeData?.heroVideoUrl}
+      structuredHours={structuredHours}
+      isUpNext={isUpNext}
     />
   )
 }
