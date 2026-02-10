@@ -1,6 +1,8 @@
 import { getCachedSpace } from '@/utilities/getSpace'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
+import type { Visit } from '@/payload-types'
 
 import { NewsletterForm } from './NewsletterForm'
 import { FooterClientWrapper } from './Component.client'
@@ -11,11 +13,18 @@ const SITEMAP_LINKS = [
   { label: 'Happenings', url: '/happenings' },
   { label: 'Artists', url: '/artists' },
   { label: 'Visit', url: '/visit' },
-  { label: 'Journal', url: '/journal' },
+  { label: 'News', url: '/journal' },
+  { label: 'Gallery Space', url: '/space' },
 ] as const
 
 export async function Footer() {
   const space = await getCachedSpace()()
+  const visit = (await getCachedGlobal('visit', 1)()) as Visit
+
+  // Pull hours from Visit global's regularHours, fall back to Space global
+  const regularHours = visit?.hours?.regularHours && visit.hours.regularHours.length > 0
+    ? visit.hours.regularHours
+    : null
 
   return (
     <FooterClientWrapper>
@@ -58,22 +67,23 @@ export async function Footer() {
               </nav>
             </div>
 
-            {/* Visit Info */}
+            {/* Hours */}
             <div>
-              <h4 className="mb-4 font-bold text-off-white">Visit</h4>
+              <h4 className="mb-4 font-bold text-off-white">Our Hours</h4>
               <div className="space-y-2 text-sm">
-                {space?.hours ? (
+                {regularHours ? (
+                  regularHours.map((item, i: number) => (
+                    <p key={i} className="text-off-white">
+                      {item.day}: {item.hours}
+                    </p>
+                  ))
+                ) : space?.hours ? (
                   space.hours.split(',').map((line: string, i: number) => (
                     <p key={i} className="text-off-white">
                       {line.trim()}
                     </p>
                   ))
-                ) : (
-                  <>
-                    <p className="text-off-white">Wednesday - Sunday</p>
-                    <p className="text-off-white">10 AM - 6 PM</p>
-                  </>
-                )}
+                ) : null}
                 {space?.admission && <p className="mt-4 text-off-white">{space.admission}</p>}
               </div>
             </div>
@@ -101,7 +111,7 @@ export async function Footer() {
 
             {/* Newsletter */}
             <div>
-              <h4 className="mb-4 font-bold text-off-white">The Journal</h4>
+              <h4 className="mb-4 font-bold text-off-white">News</h4>
               <div className="space-y-2 text-sm">
                 <NewsletterForm />
               </div>
@@ -110,7 +120,7 @@ export async function Footer() {
 
           <div className="mt-8 pt-8 border-t border-lake/20 text-center text-sm">
             <p className="text-off-white">
-              &copy; {new Date().getFullYear()} Gallery 1882. All rights reserved.
+              &copy; {new Date().getFullYear()} {space?.name || 'Gallery 1882'}. All rights reserved.
             </p>
           </div>
         </div>

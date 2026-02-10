@@ -86,157 +86,45 @@ const getDirectionCardStyle = (style: string | null | undefined) => {
 export default function VisitPageClient({ visit }: VisitPageClientProps) {
   const heroImage = visit.heroImage as Media | null | undefined
 
-  // Default values for fallback
-  const defaultRegularHours = [
-    { day: 'Monday - Friday', hours: '10:00 AM - 6:00 PM' },
-    { day: 'Saturday', hours: '10:00 AM - 8:00 PM' },
-    { day: 'Sunday', hours: '12:00 PM - 6:00 PM' },
-  ]
+  const regularHours = visit.hours?.regularHours && visit.hours.regularHours.length > 0
+    ? visit.hours.regularHours
+    : null
 
-  const defaultSpecialHours = [
-    {
-      title: 'First Friday of Each Month',
-      description: 'Extended hours until 9:00 PM with special programming',
-    },
-    {
-      title: 'Summer Season (June-August)',
-      description: 'Additional evening hours on Thursdays until 8:00 PM',
-    },
-  ]
+  const specialHours = visit.hours?.specialHours && visit.hours.specialHours.length > 0
+    ? visit.hours.specialHours
+    : null
 
-  const defaultGeneralAdmissionFeatures = [
-    'All ages welcome',
-    'No advance booking required',
-    'Self-guided tours available',
-  ]
-
-  const defaultGroupVisitFeatures = [
-    'Guided tours available',
-    'Educational programs',
-    'Special group rates for programs',
-  ]
-
-  const defaultParkingFeatures = [
-    '20 spaces in gallery lot',
-    'Street parking on Broadway',
-    'Accessible parking spaces available',
-  ]
-
-  const defaultDirections = [
-    {
-      title: 'By Car',
-      content:
-        'From Chicago: Take I-94 East to Exit 26A (IN-49), then follow signs to Chesterton.\n\nFrom Indianapolis: Take I-65 North to I-94 West, then follow the same directions.',
-      style: 'default' as const,
-    },
-    {
-      title: 'Public Transit',
-      content:
-        'South Shore Line train to Chesterton station, then 5-minute walk to gallery.\n\nBus routes 1 and 3 stop within 2 blocks of the gallery.',
-      style: 'lake' as const,
-    },
-    {
-      title: 'Accessibility',
-      content:
-        'The gallery is fully accessible with ramps, elevators, and accessible restrooms. Service animals are welcome.',
-      style: 'dark' as const,
-    },
-  ]
-
-  const defaultChestertonFeatures = [
-    {
-      title: 'National Park Access',
-      description:
-        'Just 5 minutes from the Indiana Dunes National Park, with hiking trails, beaches, and unique ecosystems.',
-      icon: 'location' as const,
-    },
-    {
-      title: 'Historic Downtown',
-      description:
-        "Explore Chesterton's charming downtown with local shops, restaurants, and historic architecture.",
-      icon: 'building' as const,
-    },
-    {
-      title: 'Community Spirit',
-      description:
-        'A tight-knit community that values arts, culture, and environmental stewardship in equal measure.',
-      icon: 'heart' as const,
-    },
-  ]
-
-  const defaultFaqs = [
-    {
-      question: 'What should I expect during my visit?',
-      answer:
-        'Gallery 1882 offers a contemplative space to experience contemporary art in a natural setting. Visitors can explore our current exhibitions at their own pace, with gallery attendants available to answer questions. We encourage quiet reflection and respectful engagement with the artwork.',
-    },
-    {
-      question: 'Is photography allowed?',
-      answer:
-        'Photography is welcome in the gallery spaces for personal use only. We ask that visitors refrain from using flash photography and respect the experience of other visitors. Commercial photography requires advance permission.',
-    },
-    {
-      question: 'Are there guided tours available?',
-      answer:
-        'Yes! We offer guided tours for groups of 10 or more visitors. Tours can be scheduled in advance and are led by knowledgeable gallery staff or trained docents. Contact us at least one week in advance to schedule your group visit.',
-    },
-    {
-      question: 'What facilities are available?',
-      answer:
-        'The gallery features accessible restrooms, a small gift shop with artist books and locally-made items, and a reading room with art publications. We also have a coat check area and seating throughout the galleries for visitor comfort.',
-    },
-    {
-      question: 'Can I bring children to the gallery?',
-      answer:
-        'Children of all ages are welcome at Gallery 1882. We ask that parents and guardians supervise their children to ensure a respectful environment for all visitors. We offer family-friendly programs and activities during select times.',
-    },
-    {
-      question: 'How often do exhibitions change?',
-      answer:
-        'We typically present 4-6 major exhibitions per year, with each exhibition running for 8-12 weeks. We also feature smaller rotating displays in our project space. Check our website or sign up for our newsletter to stay updated on current and upcoming exhibitions.',
-    },
-  ]
-
-  const regularHours =
-    visit.hours?.regularHours && visit.hours.regularHours.length > 0
-      ? visit.hours.regularHours
-      : defaultRegularHours
-
-  const specialHours =
-    visit.hours?.specialHours && visit.hours.specialHours.length > 0
-      ? visit.hours.specialHours
-      : defaultSpecialHours
+  const showAdmission = visit.showAdmissionSection === true
 
   const generalAdmissionFeatures =
-    visit.admission?.generalAdmissionFeatures &&
-    visit.admission.generalAdmissionFeatures.length > 0
+    visit.admission?.generalAdmissionFeatures && visit.admission.generalAdmissionFeatures.length > 0
       ? visit.admission.generalAdmissionFeatures.map((f) => f.feature)
-      : defaultGeneralAdmissionFeatures
+      : null
 
   const groupVisitFeatures =
     visit.admission?.groupVisitFeatures && visit.admission.groupVisitFeatures.length > 0
       ? visit.admission.groupVisitFeatures.map((f) => f.feature)
-      : defaultGroupVisitFeatures
+      : null
 
   const parkingFeatures =
     visit.location?.parkingFeatures && visit.location.parkingFeatures.length > 0
       ? visit.location.parkingFeatures.map((f) => f.feature)
-      : defaultParkingFeatures
+      : null
 
   const directions =
     visit.location?.directions && visit.location.directions.length > 0
       ? visit.location.directions
-      : defaultDirections
+      : null
 
   const chestertonFeatures =
     visit.chesterton?.features && visit.chesterton.features.length > 0
       ? visit.chesterton.features
-      : defaultChestertonFeatures
+      : null
 
   const faqs =
     visit.faqsSection?.faqs && visit.faqsSection.faqs.length > 0
       ? visit.faqsSection.faqs
-      : defaultFaqs
+      : null
 
   return (
     <main className="min-h-screen bg-off-white">
@@ -257,266 +145,286 @@ export default function VisitPageClient({ visit }: VisitPageClientProps) {
       </section>
 
       {/* Hero Image */}
-      <section className="py-0">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative overflow-hidden rounded-lg"
-          >
-            <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
-              <Image
-                src={heroImage?.url || '/media/placeholder.svg'}
-                alt={heroImage?.alt || 'Gallery 1882 placeholder image'}
-                width={1920}
-                height={1080}
-                className="h-full w-full object-cover object-center"
-              />
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {heroImage?.url && (
+        <section className="py-0">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="relative overflow-hidden rounded-lg"
+            >
+              <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
+                <Image
+                  src={heroImage.url}
+                  alt={heroImage.alt || 'Gallery 1882'}
+                  width={1920}
+                  height={1080}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Hours Section */}
-      <section className="py-10 gallery-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="grid gap-20 lg:grid-cols-12"
-          >
-            <div className="lg:col-span-7">
-              <div className="caption text-lake mb-6">{visit.hours?.caption || 'Hours'}</div>
-              <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
-                {visit.hours?.title || 'Gallery Hours'}
-              </h2>
-              <div className="space-y-6 text-lg leading-relaxed text-navy/80">
-                <p>
-                  {visit.hours?.description ||
-                    'Gallery 1882 is open to the public with regular hours that allow visitors to experience our exhibitions and programs throughout the week.'}
-                </p>
-                <div className="space-y-4">
-                  {regularHours.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center py-3 border-b border-navy/10"
-                    >
-                      <span className="font-semibold text-navy">{item.day}</span>
-                      <span className="text-navy/80">{item.hours}</span>
+      {(regularHours || visit.hours?.description) && (
+        <section className="py-10 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="grid gap-20 lg:grid-cols-12"
+            >
+              <div className="lg:col-span-7">
+                {visit.hours?.caption && (
+                  <div className="caption text-lake mb-6">{visit.hours.caption}</div>
+                )}
+                <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
+                  {visit.hours?.title || 'Gallery Hours'}
+                </h2>
+                <div className="space-y-6 text-lg leading-relaxed text-navy/80">
+                  {visit.hours?.description && <p>{visit.hours.description}</p>}
+                  {regularHours && (
+                    <div className="space-y-4">
+                      {regularHours.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center py-3 border-b border-navy/10"
+                        >
+                          <span className="font-semibold text-navy">{item.day}</span>
+                          <span className="text-navy/80">{item.hours}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <p className="text-sm text-navy/60 mt-6">
-                  {visit.hours?.note ||
-                    '* Last admission 30 minutes before closing. The gallery is closed on major holidays.'}
-                </p>
-              </div>
-            </div>
-            <div className="lg:col-span-5 lg:col-start-8">
-              <div className="bg-lake/5 p-8 rounded-lg">
-                <h3 className="text-2xl font-bold text-navy mb-6">
-                  {visit.hours?.specialHoursTitle || 'Special Hours'}
-                </h3>
-                <div className="space-y-4">
-                  {specialHours.map((item, index) => (
-                    <div key={index}>
-                      <p className="font-semibold text-navy mb-2">{item.title}</p>
-                      <p className="text-navy/80">{item.description}</p>
-                    </div>
-                  ))}
+                  )}
+                  {visit.hours?.note && (
+                    <p className="text-sm text-navy/60 mt-6">{visit.hours.note}</p>
+                  )}
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+              {specialHours && (
+                <div className="lg:col-span-5 lg:col-start-8">
+                  <div className="bg-lake/5 p-8 rounded-lg">
+                    <h3 className="text-2xl font-bold text-navy mb-6">
+                      {visit.hours?.specialHoursTitle || 'Special Hours'}
+                    </h3>
+                    <div className="space-y-4">
+                      {specialHours.map((item, index) => (
+                        <div key={index}>
+                          <p className="font-semibold text-navy mb-2">{item.title}</p>
+                          <p className="text-navy/80">{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
-      {/* Entry Section */}
-      <section className="py-20 gallery-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <div className="caption text-lake mb-6">
-              {visit.admission?.caption || 'Admission'}
-            </div>
-            <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
-              {visit.admission?.title || 'Free Admission'}
-            </h2>
-            <div className="space-y-8 text-lg leading-relaxed text-navy/80">
-              <p>
-                {visit.admission?.description ||
-                  'Gallery 1882 is committed to making contemporary art accessible to everyone. Admission is always free for all visitors.'}
-              </p>
-              <div className="grid md:grid-cols-2 gap-8 mt-12">
-                <div className="bg-off-white p-8 rounded-lg border border-navy/10">
-                  <h3 className="text-2xl font-bold text-navy mb-4">
-                    {visit.admission?.generalAdmissionTitle || 'General Admission'}
-                  </h3>
-                  <p className="text-navy/80 mb-4">
-                    {visit.admission?.generalAdmissionDescription ||
-                      'No tickets required for general admission. Simply walk in during our regular hours.'}
-                  </p>
-                  <ul className="text-sm text-navy/70 space-y-2">
-                    {generalAdmissionFeatures.map((feature, index) => (
-                      <li key={index}>• {feature}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="bg-lake/5 p-8 rounded-lg border border-lake/20">
-                  <h3 className="text-2xl font-bold text-navy mb-4">
-                    {visit.admission?.groupVisitTitle || 'Group Visits'}
-                  </h3>
-                  <p className="text-navy/80 mb-4">
-                    {visit.admission?.groupVisitDescription ||
-                      'Groups of 10 or more are encouraged to contact us in advance for the best experience.'}
-                  </p>
-                  <ul className="text-sm text-navy/70 space-y-2">
-                    {groupVisitFeatures.map((feature, index) => (
-                      <li key={index}>• {feature}</li>
-                    ))}
-                  </ul>
+      {/* Admission Section — only show when enabled and has content */}
+      {showAdmission && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center max-w-4xl mx-auto"
+            >
+              {visit.admission?.caption && (
+                <div className="caption text-lake mb-6">{visit.admission.caption}</div>
+              )}
+              <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                {visit.admission?.title || 'Admission'}
+              </h2>
+              <div className="space-y-8 text-lg leading-relaxed text-navy/80">
+                {visit.admission?.description && <p>{visit.admission.description}</p>}
+                <div className="grid md:grid-cols-2 gap-8 mt-12">
+                  {(visit.admission?.generalAdmissionTitle || generalAdmissionFeatures) && (
+                    <div className="bg-off-white p-8 rounded-lg border border-navy/10">
+                      <h3 className="text-2xl font-bold text-navy mb-4">
+                        {visit.admission?.generalAdmissionTitle || 'General Admission'}
+                      </h3>
+                      {visit.admission?.generalAdmissionDescription && (
+                        <p className="text-navy/80 mb-4">{visit.admission.generalAdmissionDescription}</p>
+                      )}
+                      {generalAdmissionFeatures && (
+                        <ul className="text-sm text-navy/70 space-y-2">
+                          {generalAdmissionFeatures.map((feature, index) => (
+                            <li key={index}>• {feature}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                  {(visit.admission?.groupVisitTitle || groupVisitFeatures) && (
+                    <div className="bg-lake/5 p-8 rounded-lg border border-lake/20">
+                      <h3 className="text-2xl font-bold text-navy mb-4">
+                        {visit.admission?.groupVisitTitle || 'Group Visits'}
+                      </h3>
+                      {visit.admission?.groupVisitDescription && (
+                        <p className="text-navy/80 mb-4">{visit.admission.groupVisitDescription}</p>
+                      )}
+                      {groupVisitFeatures && (
+                        <ul className="text-sm text-navy/70 space-y-2">
+                          {groupVisitFeatures.map((feature, index) => (
+                            <li key={index}>• {feature}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Getting Here Section */}
-      <section className="py-20 gallery-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="grid gap-20 lg:grid-cols-12"
-          >
-            <div className="lg:col-span-7">
-              <div className="caption text-lake mb-6">
-                {visit.location?.caption || 'Location'}
-              </div>
-              <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
-                {visit.location?.title || 'Getting Here'}
-              </h2>
-              <div className="space-y-6 text-lg leading-relaxed text-navy/80">
-                <p>
-                  {visit.location?.description ||
-                    'Located in the heart of Chesterton, Indiana, Gallery 1882 is easily accessible by car and public transportation, with convenient parking available.'}
-                </p>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-2xl font-bold text-navy mb-4">Address</h3>
-                    <p className="text-lg text-navy/80 whitespace-pre-line">
-                      {visit.location?.address || '1882 Broadway\nChesterton, IN 46304'}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-navy mb-4">Parking</h3>
-                    <p className="text-navy/80 mb-4">
-                      {visit.location?.parkingDescription ||
-                        'Free parking is available in our dedicated lot adjacent to the gallery. Additional street parking is available on Broadway and surrounding streets.'}
-                    </p>
-                    <ul className="text-sm text-navy/70 space-y-1">
-                      {parkingFeatures.map((feature, index) => (
-                        <li key={index}>• {feature}</li>
-                      ))}
-                    </ul>
+      {(visit.location?.description || visit.location?.address || directions) && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="grid gap-20 lg:grid-cols-12"
+            >
+              <div className="lg:col-span-7">
+                {visit.location?.caption && (
+                  <div className="caption text-lake mb-6">{visit.location.caption}</div>
+                )}
+                <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
+                  {visit.location?.title || 'Getting Here'}
+                </h2>
+                <div className="space-y-6 text-lg leading-relaxed text-navy/80">
+                  {visit.location?.description && <p>{visit.location.description}</p>}
+                  <div className="space-y-6">
+                    {visit.location?.address && (
+                      <div>
+                        <h3 className="text-2xl font-bold text-navy mb-4">Address</h3>
+                        <p className="text-lg text-navy/80 whitespace-pre-line">
+                          {visit.location.address}
+                        </p>
+                      </div>
+                    )}
+                    {(visit.location?.parkingDescription || parkingFeatures) && (
+                      <div>
+                        <h3 className="text-2xl font-bold text-navy mb-4">Parking</h3>
+                        {visit.location?.parkingDescription && (
+                          <p className="text-navy/80 mb-4">{visit.location.parkingDescription}</p>
+                        )}
+                        {parkingFeatures && (
+                          <ul className="text-sm text-navy/70 space-y-1">
+                            {parkingFeatures.map((feature, index) => (
+                              <li key={index}>• {feature}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="lg:col-span-5 lg:col-start-8">
-              <div className="space-y-6">
-                {directions.map((item, index) => (
-                  <div key={index} className={getDirectionCardStyle(item.style)}>
-                    <h3 className="text-xl font-bold text-navy mb-4">{item.title}</h3>
-                    <p className="text-navy/80 text-sm whitespace-pre-line">{item.content}</p>
+              {directions && (
+                <div className="lg:col-span-5 lg:col-start-8">
+                  <div className="space-y-6">
+                    {directions.map((item, index) => (
+                      <div key={index} className={getDirectionCardStyle(item.style)}>
+                        <h3 className="text-xl font-bold text-navy mb-4">{item.title}</h3>
+                        <p className="text-navy/80 text-sm whitespace-pre-line">{item.content}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* About Chesterton Section */}
-      <section className="py-20 gallery-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center max-w-5xl mx-auto"
-          >
-            <div className="caption text-lake mb-6">
-              {visit.chesterton?.caption || 'About Chesterton'}
-            </div>
-            <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
-              {visit.chesterton?.title || 'A Gateway to the Indiana Dunes'}
-            </h2>
-            <div className="space-y-8 text-lg leading-relaxed text-navy/80">
-              <p>
-                {visit.chesterton?.description ||
-                  'Chesterton serves as the perfect gateway to the Indiana Dunes National Park, offering visitors a unique blend of natural beauty and cultural experiences. Our gallery is proud to be part of this vibrant community.'}
-              </p>
-              <div className="grid md:grid-cols-3 gap-8 mt-12">
-                {chestertonFeatures.map((feature, index) => (
-                  <div key={index} className="text-center">
-                    <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      {getIcon(feature.icon)}
-                    </div>
-                    <h3 className="text-xl font-bold text-navy mb-3">{feature.title}</h3>
-                    <p className="text-navy/80 text-sm">{feature.description}</p>
+      {(visit.chesterton?.description || chestertonFeatures) && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center max-w-5xl mx-auto"
+            >
+              {visit.chesterton?.caption && (
+                <div className="caption text-lake mb-6">{visit.chesterton.caption}</div>
+              )}
+              <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                {visit.chesterton?.title || 'About Chesterton'}
+              </h2>
+              <div className="space-y-8 text-lg leading-relaxed text-navy/80">
+                {visit.chesterton?.description && <p>{visit.chesterton.description}</p>}
+                {chestertonFeatures && (
+                  <div className="grid md:grid-cols-3 gap-8 mt-12">
+                    {chestertonFeatures.map((feature, index) => (
+                      <div key={index} className="text-center">
+                        <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                          {getIcon(feature.icon)}
+                        </div>
+                        <h3 className="text-xl font-bold text-navy mb-3">{feature.title}</h3>
+                        <p className="text-navy/80 text-sm">{feature.description}</p>
+                      </div>
+                    ))}
                   </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQs Section — only show when FAQs are configured */}
+      {faqs && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="max-w-4xl mx-auto"
+            >
+              {visit.faqsSection?.caption && (
+                <div className="caption text-lake mb-6">{visit.faqsSection.caption}</div>
+              )}
+              <h2 className="mb-12 text-4xl font-bold tracking-tight md:text-5xl text-navy text-center">
+                {visit.faqsSection?.title || 'Visitor Information'}
+              </h2>
+              <div className="space-y-4">
+                {faqs.map((faq, index) => (
+                  <details key={index} className="group border border-navy/10 rounded-lg overflow-hidden">
+                    <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-navy/5 transition-colors">
+                      <span className="font-semibold text-navy text-lg">{faq.question}</span>
+                      <ChevronIcon />
+                    </summary>
+                    <div className="px-6 pb-6 text-navy/80">
+                      <p>{faq.answer}</p>
+                    </div>
+                  </details>
                 ))}
               </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* FAQs Section */}
-      <section className="py-20 gallery-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <div className="caption text-lake mb-6">
-              {visit.faqsSection?.caption || 'Frequently Asked Questions'}
-            </div>
-            <h2 className="mb-12 text-4xl font-bold tracking-tight md:text-5xl text-navy text-center">
-              {visit.faqsSection?.title || 'Visitor Information'}
-            </h2>
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <details key={index} className="group border border-navy/10 rounded-lg overflow-hidden">
-                  <summary className="flex justify-between items-center p-6 cursor-pointer hover:bg-navy/5 transition-colors">
-                    <span className="font-semibold text-navy text-lg">{faq.question}</span>
-                    <ChevronIcon />
-                  </summary>
-                  <div className="px-6 pb-6 text-navy/80">
-                    <p>{faq.answer}</p>
-                  </div>
-                </details>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+            </motion.div>
+          </div>
+        </section>
+      )}
     </main>
   )
 }

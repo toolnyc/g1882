@@ -8,56 +8,72 @@ import { getCachedHappenings } from '@/utilities/getHappenings'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatDateRange } from '@/utilities/dateHelpers'
-import type { Happening } from '@/payload-types'
+import type { Artist, Happening } from '@/payload-types'
+
+const getArtistNames = (happening: Happening): string => {
+  if (happening.artists && happening.artists.length > 0) {
+    return happening.artists
+      .map((a) => {
+        if (typeof a === 'object' && (a as Artist)?.name) return (a as Artist).name
+        return null
+      })
+      .filter(Boolean)
+      .join(', ')
+  }
+  if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
+    return happening.featuredPerson.name
+  }
+  return happening.featuredPersonName || ''
+}
 
 export default async function HappeningsPage() {
-  // Fetch with depth 2 to populate heroImage and featuredPerson.image relations
+  // Fetch with depth 2 to populate heroImage, artists, and featuredPerson relations
   const getHappenings = getCachedHappenings({}, 2)
   const allHappenings = await getHappenings()
 
   const now = new Date()
-  const oneWeekFromNow = new Date(now)
-  oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7)
   const oneMonthFromNow = new Date(now)
   oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1)
 
-  // Featured happenings: featured: true AND startDate within current week/month
+  // Featured happenings: featured: true AND startDate within current month
   const featuredHappenings = allHappenings.filter((happening) => {
     if (!happening.featured || !happening.startDate) return false
     const startDate = new Date(happening.startDate as string)
     return startDate >= now && startDate <= oneMonthFromNow
   })
 
-  // Upcoming events: startDate in future, not in featured section
-  const upcomingHappenings = allHappenings.filter((happening) => {
-    if (!happening.startDate) return false
-    const startDate = new Date(happening.startDate as string)
-    if (startDate <= now) return false
-    // Exclude featured happenings
-    return !featuredHappenings.some((f) => f.id === happening.id)
-  })
+  // Upcoming events: startDate in future, not in featured section — sorted ascending
+  const upcomingHappenings = allHappenings
+    .filter((happening) => {
+      if (!happening.startDate) return false
+      const startDate = new Date(happening.startDate as string)
+      if (startDate <= now) return false
+      return !featuredHappenings.some((f) => f.id === happening.id)
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.startDate as string).getTime()
+      const dateB = new Date(b.startDate as string).getTime()
+      return dateA - dateB
+    })
 
-  // All happenings for timeline (sorted by startDate descending)
-  const timelineHappenings = [...allHappenings].sort((a, b) => {
-    const dateA = a.startDate ? new Date(a.startDate as string).getTime() : 0
-    const dateB = b.startDate ? new Date(b.startDate as string).getTime() : 0
-    return dateB - dateA
-  })
+  // All happenings for timeline (upcoming ascending first, then past descending)
+  const futureHappenings = allHappenings
+    .filter((h) => h.startDate && new Date(h.startDate as string) > now)
+    .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
 
-  const getFeaturedPersonName = (happening: Happening) => {
-    if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
-      return happening.featuredPerson.name
-    }
-    return happening.featuredPersonName || ''
-  }
+  const pastHappenings = allHappenings
+    .filter((h) => h.startDate && new Date(h.startDate as string) <= now)
+    .sort((a, b) => new Date(b.startDate as string).getTime() - new Date(a.startDate as string).getTime())
+
+  const timelineHappenings = [...futureHappenings, ...pastHappenings]
 
   // Get the most upcoming happening for the banner
   const upcomingBannerHappening = upcomingHappenings.length > 0 ? upcomingHappenings[0] : null
   let upcomingBanner = null
 
   if (upcomingBannerHappening) {
-    const imageUrl = resolveMediaUrl(upcomingBannerHappening.heroImage, '/media/test-space.jpg')
-    const personName = getFeaturedPersonName(upcomingBannerHappening)
+    const imageUrl = resolveMediaUrl(upcomingBannerHappening.heroImage)
+    const personName = getArtistNames(upcomingBannerHappening)
     const dateSubtitle = formatDateRange(
       upcomingBannerHappening.startDate,
       upcomingBannerHappening.endDate,
@@ -73,7 +89,7 @@ export default async function HappeningsPage() {
         label="Coming Up"
         href={upcomingBannerHappening.slug ? `/happenings/${upcomingBannerHappening.slug}` : null}
         showLiveIndicator={false}
-        category={upcomingBannerHappening.category || undefined}
+        category={upcomingBannerHappening.type || upcomingBannerHappening.category || undefined}
       />
     )
   }
@@ -83,8 +99,11 @@ export default async function HappeningsPage() {
       {/* Timeline View */}
       <DirectoryListing
         items={timelineHappenings.map((happening) => {
-          const subtitle = formatDateRange(happening.startDate, happening.endDate)
-          const personName = getFeaturedPersonName(happening)
+          const isExhibition = happening.type === 'exhibition' || (!happening.type && happening.endDate)
+          const subtitle = isExhibition
+            ? formatDateRange(happening.startDate, happening.endDate)
+            : formatDateRange(happening.startDate)
+          const personName = getArtistNames(happening)
           const fullSubtitle =
             personName && subtitle ? `${subtitle} • ${personName}` : subtitle || personName || ''
 
@@ -98,7 +117,7 @@ export default async function HappeningsPage() {
             subtitle: fullSubtitle,
             href: happening.slug ? `/happenings/${happening.slug}` : null,
             featuredPersonName: personName,
-            category: happening.category || null,
+            category: happening.type || happening.category || null,
           }
         })}
         title="Happenings"

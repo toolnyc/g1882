@@ -4,6 +4,7 @@ import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
 import { RelatedHappenings } from './RelatedHappenings'
+import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,14 @@ type Args = {
   params: Promise<{
     slug: string
   }>
+}
+
+const PLATFORM_LABELS: Record<string, string> = {
+  instagram: 'Instagram',
+  twitter: 'Twitter / X',
+  facebook: 'Facebook',
+  linkedin: 'LinkedIn',
+  other: 'Link',
 }
 
 export default async function ArtistPage({ params: paramsPromise }: Args) {
@@ -30,19 +39,20 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
   }
 
   const artistImage = typeof artist.image === 'object' && artist.image ? artist.image : null
+  const works = artist.works || []
+  const socialLinks = artist.socialLinks || []
 
   return (
     <main className="min-h-screen bg-off-white">
       <article className="pt-48 pb-24">
-        {/* Hero Image */}
+        {/* Hero Image — optional, graceful layout without */}
         {artistImage && typeof artistImage === 'object' && artistImage.url && (
           <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
             <Image
               src={artistImage.url}
               alt={artistImage.alt || artist.name || ''}
               fill
-              className="object-fit-contain"
-              objectFit="contain"
+              className="object-contain"
               priority
             />
           </div>
@@ -63,6 +73,76 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
                 <p className="text-base leading-relaxed text-navy/80 whitespace-pre-line">
                   {artist.bio}
                 </p>
+              </div>
+            )}
+
+            {/* Website & Social Links */}
+            {(artist.website || socialLinks.length > 0) && (
+              <div className="mb-8 flex flex-wrap gap-4">
+                {artist.website && (
+                  <a
+                    href={artist.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-bright-lake hover:text-lake transition-colors font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Website
+                  </a>
+                )}
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.id || link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-bright-lake hover:text-lake transition-colors font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    {PLATFORM_LABELS[link.platform] || link.platform}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Works Gallery */}
+            {works.length > 0 && (
+              <div className="mt-12 pt-8 border-t border-navy/20">
+                <h2 className="text-2xl font-bold text-navy mb-6">Works</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {works.map((work) => {
+                    const imageUrl = resolveMediaUrl(work.image)
+                    if (!imageUrl) return null
+
+                    return (
+                      <div key={work.id} className="group">
+                        <div className="aspect-square relative overflow-hidden rounded-lg bg-navy/5">
+                          <Image
+                            src={imageUrl}
+                            alt={work.title || work.caption || artist.name || ''}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                        </div>
+                        {(work.title || work.caption) && (
+                          <div className="mt-3">
+                            {work.title && (
+                              <p className="font-semibold text-navy text-sm">{work.title}</p>
+                            )}
+                            {work.caption && (
+                              <p className="text-navy/60 text-sm">{work.caption}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )}
 

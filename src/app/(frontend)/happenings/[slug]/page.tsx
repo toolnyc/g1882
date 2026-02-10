@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 import { getCachedHappeningBySlug } from '@/utilities/getHappeningBySlug'
 import RichText from '@/components/RichText'
@@ -7,6 +8,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
+import type { Artist } from '@/payload-types'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
@@ -35,12 +37,24 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   const heroImage =
     typeof happening.heroImage === 'object' && happening.heroImage ? happening.heroImage : null
 
-  const featuredPerson =
-    typeof happening.featuredPerson === 'object' && happening.featuredPerson
-      ? happening.featuredPerson
-      : null
+  // Resolve all artists from the new array field
+  const artists: Artist[] = (happening.artists || [])
+    .map((a) => (typeof a === 'object' && a ? (a as Artist) : null))
+    .filter(Boolean) as Artist[]
 
-  const featuredPersonName = featuredPerson?.name || happening.featuredPersonName || ''
+  // Fall back to legacy featuredPerson
+  if (artists.length === 0) {
+    const featuredPerson =
+      typeof happening.featuredPerson === 'object' && happening.featuredPerson
+        ? happening.featuredPerson
+        : null
+    if (featuredPerson) {
+      artists.push(featuredPerson as Artist)
+    }
+  }
+
+  const legacyPersonName =
+    artists.length === 0 ? (happening.featuredPersonName || '') : ''
 
   const startDate = happening.startDate ? new Date(happening.startDate as string) : null
   const endDate = happening.endDate ? new Date(happening.endDate as string) : null
@@ -60,6 +74,8 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
     })
   }
 
+  const typeLabel = happening.type === 'exhibition' ? 'Exhibition' : happening.type === 'event' ? 'Event' : null
+
   return (
     <main className="min-h-screen bg-off-white">
       <article className="pb-24">
@@ -78,13 +94,34 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            {/* Title and Featured Person */}
+            {/* Title and Artists */}
             <div className="mb-8">
               <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-navy mb-4">
                 {happening.title}
               </h1>
-              {featuredPersonName && (
-                <p className="text-2xl text-bright-lake font-semibold">{featuredPersonName}</p>
+              {artists.length > 0 && (
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  {artists.map((artist, i) => (
+                    <React.Fragment key={artist.id}>
+                      {i > 0 && <span className="text-2xl text-bright-lake">,</span>}
+                      {artist.slug ? (
+                        <Link
+                          href={`/artists/${artist.slug}`}
+                          className="text-2xl text-bright-lake font-semibold hover:text-lake transition-colors"
+                        >
+                          {artist.name}
+                        </Link>
+                      ) : (
+                        <span className="text-2xl text-bright-lake font-semibold">
+                          {artist.name}
+                        </span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+              {legacyPersonName && (
+                <p className="text-2xl text-bright-lake font-semibold">{legacyPersonName}</p>
               )}
             </div>
 
@@ -97,8 +134,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                       Start:
                     </span>
                     <span className="text-lg text-navy">
-                      {formatDate(startDate)}
-                      {startDate && ` at ${formatTime(startDate)}`}
+                      {formatDate(startDate)} at {formatTime(startDate)}
                     </span>
                   </div>
                   {endDate && (
@@ -107,8 +143,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                         End:
                       </span>
                       <span className="text-lg text-navy">
-                        {formatDate(endDate)}
-                        {endDate && ` at ${formatTime(endDate)}`}
+                        {formatDate(endDate)} at {formatTime(endDate)}
                       </span>
                     </div>
                   )}
@@ -116,10 +151,10 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               )}
             </div>
 
-            {/* Category */}
-            {happening.category && (
+            {/* Type / Category Tag */}
+            {(typeLabel || happening.category) && (
               <div className="mb-8">
-                <CategoryTag category={happening.category} />
+                <CategoryTag category={typeLabel || happening.category!} />
               </div>
             )}
 
