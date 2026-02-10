@@ -25,9 +25,9 @@ setInterval(() => {
   }
 }, FORM_RATE_LIMIT_WINDOW_MS)
 
-export function middleware(_request: NextRequest) {
-  if (_request.method === 'POST' && _request.nextUrl.pathname === '/api/form-submissions') {
-    const ip = _request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+export function middleware(request: NextRequest) {
+  if (request.method === 'POST' && request.nextUrl.pathname === '/api/form-submissions') {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
     if (isFormRateLimited(ip)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
@@ -37,6 +37,17 @@ export function middleware(_request: NextRequest) {
   }
 
   const response = NextResponse.next()
+
+  const pathname = request.nextUrl.pathname
+
+  // Cache-Control for font files and static assets served through middleware
+  if (pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+  } else if (pathname.startsWith('/api/')) {
+    response.headers.set('Cache-Control', 'no-store')
+  } else if (!pathname.startsWith('/admin')) {
+    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300')
+  }
 
   // Security headers
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')

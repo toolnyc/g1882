@@ -99,6 +99,7 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
                       alt={getImageAlt(happening)}
                       width={96}
                       height={96}
+                      sizes="(max-width: 640px) 80px, 96px"
                       className="h-full w-full object-cover object-center"
                     />
                   </div>
