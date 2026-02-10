@@ -12,6 +12,7 @@ import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { formatSlug } from './hooks/formatSlug'
 import { revalidateHappening, revalidateDeleteHappening } from './hooks/revalidateHappening'
 
 export const Happenings: CollectionConfig = {
@@ -218,6 +219,7 @@ export const Happenings: CollectionConfig = {
     slugField(),
   ],
   hooks: {
+    beforeChange: [formatSlug],
     afterChange: [revalidateHappening],
     afterDelete: [revalidateDeleteHappening],
   },
