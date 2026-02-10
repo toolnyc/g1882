@@ -8,8 +8,10 @@ export const dynamic = 'force-dynamic'
 import { generateMeta } from '@/utilities/generateMeta'
 import { SpacePageClient } from './SpacePage.client'
 
-export default function SpacePage() {
-  return <SpacePageClient />
+export default async function SpacePage() {
+  const space = await getCachedSpace()()
+
+  return <SpacePageClient space={space ?? undefined} />
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   if (!space) {
     return {
-      title: 'Space',
+      title: 'Gallery Space',
     }
   }
 
@@ -25,8 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
     doc: {
       ...space,
       meta: {
-        title: space.name || 'Space',
-        description: space.description || space.tagline || undefined,
+        title: `Gallery Space | ${space.name || 'Gallery 1882'}`,
+        description:
+          space.description ||
+          space.tagline ||
+          'Rent our contemporary gallery space for private events, corporate gatherings, and art-centric celebrations.',
       },
     },
   })

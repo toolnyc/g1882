@@ -139,6 +139,7 @@ export const Artists: CollectionConfig = {
       ],
     },
     slugField({
+      fieldToUse: 'name',
       position: undefined,
     }),
   ],

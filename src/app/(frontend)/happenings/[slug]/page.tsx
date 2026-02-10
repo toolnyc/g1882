@@ -75,15 +75,24 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   }
 
   const typeLabel = happening.type === 'exhibition' ? 'Exhibition' : happening.type === 'event' ? 'Event' : null
+  const hasHeroImage = heroImage && typeof heroImage === 'object' && heroImage.url
+  const isEvent = happening.type === 'event'
+
+  // For events on the same day, show a compact single-line date with time range
+  const isSameDay =
+    startDate && endDate &&
+    startDate.getFullYear() === endDate.getFullYear() &&
+    startDate.getMonth() === endDate.getMonth() &&
+    startDate.getDate() === endDate.getDate()
 
   return (
     <main className="min-h-screen bg-off-white">
-      <article className="pb-24">
+      <article className={`pb-24${hasHeroImage ? '' : ' pt-48'}`}>
         {/* Hero Image */}
-        {heroImage && typeof heroImage === 'object' && heroImage.url && (
+        {hasHeroImage && (
           <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
             <Image
-              src={heroImage.url}
+              src={heroImage.url!}
               alt={heroImage.alt || happening.title || ''}
               fill
               className="object-cover"
@@ -127,7 +136,28 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
             {/* Date and Time Information */}
             <div className="mb-8 pb-8 border-b border-navy/20">
-              {startDate && (
+              {startDate && isEvent && isSameDay ? (
+                /* Events on a single day: show date once with time range */
+                <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                      Date:
+                    </span>
+                    <span className="text-lg text-navy">
+                      {formatDate(startDate)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                      Time:
+                    </span>
+                    <span className="text-lg text-navy">
+                      {formatTime(startDate)}{endDate ? ` \u2013 ${formatTime(endDate)}` : ''}
+                    </span>
+                  </div>
+                </div>
+              ) : startDate && isEvent ? (
+                /* Events spanning multiple days: show full start and end */
                 <div className="space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
@@ -148,7 +178,29 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                     </div>
                   )}
                 </div>
-              )}
+              ) : startDate ? (
+                /* Exhibitions: show date range */
+                <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                      Opens:
+                    </span>
+                    <span className="text-lg text-navy">
+                      {formatDate(startDate)}
+                    </span>
+                  </div>
+                  {endDate && (
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span className="text-sm font-semibold text-navy/70 uppercase tracking-wide">
+                        Closes:
+                      </span>
+                      <span className="text-lg text-navy">
+                        {formatDate(endDate)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
 
             {/* Type / Category Tag */}

@@ -87,7 +87,7 @@ export default async function HappeningsPage() {
         subtitle={personName || undefined}
         description={dateSubtitle || undefined}
         label="Coming Up"
-        href={upcomingBannerHappening.slug ? `/happenings/${upcomingBannerHappening.slug}` : null}
+        href={`/happenings/${upcomingBannerHappening.slug || upcomingBannerHappening.id}`}
         showLiveIndicator={false}
         category={upcomingBannerHappening.type || upcomingBannerHappening.category || undefined}
       />
@@ -115,7 +115,7 @@ export default async function HappeningsPage() {
               ? new Date(happening.startDate as string).getFullYear().toString()
               : 'Unknown',
             subtitle: fullSubtitle,
-            href: happening.slug ? `/happenings/${happening.slug}` : null,
+            href: `/happenings/${happening.slug || happening.id}`,
             featuredPersonName: personName,
             category: happening.type || happening.category || null,
           }

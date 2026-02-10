@@ -78,7 +78,7 @@ export const seed = async ({
   payload.logger.info(`— Seeding happenings...`)
   const happeningMap = await seedHappenings(payload, req, artistMap, mediaMap)
 
-  // Seed posts/journal (depends on artists and happenings)
+  // Seed posts/news (depends on artists and happenings)
   payload.logger.info(`— Seeding posts...`)
   await seedPosts(payload, req, artistMap, happeningMap, mediaMap)
 

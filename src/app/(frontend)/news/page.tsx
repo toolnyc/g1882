@@ -46,7 +46,7 @@ export default async function Page() {
         title={recentPost.title || 'Recent Post'}
         description={publishedDate}
         label="Recently Posted"
-        href={recentPost.slug ? `/journal/${recentPost.slug}` : null}
+        href={recentPost.slug ? `/news/${recentPost.slug}` : null}
         showLiveIndicator={false}
       />
     )
@@ -67,11 +67,11 @@ export default async function Page() {
               ? new Date(post.publishedAt as string).getFullYear().toString()
               : 'Unknown',
             subtitle: publishedDate,
-            href: post.slug ? `/journal/${post.slug}` : null,
+            href: post.slug ? `/news/${post.slug}` : null,
             publishedAt: post.publishedAt,
           }
         })}
-        title="Journal"
+        title="News"
         groupBy="chronological"
         banner={recentBanner}
       />
@@ -81,7 +81,7 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Journal`,
+    title: `News`,
   }
 }
 

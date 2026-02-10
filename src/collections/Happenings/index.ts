@@ -176,12 +176,13 @@ export const Happenings: CollectionConfig = {
                       return false
                     }
 
-                    // Active if current date is between start and end (or after start if no end date)
+                    // Active only if current date is between start and end.
+                    // Happenings without an endDate are NOT considered active.
                     if (endDate) {
                       return now >= startDate && now <= endDate
-                    } else {
-                      return now >= startDate
                     }
+
+                    return false
                   },
                 ],
               },

@@ -6,6 +6,7 @@ import { draftMode } from 'next/headers'
 async function getHappeningBySlug(slug: string, depth = 2, draft = false) {
   const payload = await getPayload({ config: configPromise })
 
+  // First try to find by slug
   const result = await payload.find({
     collection: 'happenings',
     depth,
@@ -21,7 +22,26 @@ async function getHappeningBySlug(slug: string, depth = 2, draft = false) {
     overrideAccess: true,
   })
 
-  return result.docs[0] || null
+  if (result.docs[0]) {
+    return result.docs[0]
+  }
+
+  // Fall back to finding by ID (for happenings that may lack a slug)
+  try {
+    const byId = await payload.findByID({
+      collection: 'happenings',
+      id: slug,
+      depth,
+      draft,
+    })
+    if (byId && (draft || byId._status === 'published')) {
+      return byId
+    }
+  } catch {
+    // ID lookup failed (invalid ID format, not found, etc.) -- return null
+  }
+
+  return null
 }
 
 /**

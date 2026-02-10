@@ -591,7 +591,7 @@ export const mockJournalBanner = {
   subheadline:
     'Subscribe to our journal for exclusive artist interviews, behind-the-scenes content, and insights into contemporary art practice.',
   ctaText: 'Subscribe to Journal',
-  ctaUrl: '/journal',
+  ctaUrl: '/news',
 }
 
 // Mission Section Data

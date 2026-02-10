@@ -19,7 +19,7 @@ export async function POST(request: Request): Promise<Response> {
 
   // Default tags to revalidate all content
   const defaultTags = ['posts', 'artists', 'happenings', 'posts-sitemap']
-  const defaultPaths = ['/journal', '/artists', '/happenings', '/']
+  const defaultPaths = ['/news', '/artists', '/happenings', '/']
 
   const tagsToRevalidate = tags || defaultTags
   const pathsToRevalidate = paths || defaultPaths

@@ -13,7 +13,7 @@ const SITEMAP_LINKS = [
   { label: 'Happenings', url: '/happenings' },
   { label: 'Artists', url: '/artists' },
   { label: 'Visit', url: '/visit' },
-  { label: 'News', url: '/journal' },
+  { label: 'News', url: '/news' },
   { label: 'Gallery Space', url: '/space' },
 ] as const
 

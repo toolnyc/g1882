@@ -38,25 +38,17 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
   const activeDateConditions: Where[] = []
   if (filters.active) {
     // Filter by date ranges instead of isActive field, since isActive is calculated dynamically
-    // Active happenings: startDate <= now AND (endDate >= now OR endDate is null)
+    // Active happenings: startDate <= now AND endDate >= now
+    // Happenings without an endDate are NOT considered active (they have no defined end)
     activeDateConditions.push({
       startDate: {
         less_than_equal: now.toISOString(),
       },
     })
     activeDateConditions.push({
-      or: [
-        {
-          endDate: {
-            greater_than_equal: now.toISOString(),
-          },
-        },
-        {
-          endDate: {
-            equals: null,
-          },
-        },
-      ],
+      endDate: {
+        greater_than_equal: now.toISOString(),
+      },
     })
   }
 
@@ -133,11 +125,11 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
       return { ...happening, isActive: false }
     }
 
+    // Active only if both startDate and endDate are set and now falls within the range.
+    // Happenings without an endDate are NOT considered active (they have no defined end).
     let isActive = false
     if (endDate) {
       isActive = now >= startDate && now <= endDate
-    } else {
-      isActive = now >= startDate
     }
 
     return { ...happening, isActive }

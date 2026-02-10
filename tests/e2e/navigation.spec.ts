@@ -8,7 +8,7 @@ const MAIN_NAV_ROUTES = [
   { label: 'Happenings', path: '/happenings' },
   { label: 'Artists', path: '/artists' },
   { label: 'Visit', path: '/visit' },
-  { label: 'Journal', path: '/journal' },
+  { label: 'News', path: '/news' },
   { label: 'Space', path: '/space' },
 ]
 

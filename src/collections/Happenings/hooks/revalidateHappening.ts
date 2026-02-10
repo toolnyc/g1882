@@ -10,6 +10,9 @@ export const revalidateHappening: CollectionAfterChangeHook<Happening> = ({
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
+    // Always revalidate the happenings list tag
+    revalidateTag('happenings')
+
     if (doc.slug) {
       const path = `/happenings/${doc.slug}`
 
@@ -17,8 +20,12 @@ export const revalidateHappening: CollectionAfterChangeHook<Happening> = ({
 
       revalidatePath(path)
       revalidateTag(`happening_${doc.slug}`)
-      revalidateTag('happenings')
     }
+
+    // Also revalidate the ID-based path (fallback for happenings without slugs)
+    const idPath = `/happenings/${doc.id}`
+    revalidatePath(idPath)
+    revalidateTag(`happening_${doc.id}`)
 
     // If the slug changed, we need to revalidate the old path
     if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
@@ -37,12 +44,20 @@ export const revalidateDeleteHappening: CollectionAfterDeleteHook<Happening> = (
   doc,
   req: { context },
 }) => {
-  if (!context.disableRevalidate && doc?.slug) {
-    const path = `/happenings/${doc.slug}`
-
-    revalidatePath(path)
-    revalidateTag(`happening_${doc.slug}`)
+  if (!context.disableRevalidate) {
     revalidateTag('happenings')
+
+    if (doc?.slug) {
+      const path = `/happenings/${doc.slug}`
+
+      revalidatePath(path)
+      revalidateTag(`happening_${doc.slug}`)
+    }
+
+    if (doc?.id) {
+      revalidatePath(`/happenings/${doc.id}`)
+      revalidateTag(`happening_${doc.id}`)
+    }
   }
 
   return doc

@@ -60,7 +60,7 @@ export default async function ExhibitionsPage() {
       description: happening.description ? JSON.stringify(happening.description) : '',
       image: imageUrl,
       featured: happening.featured || false,
-      href: `/happenings/${happening.slug}`,
+      href: `/happenings/${happening.slug || happening.id}`,
       category: happening.category || null,
     }
   })

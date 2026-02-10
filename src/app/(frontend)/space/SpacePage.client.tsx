@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
+import type { Space } from '@/payload-types'
 
 interface RentalFormData {
   name: string
@@ -20,7 +21,11 @@ interface RentalFormData {
   message: string
 }
 
-export function SpacePageClient() {
+interface SpacePageClientProps {
+  space?: Space
+}
+
+export function SpacePageClient({ space }: SpacePageClientProps) {
   const {
     register,
     handleSubmit,
@@ -31,6 +36,10 @@ export function SpacePageClient() {
   const [isLoading, setIsLoading] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [error, setError] = useState<string | undefined>()
+
+  const galleryName = space?.name || 'Gallery 1882'
+  const galleryEmail = space?.email || null
+  const galleryPhone = space?.phone || null
 
   const onSubmit = async (data: RentalFormData) => {
     setIsLoading(true)
@@ -83,7 +92,7 @@ export function SpacePageClient() {
           >
             <div className="mb-8">
               <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">
-                Rent Our Space
+                Gallery Space
               </h1>
               <AnimatedBorder className="mt-4" />
             </div>
@@ -103,7 +112,7 @@ export function SpacePageClient() {
             <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
               <Image
                 src="/media/placeholder.svg"
-                alt="Gallery 1882 space"
+                alt={`${galleryName} gallery space`}
                 width={1920}
                 height={1080}
                 className="h-full w-full object-cover object-center"
@@ -113,7 +122,7 @@ export function SpacePageClient() {
         </div>
       </section>
 
-      {/* About the Space Section */}
+      {/* Intro / Description Section */}
       <section className="py-10 gallery-section">
         <div className="container">
           <motion.div
@@ -129,16 +138,23 @@ export function SpacePageClient() {
                 A Unique Space for Your Event
               </h2>
               <div className="space-y-6 text-lg leading-relaxed text-navy/80">
-                <p>
-                  Gallery 1882 offers a contemporary, versatile space perfect for private events,
-                  corporate gatherings, weddings, and art-centric celebrations. Our gallery combines
-                  modern aesthetics with the natural beauty of the Indiana Dunes region.
-                </p>
-                <p>
-                  Whether you&apos;re planning an intimate gathering or a larger celebration, our
-                  space can accommodate a variety of events while providing a sophisticated backdrop
-                  of contemporary art.
-                </p>
+                {space?.description ? (
+                  <p>{space.description}</p>
+                ) : (
+                  <>
+                    <p>
+                      {galleryName} offers a contemporary, versatile space perfect for private
+                      events, corporate gatherings, weddings, and art-centric celebrations. Our
+                      gallery combines modern aesthetics with the natural beauty of the Indiana Dunes
+                      region.
+                    </p>
+                    <p>
+                      Whether you&apos;re planning an intimate gathering or a larger celebration, our
+                      space can accommodate a variety of events while providing a sophisticated
+                      backdrop of contemporary art.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
             <div className="lg:col-span-5 lg:col-start-8">
@@ -164,7 +180,7 @@ export function SpacePageClient() {
         </div>
       </section>
 
-      {/* Amenities Section */}
+      {/* Space Features / Amenities Section */}
       <section className="py-20 gallery-section">
         <div className="container">
           <motion.div
@@ -250,7 +266,7 @@ export function SpacePageClient() {
         </div>
       </section>
 
-      {/* Rental Inquiry Form Section */}
+      {/* Rental Info / Inquiry CTA Section */}
       <section className="py-20 gallery-section bg-navy/5">
         <div className="container">
           <motion.div
@@ -266,9 +282,32 @@ export function SpacePageClient() {
                 Request Information
               </h2>
               <p className="text-lg text-navy/80">
-                Interested in renting Gallery 1882 for your event? Fill out the form below and
+                Interested in renting {galleryName} for your event? Fill out the form below and
                 we&apos;ll get back to you within 48 hours.
               </p>
+              {(galleryEmail || galleryPhone) && (
+                <p className="mt-4 text-navy/60 text-sm">
+                  You can also reach us directly
+                  {galleryEmail && (
+                    <>
+                      {' '}at{' '}
+                      <a href={`mailto:${galleryEmail}`} className="text-lake hover:underline">
+                        {galleryEmail}
+                      </a>
+                    </>
+                  )}
+                  {galleryEmail && galleryPhone && ' or'}
+                  {galleryPhone && (
+                    <>
+                      {' '}by phone at{' '}
+                      <a href={`tel:${galleryPhone}`} className="text-lake hover:underline">
+                        {galleryPhone}
+                      </a>
+                    </>
+                  )}
+                  .
+                </p>
+              )}
             </div>
 
             {hasSubmitted ? (
