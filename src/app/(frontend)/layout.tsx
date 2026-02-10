@@ -33,18 +33,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link rel="preconnect" href="https://api.open-meteo.com" />
+        <link rel="dns-prefetch" href="https://public.blob.vercel-storage.com" />
+        <link rel="preconnect" href="https://customer-dz4f40f4nnmmdd6e.cloudflarestream.com" />
+        <link rel="preconnect" href="https://iframe.cloudflarestream.com" />
       </head>
       <body>
         <Providers isAdmin={isAuthenticated}>
           <LanderModeGuard>
             <CustomCursor />
-            <div className="fixed top-0 left-0 right-0 z-[100]">
-              <AdminBar
-                adminBarProps={{
-                  preview: isEnabled,
-                }}
-              />
-            </div>
+            {isEnabled && (
+              <div className="fixed top-0 left-0 right-0 z-[100]">
+                <AdminBar
+                  adminBarProps={{
+                    preview: isEnabled,
+                  }}
+                />
+              </div>
+            )}
             <LayoutClient>
               <div>
                 <Header />

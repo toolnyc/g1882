@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(_request: NextRequest) {
+export function middleware(request: NextRequest) {
   const response = NextResponse.next()
+
+  const pathname = request.nextUrl.pathname
+
+  // Cache-Control for font files and static assets served through middleware
+  if (pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+  } else if (pathname.startsWith('/api/')) {
+    response.headers.set('Cache-Control', 'no-store')
+  } else if (!pathname.startsWith('/admin')) {
+    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300')
+  }
 
   // Security headers
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
