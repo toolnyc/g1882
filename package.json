@@ -20,6 +20,7 @@
     "test": "pnpm run test:unit && pnpm run test:int && pnpm run test:e2e",
     "test:unit": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts tests/unit",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts",
+    "test:e2e:ui": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test --config=playwright.config.ts --ui",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts tests/int",
     "test:pre-deploy": "pnpm run lint:fix && pnpm run test:unit && pnpm run test:int"
   },
