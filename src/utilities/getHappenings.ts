@@ -6,6 +6,8 @@ type HappeningFilters = {
   featured?: boolean
   upcoming?: boolean
   active?: boolean
+  type?: 'exhibition' | 'event'
+  sortDirection?: 'asc' | 'desc'
 }
 
 async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
@@ -59,6 +61,14 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
     })
   }
 
+  if (filters.type) {
+    allConditions.push({
+      type: {
+        equals: filters.type,
+      },
+    })
+  }
+
   // Add active date conditions
   allConditions.push(...activeDateConditions)
 
@@ -77,11 +87,15 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1) {
     Object.assign(where, publishedFilter)
   }
 
+  // Default to ascending for upcoming, descending otherwise
+  const sortDirection = filters.sortDirection || (filters.upcoming ? 'asc' : 'desc')
+  const sort = sortDirection === 'asc' ? 'startDate' : '-startDate'
+
   const result = await payload.find({
     collection: 'happenings',
     depth,
     where,
-    sort: '-startDate',
+    sort,
     limit: 1000,
     pagination: false,
     overrideAccess: true,

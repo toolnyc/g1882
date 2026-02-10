@@ -1,4 +1,4 @@
-import type { Happening, Home, Media, Space } from '@/payload-types'
+import type { Home, Media, Space } from '@/payload-types'
 
 import { resolveArtist, resolveMediaUrl } from './mediaHelpers'
 
@@ -8,7 +8,6 @@ export interface FeaturedArtistData {
   title: string
   bio: string
   image: string
-  exhibitionId: string
   artistSlug: string
 }
 
@@ -20,59 +19,23 @@ export interface VisitSectionData {
   ctaUrl: string
 }
 
-const defaultArtistImage = '/media/test-artist.jpg'
-const defaultVisitImage = '/media/test-space.jpg'
-
-const getArtistImage = (image: string | Media | null | undefined) =>
-  resolveMediaUrl(image, defaultArtistImage)
+const getArtistImage = (image: string | Media | null | undefined, override?: string | Media | null) =>
+  resolveMediaUrl(override) || resolveMediaUrl(image)
 
 export const transformFeaturedArtist = (
   homeData: Home | null,
-  featuredHappening?: Happening | null,
 ): FeaturedArtistData | null => {
   const homeArtist = resolveArtist(homeData?.featuredArtist)
-  if (homeArtist) {
-    return {
-      id: homeArtist.id,
-      name: homeArtist.name,
-      title: homeArtist.name,
-      bio: homeArtist.bio || '',
-      image: getArtistImage(homeArtist.image),
-      exhibitionId: '',
-      artistSlug: homeArtist.slug,
-    }
-  }
+  if (!homeArtist) return null
 
-  if (!featuredHappening) {
-    return null
+  return {
+    id: homeArtist.id,
+    name: homeArtist.name,
+    title: homeArtist.name,
+    bio: (homeData?.featuredArtistDescription as string) || homeArtist.bio || '',
+    image: getArtistImage(homeArtist.image, homeData?.featuredArtistImage),
+    artistSlug: homeArtist.slug,
   }
-
-  const happeningArtist = resolveArtist(featuredHappening.featuredPerson)
-  if (happeningArtist) {
-    return {
-      id: happeningArtist.id,
-      name: happeningArtist.name,
-      title: featuredHappening.title || happeningArtist.name,
-      bio: happeningArtist.bio || '',
-      image: getArtistImage(happeningArtist.image),
-      exhibitionId: featuredHappening.id,
-      artistSlug: happeningArtist.slug,
-    }
-  }
-
-  if (featuredHappening.featuredPersonName) {
-    return {
-      id: featuredHappening.id,
-      name: featuredHappening.featuredPersonName,
-      title: featuredHappening.title || featuredHappening.featuredPersonName,
-      bio: '',
-      image: defaultArtistImage,
-      exhibitionId: featuredHappening.id,
-      artistSlug: '',
-    }
-  }
-
-  return null
 }
 
 export const transformVisitSection = (
@@ -83,7 +46,7 @@ export const transformVisitSection = (
     return {
       title: homeData.visitTitle,
       description: homeData.visitDescription || '',
-      image: resolveMediaUrl(homeData.visitImage, defaultVisitImage),
+      image: resolveMediaUrl(homeData.visitImage),
       ctaText: homeData.visitCtaText || 'Plan Your Visit',
       ctaUrl: homeData.visitCtaUrl || '/visit',
     }
@@ -98,9 +61,8 @@ export const transformVisitSection = (
     description:
       space.description ||
       'Located under an hours drive from Chicago, Gallery 1882, in the heart of Chesterton, Indiana is the gateway to the Indiana Dunes National Park. Always open, always free, always inspiring.',
-    image: defaultVisitImage,
+    image: '',
     ctaText: 'Plan Your Visit',
     ctaUrl: '/visit',
   }
 }
-

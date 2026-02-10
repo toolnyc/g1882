@@ -72,6 +72,7 @@ export async function seedHappenings(
       collection: 'happenings',
       data: {
         title: mockHappening.title,
+        type: (mockHappening.endDate ? 'exhibition' : 'event') as 'exhibition' | 'event',
         slug,
         startDate: mockHappening.startDate,
         endDate: mockHappening.endDate || undefined,

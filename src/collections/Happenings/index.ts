@@ -44,6 +44,20 @@ export const Happenings: CollectionConfig = {
       required: true,
     },
     {
+      name: 'type',
+      type: 'select',
+      required: true,
+      defaultValue: 'exhibition',
+      options: [
+        { label: 'Exhibition', value: 'exhibition' },
+        { label: 'Event', value: 'event' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Exhibitions have date ranges; events are single-day occurrences',
+      },
+    },
+    {
       name: 'startDate',
       type: 'date',
       required: true,
@@ -79,9 +93,22 @@ export const Happenings: CollectionConfig = {
       }),
     },
     {
+      name: 'artists',
+      type: 'relationship',
+      relationTo: 'artists',
+      hasMany: true,
+      required: false,
+      admin: {
+        description: 'Artists involved in this happening (supports multiple for group shows)',
+      },
+    },
+    {
       name: 'category',
       type: 'text',
       required: false,
+      admin: {
+        description: 'Deprecated — use the "type" field instead',
+      },
     },
     {
       name: 'featuredPerson',
@@ -90,6 +117,7 @@ export const Happenings: CollectionConfig = {
       required: false,
       admin: {
         position: 'sidebar',
+        description: 'Deprecated — use the "artists" field instead',
       },
     },
     {
@@ -97,7 +125,7 @@ export const Happenings: CollectionConfig = {
       type: 'text',
       required: false,
       admin: {
-        description: 'Fallback name when no artist relationship is set',
+        description: 'Deprecated — use the "artists" field instead',
         position: 'sidebar',
       },
     },

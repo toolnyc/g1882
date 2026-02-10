@@ -17,6 +17,25 @@ export const Home: GlobalConfig = {
       fields: [hero],
     },
     {
+      name: 'heroVideoUrl',
+      type: 'text',
+      label: 'Hero Video URL',
+      required: false,
+      admin: {
+        description:
+          'Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.',
+      },
+    },
+    {
+      name: 'missionCaption',
+      type: 'text',
+      label: 'Mission Section Caption',
+      required: false,
+      admin: {
+        description: 'Caption above the mission statement (defaults to "Our Mission")',
+      },
+    },
+    {
       name: 'missionStatement',
       type: 'textarea',
       label: 'Mission Statement',
@@ -42,6 +61,34 @@ export const Home: GlobalConfig = {
       required: false,
       admin: {
         description: 'Select an artist to feature on the homepage',
+      },
+    },
+    {
+      name: 'featuredArtistImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Featured Artist Image Override',
+      required: false,
+      admin: {
+        description: "Optional: override the artist's default image for the homepage display",
+      },
+    },
+    {
+      name: 'featuredArtistDescription',
+      type: 'textarea',
+      label: 'Featured Artist Description',
+      required: false,
+      admin: {
+        description: 'Optional: custom blurb for the homepage (overrides artist bio)',
+      },
+    },
+    {
+      name: 'visitSectionEnabled',
+      type: 'checkbox',
+      label: 'Show Visit Section',
+      defaultValue: true,
+      admin: {
+        description: 'Toggle the Visit section on the homepage',
       },
     },
     {

@@ -47,6 +47,65 @@ export const Artists: CollectionConfig = {
       relationTo: 'media',
       required: false,
     },
+    {
+      name: 'works',
+      type: 'array',
+      label: 'Works',
+      admin: {
+        description: 'Gallery of artist works with images and captions',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'title',
+          type: 'text',
+          required: false,
+        },
+        {
+          name: 'caption',
+          type: 'text',
+          required: false,
+        },
+      ],
+    },
+    {
+      name: 'website',
+      type: 'text',
+      label: 'Website URL',
+      required: false,
+      admin: {
+        description: "Artist's personal website",
+      },
+    },
+    {
+      name: 'socialLinks',
+      type: 'array',
+      label: 'Social Links',
+      fields: [
+        {
+          name: 'platform',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Instagram', value: 'instagram' },
+            { label: 'Twitter / X', value: 'twitter' },
+            { label: 'Facebook', value: 'facebook' },
+            { label: 'LinkedIn', value: 'linkedin' },
+            { label: 'Other', value: 'other' },
+          ],
+        },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
     slugField({
       position: undefined,
     }),

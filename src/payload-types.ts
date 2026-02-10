@@ -298,6 +298,28 @@ export interface Artist {
   bio?: string | null;
   image?: (string | null) | Media;
   /**
+   * Gallery of artist works with images and captions
+   */
+  works?:
+    | {
+        image: string | Media;
+        title?: string | null;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Artist's personal website
+   */
+  website?: string | null;
+  socialLinks?:
+    | {
+        platform: 'instagram' | 'twitter' | 'facebook' | 'linkedin' | 'other';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
@@ -313,6 +335,10 @@ export interface Artist {
 export interface Happening {
   id: string;
   title: string;
+  /**
+   * Exhibitions have date ranges; events are single-day occurrences
+   */
+  type: 'exhibition' | 'event';
   startDate: string;
   endDate?: string | null;
   description?: {
@@ -330,10 +356,20 @@ export interface Happening {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Artists involved in this happening (supports multiple for group shows)
+   */
+  artists?: (string | Artist)[] | null;
+  /**
+   * Deprecated — use the "type" field instead
+   */
   category?: string | null;
+  /**
+   * Deprecated — use the "artists" field instead
+   */
   featuredPerson?: (string | null) | Artist;
   /**
-   * Fallback name when no artist relationship is set
+   * Deprecated — use the "artists" field instead
    */
   featuredPersonName?: string | null;
   heroImage?: (string | null) | Media;
@@ -1008,6 +1044,22 @@ export interface ArtistsSelect<T extends boolean = true> {
   name?: T;
   bio?: T;
   image?: T;
+  works?:
+    | T
+    | {
+        image?: T;
+        title?: T;
+        caption?: T;
+        id?: T;
+      };
+  website?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1020,9 +1072,11 @@ export interface ArtistsSelect<T extends boolean = true> {
  */
 export interface HappeningsSelect<T extends boolean = true> {
   title?: T;
+  type?: T;
   startDate?: T;
   endDate?: T;
   description?: T;
+  artists?: T;
   category?: T;
   featuredPerson?: T;
   featuredPersonName?: T;
@@ -1303,7 +1357,27 @@ export interface Space {
   address?: string | null;
   phone?: string | null;
   email?: string | null;
+  /**
+   * Comma-separated hours string (legacy). Use structuredHours for new data.
+   */
   hours?: string | null;
+  /**
+   * Structured hours for open/closed status. Day: 0=Sunday, 1=Monday, ... 6=Saturday
+   */
+  structuredHours?:
+    | {
+        day: '0' | '1' | '2' | '3' | '4' | '5' | '6';
+        /**
+         * Opening time in 24h format, e.g. "10:00"
+         */
+        open: string;
+        /**
+         * Closing time in 24h format, e.g. "18:00"
+         */
+        close: string;
+        id?: string | null;
+      }[]
+    | null;
   admission?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1354,6 +1428,14 @@ export interface Home {
       media?: (string | null) | Media;
     };
   };
+  /**
+   * Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.
+   */
+  heroVideoUrl?: string | null;
+  /**
+   * Caption above the mission statement (defaults to "Our Mission")
+   */
+  missionCaption?: string | null;
   missionStatement?: string | null;
   missionCtaText?: string | null;
   missionCtaUrl?: string | null;
@@ -1361,6 +1443,18 @@ export interface Home {
    * Select an artist to feature on the homepage
    */
   featuredArtist?: (string | null) | Artist;
+  /**
+   * Optional: override the artist's default image for the homepage display
+   */
+  featuredArtistImage?: (string | null) | Media;
+  /**
+   * Optional: custom blurb for the homepage (overrides artist bio)
+   */
+  featuredArtistDescription?: string | null;
+  /**
+   * Toggle the Visit section on the homepage
+   */
+  visitSectionEnabled?: boolean | null;
   visitTitle?: string | null;
   visitDescription?: string | null;
   visitImage?: (string | null) | Media;
@@ -1400,6 +1494,10 @@ export interface Visit {
         }[]
       | null;
   };
+  /**
+   * Toggle visibility of the Admission section on the Visit page
+   */
+  showAdmissionSection?: boolean | null;
   admission?: {
     caption?: string | null;
     title?: string | null;
@@ -1484,6 +1582,14 @@ export interface SpaceSelect<T extends boolean = true> {
   phone?: T;
   email?: T;
   hours?: T;
+  structuredHours?:
+    | T
+    | {
+        day?: T;
+        open?: T;
+        close?: T;
+        id?: T;
+      };
   admission?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1520,10 +1626,15 @@ export interface HomeSelect<T extends boolean = true> {
               media?: T;
             };
       };
+  heroVideoUrl?: T;
+  missionCaption?: T;
   missionStatement?: T;
   missionCtaText?: T;
   missionCtaUrl?: T;
   featuredArtist?: T;
+  featuredArtistImage?: T;
+  featuredArtistDescription?: T;
+  visitSectionEnabled?: T;
   visitTitle?: T;
   visitDescription?: T;
   visitImage?: T;
@@ -1562,6 +1673,7 @@ export interface VisitSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  showAdmissionSection?: T;
   admission?:
     | T
     | {

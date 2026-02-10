@@ -99,9 +99,21 @@ export const Visit: GlobalConfig = {
 
     // Admission Section
     {
+      name: 'showAdmissionSection',
+      type: 'checkbox',
+      label: 'Show Admission Section',
+      defaultValue: false,
+      admin: {
+        description: 'Toggle visibility of the Admission section on the Visit page',
+      },
+    },
+    {
       name: 'admission',
       type: 'group',
       label: 'Admission Section',
+      admin: {
+        condition: (data) => Boolean(data?.showAdmissionSection),
+      },
       fields: [
         {
           name: 'caption',
