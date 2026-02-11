@@ -1,8 +1,6 @@
 import { getCachedSpace } from '@/utilities/getSpace'
-import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
-import type { Visit } from '@/payload-types'
 import { formatStructuredHours } from '@/utilities/hoursHelpers'
 
 import { NewsletterForm } from './NewsletterForm'
@@ -20,16 +18,8 @@ const SITEMAP_LINKS = [
 
 export async function Footer() {
   const space = await getCachedSpace()()
-  const visit = (await getCachedGlobal('visit', 1)()) as Visit
 
-  // Pull hours from Space.structuredHours first (same source as hero open/closed),
-  // then fall back to Visit regularHours, then legacy Space.hours
-  const structuredHoursDisplay = formatStructuredHours(space?.structuredHours)
-  const regularHours = structuredHoursDisplay.length > 0
-    ? structuredHoursDisplay
-    : visit?.hours?.regularHours && visit.hours.regularHours.length > 0
-      ? visit.hours.regularHours
-      : null
+  const regularHours = formatStructuredHours(space?.structuredHours)
 
   return (
     <FooterClientWrapper>
@@ -37,29 +27,9 @@ export async function Footer() {
         {/* Decorative top accent line */}
         <div className="h-px bg-gradient-to-r from-transparent via-lake to-transparent" />
         <div className="container py-12 text-off-white">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-off-white/10">
-            {/* Gallery Info */}
-            <div className="lg:pr-6">
-              <h3 className="mb-4 text-xl font-bold text-off-white">
-                {space?.name || 'Gallery 1882'}
-              </h3>
-              <p className="mb-4 text-sm text-off-white">
-                {space?.tagline || 'Contemporary art in the heart of the Indiana Dunes region.'}
-              </p>
-              {space?.address && (
-                <p className="text-sm text-off-white">
-                  {space.address.split(',').map((line: string, i: number, arr: string[]) => (
-                    <React.Fragment key={i}>
-                      {line.trim()}
-                      {i < arr.length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
-                </p>
-              )}
-            </div>
-
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-off-white/10">
             {/* Sitemap Links */}
-            <div className="lg:px-6">
+            <div className="lg:pr-6">
               <h4 className="mb-4 font-bold text-off-white">Sitemap</h4>
               <nav className="space-y-2">
                 {SITEMAP_LINKS.map((item) => (
@@ -78,7 +48,7 @@ export async function Footer() {
             <div className="lg:px-6">
               <h4 className="mb-4 font-bold text-off-white">Our Hours</h4>
               <div className="space-y-2 text-sm">
-                {regularHours ? (
+                {regularHours.length > 0 ? (
                   regularHours.map((item, i: number) => (
                     <p key={i} className="text-off-white">
                       {item.day}: {item.hours}
@@ -95,10 +65,20 @@ export async function Footer() {
               </div>
             </div>
 
-            {/* Contact */}
+            {/* Gallery Info */}
             <div className="lg:px-6">
-              <h4 className="mb-4 font-bold text-off-white">Contact</h4>
+              <h4 className="mb-4 font-bold text-off-white">Gallery Info</h4>
               <div className="space-y-2 text-sm">
+                {space?.address && (
+                  <p className="text-off-white">
+                    {space.address.split(',').map((line: string, i: number, arr: string[]) => (
+                      <React.Fragment key={i}>
+                        {line.trim()}
+                        {i < arr.length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )}
                 {space?.phone && (
                   <p className="text-off-white">
                     <a href={`tel:${space.phone}`} className="hover:text-lake transition-colors">
@@ -127,7 +107,7 @@ export async function Footer() {
 
           <div className="mt-8 pt-8 border-t border-off-white/10 text-center text-sm">
             <p className="text-off-white">
-              &copy; {new Date().getFullYear()} {space?.name || 'Gallery 1882'}. All rights reserved.
+              &copy; {new Date().getFullYear()} Gallery 1882. All rights reserved.
             </p>
           </div>
         </div>

@@ -50,25 +50,6 @@ export const Visit: GlobalConfig = {
           label: 'Description',
         },
         {
-          name: 'regularHours',
-          type: 'array',
-          label: 'Regular Hours',
-          fields: [
-            {
-              name: 'day',
-              type: 'text',
-              label: 'Day(s)',
-              required: true,
-            },
-            {
-              name: 'hours',
-              type: 'text',
-              label: 'Hours',
-              required: true,
-            },
-          ],
-        },
-        {
           name: 'note',
           type: 'textarea',
           label: 'Hours Note',

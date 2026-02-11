@@ -5,8 +5,14 @@ import { motion } from 'framer-motion'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
 import type { Visit, Media } from '@/payload-types'
 
+interface FormattedHoursLine {
+  day: string
+  hours: string
+}
+
 interface VisitPageClientProps {
   visit: Visit
+  formattedHours: FormattedHoursLine[]
 }
 
 const LocationIcon = () => (
@@ -83,12 +89,10 @@ const getDirectionCardStyle = (style: string | null | undefined) => {
   }
 }
 
-export default function VisitPageClient({ visit }: VisitPageClientProps) {
+export default function VisitPageClient({ visit, formattedHours }: VisitPageClientProps) {
   const heroImage = visit.heroImage as Media | null | undefined
 
-  const regularHours = visit.hours?.regularHours && visit.hours.regularHours.length > 0
-    ? visit.hours.regularHours
-    : null
+  const regularHours = formattedHours.length > 0 ? formattedHours : null
 
   const specialHours = visit.hours?.specialHours && visit.hours.specialHours.length > 0
     ? visit.hours.specialHours

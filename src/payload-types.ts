@@ -301,7 +301,21 @@ export interface Media {
 export interface Artist {
   id: string;
   name: string;
-  bio?: string | null;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   image?: (string | null) | Media;
   /**
    * Gallery of artist works with images and captions
@@ -1480,13 +1494,6 @@ export interface Visit {
     caption?: string | null;
     title?: string | null;
     description?: string | null;
-    regularHours?:
-      | {
-          day: string;
-          hours: string;
-          id?: string | null;
-        }[]
-      | null;
     /**
      * Note about last admission, holidays, etc.
      */
@@ -1662,13 +1669,6 @@ export interface VisitSelect<T extends boolean = true> {
         caption?: T;
         title?: T;
         description?: T;
-        regularHours?:
-          | T
-          | {
-              day?: T;
-              hours?: T;
-              id?: T;
-            };
         note?: T;
         specialHoursTitle?: T;
         specialHours?:
