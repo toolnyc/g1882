@@ -42,7 +42,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Providers isAdmin={isAuthenticated}>
           <LanderModeGuard>
             <CustomCursor />
-            {isEnabled && (
+            {(isEnabled || isAuthenticated) && (
               <div className="fixed top-0 left-0 right-0 z-[100]">
                 <AdminBar
                   adminBarProps={{

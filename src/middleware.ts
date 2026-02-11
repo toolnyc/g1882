@@ -49,7 +49,7 @@ export function middleware(request: NextRequest) {
     response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300')
   }
 
-  // Security headers
+  // Security headers (applied to all routes)
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
@@ -58,30 +58,35 @@ export function middleware(request: NextRequest) {
     'Strict-Transport-Security',
     'max-age=63072000; includeSubDomains; preload',
   )
-  response.headers.set(
-    'Content-Security-Policy',
-    [
-      "default-src 'self'",
-      // Scripts: self + inline for Next.js hydration + eval for dev
-      `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
-      // Styles: self + inline for Tailwind/Next.js
-      "style-src 'self' 'unsafe-inline'",
-      // Images: self + Vercel Blob + data URIs
-      "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
-      // Fonts: self
-      "font-src 'self'",
-      // Connect: self + weather API + Resend
-      "connect-src 'self' https://api.open-meteo.com",
-      // Media: self + Vercel Blob
-      "media-src 'self' https://*.public.blob.vercel-storage.com",
-      // Frames: Cloudflare Stream for hero video + Payload admin
-      "frame-src 'self' https://customer-*.cloudflarestream.com https://iframe.cloudflarestream.com",
-      // Frame ancestors: only self (prevents clickjacking)
-      "frame-ancestors 'self'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join('; '),
-  )
+
+  // CSP only for public frontend — the admin panel is behind auth and needs
+  // Server Actions, Lexical editor, Blob uploads, etc. that a strict CSP blocks.
+  if (!pathname.startsWith('/admin')) {
+    response.headers.set(
+      'Content-Security-Policy',
+      [
+        "default-src 'self'",
+        // Scripts: self + inline for Next.js hydration + eval for dev
+        `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
+        // Styles: self + inline for Tailwind/Next.js
+        "style-src 'self' 'unsafe-inline'",
+        // Images: self + Vercel Blob + data URIs
+        "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
+        // Fonts: self
+        "font-src 'self'",
+        // Connect: self + weather API
+        "connect-src 'self' https://api.open-meteo.com",
+        // Media: self + Vercel Blob
+        "media-src 'self' https://*.public.blob.vercel-storage.com",
+        // Frames: Cloudflare Stream for hero video
+        "frame-src 'self' https://*.cloudflarestream.com https://iframe.cloudflarestream.com",
+        // Frame ancestors: only self (prevents clickjacking)
+        "frame-ancestors 'self'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ].join('; '),
+    )
+  }
 
   return response
 }
