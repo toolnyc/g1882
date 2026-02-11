@@ -87,12 +87,12 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
         if (groupBy === 'alphabetical') {
           return (a.displayName || a.name || '').localeCompare(b.displayName || b.name || '')
         } else {
-          // For chronological, sort by date (newest first)
+          // For chronological, sort by date (soonest first within each group)
           const aDate = String(a.startDate || a.date || a.publishedAt || '')
           const bDate = String(b.startDate || b.date || b.publishedAt || '')
           return (
-            new Date(bDate).getTime() -
-            new Date(aDate).getTime()
+            new Date(aDate).getTime() -
+            new Date(bDate).getTime()
           )
         }
       })
@@ -276,7 +276,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
       </div>
 
       <section
-        className={`gallery-section ${className}`}
+        className={`gallery-section pb-24 ${className}`}
         style={{
           paddingTop:
             stickyHeaderHeight > 0 ? `calc(${stickyHeaderHeight}px + 1rem)` : 'calc(15rem + 1rem)',

@@ -3,6 +3,7 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 import type { Visit } from '@/payload-types'
+import { formatStructuredHours } from '@/utilities/hoursHelpers'
 
 import { NewsletterForm } from './NewsletterForm'
 import { FooterClientWrapper } from './Component.client'
@@ -14,17 +15,21 @@ const SITEMAP_LINKS = [
   { label: 'Artists', url: '/artists' },
   { label: 'Visit', url: '/visit' },
   { label: 'News', url: '/news' },
-  { label: 'Gallery Space', url: '/space' },
+  { label: 'Rent Our Space', url: '/space' },
 ] as const
 
 export async function Footer() {
   const space = await getCachedSpace()()
   const visit = (await getCachedGlobal('visit', 1)()) as Visit
 
-  // Pull hours from Visit global's regularHours, fall back to Space global
-  const regularHours = visit?.hours?.regularHours && visit.hours.regularHours.length > 0
-    ? visit.hours.regularHours
-    : null
+  // Pull hours from Space.structuredHours first (same source as hero open/closed),
+  // then fall back to Visit regularHours, then legacy Space.hours
+  const structuredHoursDisplay = formatStructuredHours(space?.structuredHours)
+  const regularHours = structuredHoursDisplay.length > 0
+    ? structuredHoursDisplay
+    : visit?.hours?.regularHours && visit.hours.regularHours.length > 0
+      ? visit.hours.regularHours
+      : null
 
   return (
     <FooterClientWrapper>

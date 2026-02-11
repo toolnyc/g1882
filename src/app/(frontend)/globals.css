@@ -127,7 +127,7 @@
     position: relative;
     overflow: hidden;
     border: 1px solid transparent;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.015em;
     font-size: 0.8125rem;
   }
 
@@ -158,7 +158,7 @@
     border-radius: 1px;
     position: relative;
     overflow: hidden;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.015em;
     font-size: 0.8125rem;
   }
 
@@ -188,7 +188,7 @@
     position: relative;
     overflow: hidden;
     background: var(--gallery-lake);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.015em;
     font-size: 0.8125rem;
     border: 1px solid transparent;
   }

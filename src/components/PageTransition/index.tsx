@@ -13,7 +13,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
-    // Small delay to ensure content is ready
+    setIsReady(false)
     const timer = setTimeout(() => setIsReady(true), 50)
     return () => clearTimeout(timer)
   }, [pathname])
