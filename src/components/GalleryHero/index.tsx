@@ -102,6 +102,7 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
         >
           <iframe
             src={videoUrl}
+            title="Gallery 1882 hero video"
             loading="lazy"
             className="hero-video-iframe"
             allow="accelerometer; gyroscope; autoplay; encrypted-media;"

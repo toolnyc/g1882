@@ -68,17 +68,12 @@
   
   body {
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
-    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    font-family: 'Aktiv Grotesk', var(--font-geist-sans), system-ui, -apple-system, sans-serif;
     cursor: none; /* Hide default cursor */
     /* Disable scroll bounce */
     overscroll-behavior: none;
     /* Ensure locomotive scroll works properly */
     overflow-x: hidden;
-  }
-
-  /* Hide cursor on all interactive elements */
-  a, button, [role="button"], input, textarea, select, [data-clickable] {
-    cursor: none !important;
   }
 
   /* Gallery 1882 Typography System */

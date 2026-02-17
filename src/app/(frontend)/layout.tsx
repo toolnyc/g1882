@@ -10,6 +10,7 @@ import { CustomCursor } from '@/components/CustomCursor'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
+import { CookieConsent } from '@/components/CookieConsent'
 import { LayoutClient } from '@/components/LayoutClient'
 import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -39,6 +40,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://iframe.cloudflarestream.com" />
       </head>
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-navy focus:text-off-white focus:px-4 focus:py-2 focus:rounded focus:outline-none focus:ring-2 focus:ring-lake"
+        >
+          Skip to main content
+        </a>
         <Providers isAdmin={isAuthenticated}>
           <LanderModeGuard>
             <CustomCursor />
@@ -52,13 +59,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </div>
             )}
             <LayoutClient>
-              <div>
+              <div id="main-content">
                 <Header />
                 {children}
                 <Footer />
               </div>
             </LayoutClient>
           </LanderModeGuard>
+          <CookieConsent />
         </Providers>
       </body>
     </html>

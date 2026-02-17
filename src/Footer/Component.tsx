@@ -109,6 +109,20 @@ export async function Footer() {
             <p className="text-off-white">
               &copy; {new Date().getFullYear()} Gallery 1882. All rights reserved.
             </p>
+            <nav className="mt-2 flex justify-center gap-4" aria-label="Legal">
+              <Link
+                href="/privacy"
+                className="text-off-white/70 hover:text-lake transition-colors text-xs"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/cookies"
+                className="text-off-white/70 hover:text-lake transition-colors text-xs"
+              >
+                Cookie Policy
+              </Link>
+            </nav>
           </div>
         </div>
       </footer>

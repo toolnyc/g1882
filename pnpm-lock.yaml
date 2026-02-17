@@ -162,6 +162,9 @@ importers:
       eslint-config-next:
         specifier: 15.4.4
         version: 15.4.4(eslint@9.37.0(jiti@1.21.7))(typescript@5.7.3)
+      eslint-plugin-jsx-a11y:
+        specifier: ^6.10.2
+        version: 6.10.2(eslint@9.37.0(jiti@1.21.7))
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
