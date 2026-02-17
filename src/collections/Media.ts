@@ -66,37 +66,47 @@ export const Media: CollectionConfig = {
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'],
+    resizeOptions: {
+      withoutEnlargement: true,
+    },
     imageSizes: [
       {
         name: 'thumbnail',
         width: 300,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'square',
         width: 500,
         height: 500,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'small',
         width: 600,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'medium',
         width: 900,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'large',
         width: 1400,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'xlarge',
         width: 1920,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'og',
         width: 1200,
         height: 630,
-        crop: 'center',
+        position: 'center',
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
     ],
   },
