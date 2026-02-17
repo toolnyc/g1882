@@ -24,7 +24,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 if (!process.env.PREVIEW_SECRET) {
-  throw new Error('PREVIEW_SECRET environment variable is required')
+  console.warn('PREVIEW_SECRET environment variable is not set — live preview will be disabled')
 }
 
 export default buildConfig({
