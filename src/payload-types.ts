@@ -73,6 +73,7 @@ export interface Config {
     users: User;
     artists: Artist;
     happenings: Happening;
+    'happening-types': HappeningType;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -90,6 +91,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     artists: ArtistsSelect<false> | ArtistsSelect<true>;
     happenings: HappeningsSelect<false> | HappeningsSelect<true>;
+    'happening-types': HappeningTypesSelect<false> | HappeningTypesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -356,9 +358,9 @@ export interface Happening {
   id: string;
   title: string;
   /**
-   * Exhibitions have date ranges; events are single-day occurrences
+   * Determines how dates are displayed. Date Range types show "March 16–June 20"; Date+Time types show "March 28 from 7–9pm".
    */
-  type: 'exhibition' | 'event';
+  type: string | HappeningType;
   description?: {
     root: {
       type: string;
@@ -410,6 +412,24 @@ export interface Happening {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "happening-types".
+ */
+export interface HappeningType {
+  id: string;
+  name: string;
+  /**
+   * URL-safe identifier, auto-generated from name
+   */
+  slug: string;
+  /**
+   * Controls how dates are formatted on the frontend for happenings of this type
+   */
+  dateDisplayMode: 'date-range' | 'datetime';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -827,6 +847,10 @@ export interface PayloadLockedDocument {
         value: string | Happening;
       } | null)
     | ({
+        relationTo: 'happening-types';
+        value: string | HappeningType;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1109,6 +1133,17 @@ export interface HappeningsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "happening-types_select".
+ */
+export interface HappeningTypesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  dateDisplayMode?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,7 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { getCachedHappenings } from '@/utilities/getHappenings'
-import { formatDateRange } from '@/utilities/dateHelpers'
+import { formatHappeningDate } from '@/utilities/dateHelpers'
+import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import type { Artist } from '@/payload-types'
 
 type RelatedHappeningsProps = {
@@ -41,27 +42,34 @@ export async function RelatedHappenings({ artistId, artistName }: RelatedHappeni
     <div className="mt-12 pt-8 border-t border-navy/20">
       <h2 className="text-2xl font-bold text-navy mb-6">Related Happenings</h2>
       <div className="space-y-4">
-        {relatedHappenings.map((happening) => (
-          <Link
-            key={happening.id}
-            href={`/happenings/${happening.slug}`}
-            className="block p-4 border border-navy/20 rounded-lg hover:border-bright-lake transition-colors"
-          >
-            <h3 className="text-xl font-semibold text-navy mb-2">{happening.title}</h3>
-            <div className="flex items-center gap-3 text-sm text-navy/70">
-              {happening.type && (
-                <span className="px-2 py-0.5 bg-lake/10 text-lake rounded text-xs font-medium">
-                  {happening.type}
-                </span>
-              )}
-              {happening.startDate && (
-                <span>
-                  {formatDateRange(happening.startDate, happening.endDate)}
-                </span>
-              )}
-            </div>
-          </Link>
-        ))}
+        {relatedHappenings.map((happening) => {
+          const happeningType = resolveHappeningType(happening.type)
+          const dateDisplay = happening.startDate
+            ? formatHappeningDate(
+                happening.startDate,
+                happening.endDate,
+                happeningType?.dateDisplayMode || 'datetime',
+              )
+            : ''
+
+          return (
+            <Link
+              key={happening.id}
+              href={`/happenings/${happening.slug}`}
+              className="block p-4 border border-navy/20 rounded-lg hover:border-bright-lake transition-colors"
+            >
+              <h3 className="text-xl font-semibold text-navy mb-2">{happening.title}</h3>
+              <div className="flex items-center gap-3 text-sm text-navy/70">
+                {happeningType?.name && (
+                  <span className="px-2 py-0.5 bg-lake/10 text-lake rounded text-xs font-medium">
+                    {happeningType.name}
+                  </span>
+                )}
+                {dateDisplay && <span>{dateDisplay}</span>}
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )

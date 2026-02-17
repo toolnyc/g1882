@@ -7,7 +7,8 @@ export const dynamic = 'force-dynamic'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
-import { formatDateRange } from '@/utilities/dateHelpers'
+import { formatHappeningDate } from '@/utilities/dateHelpers'
+import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import type { Artist, Happening } from '@/payload-types'
 
 const getArtistNames = (happening: Happening): string => {
@@ -27,7 +28,7 @@ const getArtistNames = (happening: Happening): string => {
 }
 
 export default async function HappeningsPage() {
-  // Fetch with depth 2 to populate heroImage, artists, and featuredPerson relations
+  // Fetch with depth 2 to populate heroImage, artists, featuredPerson, and type relations
   const getHappenings = getCachedHappenings({}, 2)
   const allHappenings = await getHappenings()
 
@@ -74,9 +75,11 @@ export default async function HappeningsPage() {
   if (upcomingBannerHappening) {
     const imageUrl = resolveMediaUrl(upcomingBannerHappening.heroImage)
     const personName = getArtistNames(upcomingBannerHappening)
-    const dateSubtitle = formatDateRange(
+    const bannerType = resolveHappeningType(upcomingBannerHappening.type)
+    const dateSubtitle = formatHappeningDate(
       upcomingBannerHappening.startDate,
       upcomingBannerHappening.endDate,
+      bannerType?.dateDisplayMode || 'datetime',
     )
 
     upcomingBanner = (
@@ -89,7 +92,7 @@ export default async function HappeningsPage() {
         label="Coming Up"
         href={`/happenings/${upcomingBannerHappening.slug || upcomingBannerHappening.id}`}
         showLiveIndicator={false}
-        category={upcomingBannerHappening.type || upcomingBannerHappening.category || undefined}
+        category={bannerType?.name || upcomingBannerHappening.category || undefined}
       />
     )
   }
@@ -99,13 +102,16 @@ export default async function HappeningsPage() {
       {/* Timeline View */}
       <DirectoryListing
         items={timelineHappenings.map((happening) => {
-          const isExhibition = happening.type === 'exhibition' || (!happening.type && happening.endDate)
-          const subtitle = isExhibition
-            ? formatDateRange(happening.startDate, happening.endDate)
-            : formatDateRange(happening.startDate)
+          const happeningType = resolveHappeningType(happening.type)
+          const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
+          const subtitle = formatHappeningDate(
+            happening.startDate,
+            happening.endDate,
+            dateDisplayMode,
+          )
           const personName = getArtistNames(happening)
           const fullSubtitle =
-            personName && subtitle ? `${subtitle} • ${personName}` : subtitle || personName || ''
+            personName && subtitle ? `${subtitle} \u2022 ${personName}` : subtitle || personName || ''
 
           return {
             ...happening,
@@ -117,7 +123,7 @@ export default async function HappeningsPage() {
             subtitle: fullSubtitle,
             href: `/happenings/${happening.slug || happening.id}`,
             featuredPersonName: personName,
-            category: happening.type || happening.category || null,
+            category: happeningType?.name || happening.category || null,
           }
         })}
         title="Happenings"

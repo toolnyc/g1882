@@ -7,7 +7,8 @@ type HappeningFilters = {
   featured?: boolean
   upcoming?: boolean
   active?: boolean
-  type?: 'exhibition' | 'event'
+  /** Filter by happening type slug (e.g. 'exhibition', 'event', 'talk') */
+  typeSlug?: string
   sortDirection?: 'asc' | 'desc'
 }
 
@@ -71,10 +72,10 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
     })
   }
 
-  if (filters.type) {
+  if (filters.typeSlug) {
     allConditions.push({
-      type: {
-        equals: filters.type,
+      'type.slug': {
+        equals: filters.typeSlug,
       },
     })
   }

@@ -9,6 +9,7 @@ import { getCachedSpace } from '@/utilities/getSpace'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { transformFeaturedArtist, transformVisitSection } from '@/utilities/dataTransformers'
+import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
 import type { Happening, Home } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
@@ -20,8 +21,8 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 export default async function HomePage() {
   // Fetch home global data
   const homeData = (await getCachedGlobal('home', 2)()) as Home
-  // Fetch all published happenings once at depth 2, then filter in memory
-  // This consolidates what was previously 3 separate DB queries into 1
+  // Fetch all published happenings once at depth 2 (populates artists, images, and type),
+  // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
   const allHappenings = await getCachedHappenings({}, 2)()
 
   // Fetch space global for structured hours and visit section
@@ -29,9 +30,9 @@ export default async function HomePage() {
 
   const now = new Date()
 
-  // Find current active exhibition (prefer exhibitions over events for "On Now")
+  // Find current active exhibition (prefer date-range types over datetime for "On Now")
   const activeExhibitions = allHappenings.filter(
-    (h) => h.isActive && (h.type === 'exhibition' || (!h.type && h.endDate)),
+    (h) => h.isActive && isDateRangeType(h.type),
   )
   const currentHappening =
     activeExhibitions.find((h) => h.featured) ||
@@ -47,7 +48,7 @@ export default async function HomePage() {
       .filter((h) => {
         if (!h.startDate) return false
         const startDate = new Date(h.startDate as string)
-        return startDate > now && (h.type === 'exhibition' || (!h.type && h.endDate))
+        return startDate > now && isDateRangeType(h.type)
       })
       .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
     if (upcomingExhibitions.length > 0) {

@@ -13,11 +13,17 @@ interface Artist {
   slug?: string | null
 }
 
+interface HappeningType {
+  name?: string | null
+  slug?: string | null
+  dateDisplayMode?: string | null
+}
+
 interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
-  type?: 'exhibition' | 'event' | null
+  type?: HappeningType | string | null
   artists?: (Artist | string)[] | null
   featuredPerson?: { name?: string | null } | string | null
   featuredPersonName?: string | null
@@ -58,10 +64,16 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
     return []
   }
 
+  const getTypeName = (): string | null => {
+    if (typeof happening.type === 'object' && happening.type?.name) {
+      return happening.type.name
+    }
+    return null
+  }
+
   const getButtonText = () => {
-    const type = happening.type
-    if (type === 'exhibition') return 'View Exhibition'
-    if (type === 'event') return 'View Event'
+    const typeName = getTypeName()
+    if (typeName) return `View ${typeName}`
     // Fall back to category
     const category = happening.category?.toLowerCase() || ''
     if (category.includes('exhibition')) return 'View Exhibition'

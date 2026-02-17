@@ -8,6 +8,8 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
+import { formatHappeningDate } from '@/utilities/dateHelpers'
+import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import type { Artist } from '@/payload-types'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
@@ -56,34 +58,17 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   const legacyPersonName =
     artists.length === 0 ? (happening.featuredPersonName || '') : ''
 
-  const startDate = happening.startDate ? new Date(happening.startDate as string) : null
-  const endDate = happening.endDate ? new Date(happening.endDate as string) : null
+  const happeningType = resolveHappeningType(happening.type)
+  const typeLabel = happeningType?.name || null
+  const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    })
-  }
-
-  const typeLabel = happening.type === 'exhibition' ? 'Exhibition' : happening.type === 'event' ? 'Event' : null
   const hasHeroImage = heroImage && typeof heroImage === 'object' && heroImage.url
-  const isEvent = happening.type === 'event'
 
-  // For events on the same day, show a compact single-line date with time range
-  const isSameDay =
-    startDate && endDate &&
-    startDate.getFullYear() === endDate.getFullYear() &&
-    startDate.getMonth() === endDate.getMonth() &&
-    startDate.getDate() === endDate.getDate()
+  const dateDisplay = formatHappeningDate(
+    happening.startDate,
+    happening.endDate,
+    dateDisplayMode,
+  )
 
   return (
     <main className="min-h-screen bg-off-white">
@@ -134,74 +119,12 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               )}
             </div>
 
-            {/* Date and Time Information */}
-            <div className="mb-8 pb-8 border-b border-navy/20">
-              {startDate && isEvent && isSameDay ? (
-                /* Events on a single day: show date once with time range */
-                <div className="space-y-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
-                      Date:
-                    </span>
-                    <span className="text-lg text-navy">
-                      {formatDate(startDate)}
-                    </span>
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
-                      Time:
-                    </span>
-                    <span className="text-lg text-navy">
-                      {formatTime(startDate)}{endDate ? ` \u2013 ${formatTime(endDate)}` : ''}
-                    </span>
-                  </div>
-                </div>
-              ) : startDate && isEvent ? (
-                /* Events spanning multiple days: show full start and end */
-                <div className="space-y-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
-                      Start:
-                    </span>
-                    <span className="text-lg text-navy">
-                      {formatDate(startDate)} at {formatTime(startDate)}
-                    </span>
-                  </div>
-                  {endDate && (
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <span className="text-sm font-semibold text-navy/70 tracking-wide">
-                        End:
-                      </span>
-                      <span className="text-lg text-navy">
-                        {formatDate(endDate)} at {formatTime(endDate)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ) : startDate ? (
-                /* Exhibitions: show date range */
-                <div className="space-y-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-sm font-semibold text-navy/70 tracking-wide">
-                      Opens:
-                    </span>
-                    <span className="text-lg text-navy">
-                      {formatDate(startDate)}
-                    </span>
-                  </div>
-                  {endDate && (
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <span className="text-sm font-semibold text-navy/70 tracking-wide">
-                        Closes:
-                      </span>
-                      <span className="text-lg text-navy">
-                        {formatDate(endDate)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ) : null}
-            </div>
+            {/* Date Display */}
+            {dateDisplay && (
+              <div className="mb-8 pb-8 border-b border-navy/20">
+                <span className="text-lg text-navy">{dateDisplay}</span>
+              </div>
+            )}
 
             {/* Type / Category Tag */}
             {(typeLabel || happening.category) && (
@@ -218,7 +141,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             )}
 
             {/* Calendar Button */}
-            {startDate && (
+            {happening.startDate && (
               <div className="mt-12 pt-8 border-t border-navy/20">
                 <CalendarButton
                   happening={{
@@ -242,8 +165,8 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                       }
                       return ''
                     })(),
-                    startDate,
-                    endDate: endDate || undefined,
+                    startDate: new Date(happening.startDate as string),
+                    endDate: happening.endDate ? new Date(happening.endDate as string) : undefined,
                     url: `${getServerSideURL()}/happenings/${slug}`,
                   }}
                 />
