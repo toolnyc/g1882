@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { formatHappeningDate, type DateDisplayMode } from '@/utilities/dateHelpers'
 
 interface Artist {
   id?: string
@@ -10,11 +11,17 @@ interface Artist {
   slug?: string | null
 }
 
+interface HappeningType {
+  name?: string | null
+  slug?: string | null
+  dateDisplayMode?: string | null
+}
+
 interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
-  type?: 'exhibition' | 'event' | null
+  type?: HappeningType | string | null
   artists?: (Artist | string)[] | null
   featuredPerson?: { name?: string | null } | string | null
   featuredPersonName?: string | null
@@ -29,25 +36,19 @@ interface UpcomingHappeningsProps {
   happenings: Happening[]
 }
 
-export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenings }) => {
-  const formatDate = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
+const resolveType = (type: Happening['type']): HappeningType | null => {
+  if (typeof type === 'object' && type !== null && 'name' in type) {
+    return type as HappeningType
   }
+  return null
+}
 
+export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenings }) => {
   const formatDateDisplay = (happening: Happening) => {
     if (!happening.startDate) return ''
-    const start = formatDate(happening.startDate)
-    // Show range for exhibitions with end dates
-    if (happening.endDate && (happening.type === 'exhibition' || !happening.type)) {
-      const end = formatDate(happening.endDate)
-      return `${start} – ${end}`
-    }
-    return start
+    const happeningType = resolveType(happening.type)
+    const mode: DateDisplayMode = (happeningType?.dateDisplayMode as DateDisplayMode) || 'datetime'
+    return formatHappeningDate(happening.startDate, happening.endDate, mode)
   }
 
   const getArtistNames = (happening: Happening): { name: string; slug?: string | null }[] => {
@@ -69,9 +70,8 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
   }
 
   const getButtonText = (happening: Happening) => {
-    const type = happening.type
-    if (type === 'exhibition') return 'View Exhibition'
-    if (type === 'event') return 'View Event'
+    const happeningType = resolveType(happening.type)
+    if (happeningType?.name) return `View ${happeningType.name}`
     const category = happening.category?.toLowerCase() || ''
     if (category.includes('exhibition')) return 'View Exhibition'
     if (category.includes('event')) return 'View Event'
@@ -79,10 +79,9 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
   }
 
   const getTypeLabel = (happening: Happening) => {
-    if (happening.type === 'exhibition') return 'Exhibition'
-    if (happening.type === 'event') return 'Event'
-    if (happening.endDate) return 'Exhibition'
-    return 'Event'
+    const happeningType = resolveType(happening.type)
+    if (happeningType?.name) return happeningType.name
+    return 'Happening'
   }
 
   // Sort upcoming happenings chronologically (ascending)

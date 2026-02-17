@@ -47,16 +47,13 @@ export const Happenings: CollectionConfig = {
     },
     {
       name: 'type',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'happening-types',
       required: true,
-      defaultValue: 'exhibition',
-      options: [
-        { label: 'Exhibition', value: 'exhibition' },
-        { label: 'Event', value: 'event' },
-      ],
       admin: {
         position: 'sidebar',
-        description: 'Exhibitions have date ranges; events are single-day occurrences',
+        description:
+          'Determines how dates are displayed. Date Range types show "March 16\u2013June 20"; Date+Time types show "March 28 from 7\u20139pm".',
       },
     },
     {
@@ -129,6 +126,8 @@ export const Happenings: CollectionConfig = {
                 date: {
                   pickerAppearance: 'dayAndTime',
                 },
+                description:
+                  'For Date Range types, only the date portion is displayed. For Date+Time types, both date and time are shown.',
               },
             },
             {
@@ -139,6 +138,8 @@ export const Happenings: CollectionConfig = {
                 date: {
                   pickerAppearance: 'dayAndTime',
                 },
+                description:
+                  'For Date Range types, displayed as the end of the range. For Date+Time types, only the end time is shown (same day assumed).',
               },
             },
             {

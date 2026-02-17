@@ -7,10 +7,11 @@ export const dynamic = 'force-dynamic'
 import { CurrentExhibitionBanner } from '@/components/CurrentExhibitionBanner'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
-import { formatDateRange } from '@/utilities/dateHelpers'
+import { formatHappeningDate } from '@/utilities/dateHelpers'
+import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 
 export default async function ExhibitionsPage() {
-  // Fetch with depth 2 to populate heroImage relation, include description for banner
+  // Fetch with depth 2 to populate heroImage and type relations, include description for banner
   const happenings = await getCachedHappenings({}, 2, {
     title: true,
     slug: true,
@@ -36,7 +37,12 @@ export default async function ExhibitionsPage() {
   // Map happenings to DirectoryListing format
   const exhibitionItems = happenings.map((happening) => {
     const imageUrl = resolveMediaUrl(happening.heroImage, '/media/test-art.jpg')
-    const subtitle = formatDateRange(happening.startDate, happening.endDate)
+    const happeningType = resolveHappeningType(happening.type)
+    const subtitle = formatHappeningDate(
+      happening.startDate,
+      happening.endDate,
+      happeningType?.dateDisplayMode || 'datetime',
+    )
 
     // Get artist name
     const artistName =
@@ -61,7 +67,7 @@ export default async function ExhibitionsPage() {
       image: imageUrl,
       featured: happening.featured || false,
       href: `/happenings/${happening.slug || happening.id}`,
-      category: happening.category || null,
+      category: happeningType?.name || happening.category || null,
     }
   })
 
@@ -82,7 +88,7 @@ export default async function ExhibitionsPage() {
           : '',
         image: resolveMediaUrl(mostRecentHappening.heroImage, '/media/test-art.jpg'),
         featured: mostRecentHappening.featured || false,
-        category: mostRecentHappening.category || null,
+        category: resolveHappeningType(mostRecentHappening.type)?.name || mostRecentHappening.category || null,
       }
     : null
 

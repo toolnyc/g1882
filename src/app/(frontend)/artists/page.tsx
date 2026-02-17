@@ -8,6 +8,7 @@ import { CurrentArtistBanner } from '@/components/CurrentArtistBanner'
 import { getCachedArtists } from '@/utilities/getArtists'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
 import type { Artist } from '@/payload-types'
 
 const getLastName = (name: string): string => {
@@ -20,9 +21,9 @@ export default async function ArtistsPage() {
   // Fetch with depth 2 to populate artists array relations
   const happenings = await getCachedHappenings({ active: true }, 2)()
 
-  // Find active exhibitions that reference artists via the new `artists` array
+  // Find active exhibitions (date-range types) that reference artists
   const activeExhibitions = happenings.filter(
-    (h) => h.isActive && (h.type === 'exhibition' || (!h.type && h.endDate)),
+    (h) => h.isActive && isDateRangeType(h.type),
   )
 
   // Build a map of artist ID → exhibition titles
