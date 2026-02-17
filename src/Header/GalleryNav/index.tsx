@@ -95,7 +95,7 @@ export const GalleryNav: React.FC = () => {
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.url
                 return (
-                  <div key={item.url} onClick={closeMenu}>
+                  <div key={item.url} role="menuitem" tabIndex={0} onClick={closeMenu} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') closeMenu() }}>
                     <Link
                       href={item.url}
                       className={`nav-link block text-lg font-medium transition-all duration-300 py-1 hover:bg-white/20 hover:px-3 hover:rounded ${

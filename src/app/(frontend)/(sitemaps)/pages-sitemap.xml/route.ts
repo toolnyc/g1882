@@ -29,10 +29,6 @@ const getPagesSitemap = unstable_cache(
         lastmod: dateFallback,
       },
       {
-        loc: `${SITE_URL}/exhibitions`,
-        lastmod: dateFallback,
-      },
-      {
         loc: `${SITE_URL}/happenings`,
         lastmod: dateFallback,
       },

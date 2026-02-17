@@ -9,6 +9,7 @@ import { getCachedArtists } from '@/utilities/getArtists'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
+import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
 
 const getLastName = (name: string): string => {
@@ -70,7 +71,7 @@ export default async function ArtistsPage() {
       bannerArtist = {
         id: firstArtist.id,
         name: firstArtist.name,
-        bio: firstArtist.bio || '',
+        bio: extractPlainText(firstArtist.bio),
         image: resolveMediaUrl(firstArtist.image),
         exhibitions: [],
         slug: firstArtist.slug,
@@ -85,7 +86,7 @@ export default async function ArtistsPage() {
         bannerArtist = {
           id: fp.id,
           name: fp.name,
-          bio: fp.bio || '',
+          bio: extractPlainText(fp.bio),
           image: resolveMediaUrl(fp.image),
           exhibitions: [],
           slug: fp.slug,
@@ -108,7 +109,7 @@ export default async function ArtistsPage() {
     const exhibitions = artistExhibitionMap.get(artist.id)
     const subtitle = exhibitions
       ? `Currently in: ${exhibitions.join(', ')}`
-      : (artist.bio || undefined)
+      : (artist.bio ? extractPlainText(artist.bio) : undefined)
 
     return {
       id: artist.id,

@@ -5,6 +5,8 @@ import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
 import { RelatedHappenings } from './RelatedHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import RichText from '@/components/RichText'
+import { extractPlainText } from '@/utilities/richTextHelpers'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
@@ -70,9 +72,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
             {/* Bio */}
             {artist.bio && (
               <div className="mb-6">
-                <p className="text-base leading-relaxed text-navy/80 whitespace-pre-line">
-                  {artist.bio}
-                </p>
+                <RichText data={artist.bio} className="text-base leading-relaxed text-navy/80" />
               </div>
             )}
 
@@ -203,7 +203,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       ...artist,
       meta: {
         title: artist.name || undefined,
-        description: artist.bio || undefined,
+        description: extractPlainText(artist.bio) || undefined,
         image: typeof artist.image === 'object' && artist.image ? artist.image : undefined,
       },
     },

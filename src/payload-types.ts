@@ -389,7 +389,13 @@ export interface Happening {
    * Deprecated -- use the "artists" field instead
    */
   featuredPersonName?: string | null;
+  /**
+   * For Date Range types, only the date portion is displayed. For Date+Time types, both date and time are shown.
+   */
   startDate: string;
+  /**
+   * For Date Range types, displayed as the end of the range. For Date+Time types, only the end time is shown (same day assumed).
+   */
   endDate?: string | null;
   /**
    * Enable to manually override automatic isActive calculation

@@ -10,6 +10,7 @@ import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
 import { formatHappeningDate } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
@@ -146,25 +147,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 <CalendarButton
                   happening={{
                     title: happening.title || '',
-                    description: (() => {
-                      if (typeof happening.description === 'string') {
-                        return happening.description
-                      }
-                      if (
-                        typeof happening.description === 'object' &&
-                        happening.description?.root
-                      ) {
-                        const extractText = (node: { type?: string; text?: string; children?: unknown[] }): string => {
-                          if (node.type === 'text') return node.text || ''
-                          if (node.children) {
-                            return node.children.map((child) => extractText(child as { type?: string; text?: string; children?: unknown[] })).join(' ')
-                          }
-                          return ''
-                        }
-                        return extractText(happening.description.root) || ''
-                      }
-                      return ''
-                    })(),
+                    description: extractPlainText(happening.description),
                     startDate: new Date(happening.startDate as string),
                     endDate: happening.endDate ? new Date(happening.endDate as string) : undefined,
                     url: `${getServerSideURL()}/happenings/${slug}`,
@@ -195,10 +178,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       ...happening,
       meta: {
         title: happening.title || undefined,
-        description:
-          typeof happening.description === 'object'
-            ? JSON.stringify(happening.description)
-            : happening.description || undefined,
+        description: extractPlainText(happening.description) || undefined,
         image:
           typeof happening.heroImage === 'object' && happening.heroImage
             ? happening.heroImage

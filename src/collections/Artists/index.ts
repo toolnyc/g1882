@@ -1,5 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
+import {
+  FixedToolbarFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
+
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
@@ -46,9 +52,13 @@ export const Artists: CollectionConfig = {
           fields: [
             {
               name: 'bio',
-              type: 'textarea',
-              required: false,
-              maxLength: 5000,
+              type: 'richText',
+              editor: lexicalEditor({
+                features: () => [
+                  FixedToolbarFeature(),
+                  InlineToolbarFeature(),
+                ],
+              }),
             },
             {
               name: 'image',

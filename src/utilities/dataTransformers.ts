@@ -1,6 +1,7 @@
 import type { Home, Media, Space } from '@/payload-types'
 
 import { resolveArtist, resolveMediaUrl } from './mediaHelpers'
+import { extractPlainText } from './richTextHelpers'
 
 export interface FeaturedArtistData {
   id: string
@@ -32,7 +33,7 @@ export const transformFeaturedArtist = (
     id: homeArtist.id,
     name: homeArtist.name,
     title: homeArtist.name,
-    bio: (homeData?.featuredArtistDescription as string) || homeArtist.bio || '',
+    bio: (homeData?.featuredArtistDescription as string) || extractPlainText(homeArtist.bio) || '',
     image: getArtistImage(homeArtist.image, homeData?.featuredArtistImage),
     artistSlug: homeArtist.slug,
   }

@@ -3,6 +3,28 @@ import type { Artist, Media } from '@/payload-types'
 import { mockArtists } from './mockData'
 import { toKebabCase } from '@/utilities/toKebabCase'
 
+function textToLexical(text: string) {
+  return {
+    root: {
+      type: 'root' as const,
+      children: [
+        {
+          type: 'paragraph' as const,
+          children: [{ type: 'text' as const, text, version: 1 }],
+          direction: 'ltr' as const,
+          format: '' as const,
+          indent: 0,
+          version: 1,
+        },
+      ],
+      direction: 'ltr' as const,
+      format: '' as const,
+      indent: 0,
+      version: 1,
+    },
+  }
+}
+
 export async function seedArtists(
   payload: Payload,
   req: PayloadRequest,
@@ -25,7 +47,7 @@ export async function seedArtists(
       data: {
         name: mockArtist.name,
         slug,
-        bio: mockArtist.bio || '',
+        bio: mockArtist.bio ? textToLexical(mockArtist.bio) : undefined,
         image: artistImage?.id || undefined,
       },
       req,

@@ -15,16 +15,11 @@ import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createInterface } from 'readline'
+import { createRequire } from 'module'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-
-// Resolve mongodb from pnpm's .pnpm store
-const mongodbPath = resolve(
-  __dirname, '..', 'node_modules', '.pnpm',
-  'mongodb@6.16.0_@aws-sdk+credential-providers@3.910.0',
-  'node_modules', 'mongodb', 'lib', 'index.js',
-)
-const { MongoClient } = await import(mongodbPath)
+const require = createRequire(import.meta.url)
+const { MongoClient } = require('mongodb')
 
 function getDatabaseUri() {
   try {

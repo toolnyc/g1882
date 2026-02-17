@@ -4,6 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { formatHappeningDate, type DateDisplayMode } from '@/utilities/dateHelpers'
+import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 
 interface Artist {
   id?: string
@@ -11,17 +12,11 @@ interface Artist {
   slug?: string | null
 }
 
-interface HappeningType {
-  name?: string | null
-  slug?: string | null
-  dateDisplayMode?: string | null
-}
-
 interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
-  type?: HappeningType | string | null
+  type?: { name?: string | null; slug?: string | null; dateDisplayMode?: string | null } | string | null
   artists?: (Artist | string)[] | null
   featuredPerson?: { name?: string | null } | string | null
   featuredPersonName?: string | null
@@ -36,17 +31,10 @@ interface UpcomingHappeningsProps {
   happenings: Happening[]
 }
 
-const resolveType = (type: Happening['type']): HappeningType | null => {
-  if (typeof type === 'object' && type !== null && 'name' in type) {
-    return type as HappeningType
-  }
-  return null
-}
-
 export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenings }) => {
   const formatDateDisplay = (happening: Happening) => {
     if (!happening.startDate) return ''
-    const happeningType = resolveType(happening.type)
+    const happeningType = resolveHappeningType(happening.type)
     const mode: DateDisplayMode = (happeningType?.dateDisplayMode as DateDisplayMode) || 'datetime'
     return formatHappeningDate(happening.startDate, happening.endDate, mode)
   }
@@ -70,7 +58,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
   }
 
   const getButtonText = (happening: Happening) => {
-    const happeningType = resolveType(happening.type)
+    const happeningType = resolveHappeningType(happening.type)
     if (happeningType?.name) return `View ${happeningType.name}`
     const category = happening.category?.toLowerCase() || ''
     if (category.includes('exhibition')) return 'View Exhibition'
@@ -79,7 +67,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
   }
 
   const getTypeLabel = (happening: Happening) => {
-    const happeningType = resolveType(happening.type)
+    const happeningType = resolveHappeningType(happening.type)
     if (happeningType?.name) return happeningType.name
     return 'Happening'
   }

@@ -43,6 +43,19 @@ vi.mock('@/utilities/generateMeta', () => ({
   })),
 }))
 
+// Mock RichText component (avoids SCSS import from @payloadcms/ui)
+vi.mock('@/components/RichText', () => ({
+  default: ({ data }: any) => {
+    if (!data?.root) return null
+    const extractText = (node: any): string => {
+      if (node.type === 'text') return node.text || ''
+      if (node.children) return node.children.map(extractText).join('')
+      return ''
+    }
+    return <div data-testid="rich-text">{extractText(data.root)}</div>
+  },
+}))
+
 describe('ArtistPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -55,11 +68,31 @@ describe('ArtistPage', () => {
   it('renders without errors when artist exists', async () => {
     const { getCachedArtistBySlug } = await import('@/utilities/getArtistBySlug')
 
+    const mockBio = {
+      root: {
+        type: 'root',
+        children: [
+          {
+            type: 'paragraph',
+            children: [{ type: 'text', text: 'Test bio', version: 1 }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
+          },
+        ],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        version: 1,
+      },
+    }
+
     const mockArtist: Partial<Artist> = {
       id: '1',
       name: 'Test Artist',
       slug: 'test-artist',
-      bio: 'Test bio',
+      bio: mockBio as any,
       image: {
         id: '1',
         url: '/media/test-artist.jpg',
@@ -100,7 +133,7 @@ describe('ArtistPage', () => {
       id: '1',
       name: 'Test Artist',
       slug: 'test-artist',
-      bio: 'Test bio',
+      bio: null,
       image: null,
     }
 
