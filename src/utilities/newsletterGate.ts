@@ -1,13 +1,19 @@
+function hasCookieConsent(): boolean {
+  if (typeof document === 'undefined') return false
+  return document.cookie.includes('cookie_consent=accepted')
+}
+
 export function setNewsletterSignupStatus() {
-  const oneYear = new Date()
-  oneYear.setFullYear(oneYear.getFullYear() + 1)
-
-  // Set cookie for Vercel preview persistence
-  document.cookie = `newsletter_signup_status=completed; expires=${oneYear.toUTCString()}; path=/; SameSite=Lax; Secure`
-
-  // Set localStorage for fast client-side checks
+  // Always set localStorage for fast client-side checks
   if (typeof window !== 'undefined') {
     localStorage.setItem('newsletter_signup_status', 'completed')
+  }
+
+  // Only set cookie if user has accepted cookies
+  if (hasCookieConsent()) {
+    const oneYear = new Date()
+    oneYear.setFullYear(oneYear.getFullYear() + 1)
+    document.cookie = `newsletter_signup_status=completed; expires=${oneYear.toUTCString()}; path=/; SameSite=Lax; Secure`
   }
 }
 

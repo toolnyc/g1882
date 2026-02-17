@@ -19,12 +19,15 @@ const CardHeader: React.FC<
 
 const CardTitle: React.FC<
   { ref?: React.Ref<HTMLHeadingElement> } & React.HTMLAttributes<HTMLHeadingElement>
-> = ({ className, ref, ...props }) => (
+> = ({ className, ref, children, ...props }) => (
+   
   <h3
     className={cn('text-2xl font-semibold leading-none tracking-tight', className)}
     ref={ref}
     {...props}
-  />
+  >
+    {children}
+  </h3>
 )
 
 const CardDescription: React.FC<
