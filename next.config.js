@@ -18,6 +18,10 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      {
+        protocol: 'https',
+        hostname: '*.blob.vercel-storage.com',
+      },
     ],
   },
   webpack: (webpackConfig, { isServer }) => {
