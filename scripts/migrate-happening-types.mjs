@@ -48,6 +48,7 @@ function prompt(question) {
 const TYPE_DEFINITIONS = [
   { name: 'Exhibition', slug: 'exhibition', dateDisplayMode: 'date-range' },
   { name: 'Event', slug: 'event', dateDisplayMode: 'datetime' },
+  { name: 'Talk', slug: 'talk', dateDisplayMode: 'datetime' },
 ]
 
 async function main() {

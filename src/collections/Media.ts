@@ -37,6 +37,25 @@ export const Media: CollectionConfig = {
         }
       },
     ],
+    beforeChange: [
+      async ({ req }) => {
+        if (!req.file?.data || !req.file.mimetype?.startsWith('image/')) return
+        const sharp = (await import('sharp')).default
+        const image = sharp(req.file.data)
+        const metadata = await image.metadata()
+        const MAX_DIMENSION = 2560
+        if (
+          (metadata.width && metadata.width > MAX_DIMENSION) ||
+          (metadata.height && metadata.height > MAX_DIMENSION)
+        ) {
+          const resized = await image
+            .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: 'inside', withoutEnlargement: true })
+            .toBuffer()
+          req.file.data = resized
+          req.file.size = resized.length
+        }
+      },
+    ],
   },
   fields: [
     {

@@ -2,12 +2,13 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest } from 'payloa
 
 import { seedArtists } from './artists'
 import { seedHappenings } from './happenings'
+import { seedHappeningTypes } from './happeningTypes'
 import { seedMedia } from './media'
 import { seedPosts } from './posts'
 import { seedGlobals } from './globals'
 import { mockGalleryInfo } from './mockData'
 
-const collections: CollectionSlug[] = ['media', 'artists', 'happenings', 'posts']
+const collections: CollectionSlug[] = ['media', 'artists', 'happenings', 'happening-types', 'posts']
 
 const globals: GlobalSlug[] = ['space', 'home']
 
@@ -74,9 +75,13 @@ export const seed = async ({
   payload.logger.info(`— Seeding artists...`)
   const artistMap = await seedArtists(payload, req, mediaMap)
 
-  // Seed happenings (depends on artists)
+  // Seed happening types
+  payload.logger.info(`— Seeding happening types...`)
+  const typeMap = await seedHappeningTypes(payload, req)
+
+  // Seed happenings (depends on artists and types)
   payload.logger.info(`— Seeding happenings...`)
-  const happeningMap = await seedHappenings(payload, req, artistMap, mediaMap)
+  const happeningMap = await seedHappenings(payload, req, artistMap, mediaMap, typeMap)
 
   // Seed posts/news (depends on artists and happenings)
   payload.logger.info(`— Seeding posts...`)

@@ -1,4 +1,4 @@
-import type { Artist, Happening, Media } from '@/payload-types'
+import type { Artist, Happening, HappeningType, Media } from '@/payload-types'
 import type { Payload, PayloadRequest } from 'payload'
 import { mockHappenings } from './mockData'
 import { toKebabCase } from '@/utilities/toKebabCase'
@@ -6,6 +6,7 @@ import { toKebabCase } from '@/utilities/toKebabCase'
 export type HappeningSeedArgs = {
   artistMap: Map<string, Artist>
   mediaMap: Map<string, Media>
+  typeMap: Map<string, HappeningType>
 }
 
 // Convert description string to Lexical format
@@ -49,6 +50,7 @@ export async function seedHappenings(
   req: PayloadRequest,
   artistMap: Map<string, Artist>,
   mediaMap: Map<string, Media>,
+  typeMap: Map<string, HappeningType>,
 ): Promise<Map<string, Happening>> {
   const happeningMap = new Map<string, Happening>()
 
@@ -68,11 +70,14 @@ export async function seedHappenings(
       heroImage = mediaMap.get(imageFilename) || null
     }
 
+    const typeSlug = mockHappening.category === 'Exhibition' ? 'exhibition' : 'event'
+    const happeningType = typeMap.get(typeSlug)
+
     const happening = await payload.create({
       collection: 'happenings',
       data: {
         title: mockHappening.title,
-        type: (mockHappening.endDate ? 'exhibition' : 'event') as 'exhibition' | 'event',
+        type: happeningType?.id || typeSlug,
         slug,
         startDate: mockHappening.startDate,
         endDate: mockHappening.endDate || undefined,
