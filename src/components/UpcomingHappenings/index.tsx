@@ -146,11 +146,11 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                               {happening.title}
                             </h3>
                             {artists.length > 0 && (
-                              <div className="flex flex-wrap gap-x-2 gap-y-1 mb-4">
+                              <div className="mb-4">
                                 {artists.map((artist, i) => (
                                   <React.Fragment key={artist.slug || i}>
                                     {i > 0 && (
-                                      <span className="text-xl text-bright-lake">,</span>
+                                      <span className="text-xl text-bright-lake">, </span>
                                     )}
                                     {artist.slug ? (
                                       <Link

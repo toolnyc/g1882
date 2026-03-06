@@ -139,10 +139,10 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
                 {happening.title}
               </h2>
               {artists.length > 0 && (
-                <div className="mb-4 flex flex-wrap gap-x-2 gap-y-1">
+                <div className="mb-4">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.slug || i}>
-                      {i > 0 && <span className="text-xl text-bright-lake">,</span>}
+                      {i > 0 && <span className="text-xl text-bright-lake">, </span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
