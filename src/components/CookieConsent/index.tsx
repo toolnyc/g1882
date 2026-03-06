@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 
 function getCookieConsent(): string | null {
   if (typeof document === 'undefined') return null
@@ -45,15 +44,7 @@ export function CookieConsent() {
     >
       <div className="container mx-auto px-4 py-4 sm:px-6 sm:py-5 flex flex-col sm:flex-row items-center gap-4">
         <p className="flex-1 text-sm text-center sm:text-left">
-          We use cookies to improve your experience. See our{' '}
-          <Link href="/privacy" className="text-lake underline hover:text-bright-lake">
-            Privacy Policy
-          </Link>{' '}
-          and{' '}
-          <Link href="/cookies" className="text-lake underline hover:text-bright-lake">
-            Cookie Policy
-          </Link>{' '}
-          for details.
+          We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.
         </p>
         <div className="flex gap-3 shrink-0">
           <button

@@ -72,7 +72,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
             {/* Bio */}
             {artist.bio && (
               <div className="mb-6">
-                <RichText data={artist.bio} className="text-base leading-relaxed text-navy/80" />
+                <RichText data={artist.bio} enableGutter={false} className="text-base leading-relaxed text-navy/80" />
               </div>
             )}
 

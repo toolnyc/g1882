@@ -34,7 +34,7 @@ interface FeaturedHappeningsProps {
 
 export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenings }) => {
   const getDateParts = (happening: Happening) => {
-    if (!happening.startDate) return { date: '', time: null }
+    if (!happening.startDate) return { date: '', time: null, endDate: null }
     const happeningType = resolveHappeningType(happening.type)
     const mode: DateDisplayMode = (happeningType?.dateDisplayMode as DateDisplayMode) || 'datetime'
     return formatHappeningDateParts(happening.startDate, happening.endDate, mode)
@@ -134,10 +134,18 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
                   {happening.startDate && (() => {
                     const parts = getDateParts(happening)
                     return parts.date ? (
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-xs font-medium text-navy/70">{parts.date}</span>
-                        {parts.time && (
-                          <span className="text-xs text-navy/45">{parts.time}</span>
+                      <div className="flex flex-col gap-0.5">
+                        {parts.endDate ? (
+                          <>
+                            <span className="text-xs font-medium text-navy/70">{parts.date} – {parts.endDate}</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-xs font-medium text-navy/70">{parts.date}</span>
+                            {parts.time && (
+                              <span className="text-xs text-navy/45">{parts.time}</span>
+                            )}
+                          </>
                         )}
                       </div>
                     ) : null

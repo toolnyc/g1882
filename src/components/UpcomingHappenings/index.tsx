@@ -30,7 +30,7 @@ interface UpcomingHappeningsProps {
 
 export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenings }) => {
   const getDateParts = (happening: Happening) => {
-    if (!happening.startDate) return { date: '', time: null }
+    if (!happening.startDate) return { date: '', time: null, endDate: null }
     const happeningType = resolveHappeningType(happening.type)
     const mode: DateDisplayMode = (happeningType?.dateDisplayMode as DateDisplayMode) || 'datetime'
     return formatHappeningDateParts(happening.startDate, happening.endDate, mode)
@@ -109,13 +109,28 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                       {/* Date Section - Prominent */}
                       {happening.startDate && (
                         <div className="col-span-12 lg:col-span-3">
-                          <div className="text-3xl lg:text-4xl font-bold text-off-white mb-1 leading-tight">
-                            {dateParts.date}
-                          </div>
-                          {dateParts.time && (
-                            <div className="text-lg text-off-white/60 mb-2">
-                              {dateParts.time}
-                            </div>
+                          {dateParts.endDate ? (
+                            <>
+                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">Opens</div>
+                              <div className="text-3xl lg:text-4xl font-bold text-off-white mb-4 leading-tight">
+                                {dateParts.date}
+                              </div>
+                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">Closes</div>
+                              <div className="text-xl lg:text-2xl font-bold text-off-white/80 mb-2 leading-tight">
+                                {dateParts.endDate}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-3xl lg:text-4xl font-bold text-off-white mb-1 leading-tight">
+                                {dateParts.date}
+                              </div>
+                              {dateParts.time && (
+                                <div className="text-lg text-off-white/60 mb-2">
+                                  {dateParts.time}
+                                </div>
+                              )}
+                            </>
                           )}
                           <div className="text-sm font-semibold text-off-white/80 tracking-wide">
                             {getTypeLabel(happening)}
