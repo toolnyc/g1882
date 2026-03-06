@@ -161,7 +161,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
               )}
               {happening.description && typeof happening.description === 'object' && happening.description.root ? (
                 <div className="mb-8 text-lg leading-relaxed text-navy/80">
-                  <RichText data={happening.description as never} className="prose-p:my-2 prose-p:text-base" />
+                  <RichText data={happening.description as never} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
                 </div>
               ) : null}
               <div className="flex flex-col gap-4 sm:flex-row">

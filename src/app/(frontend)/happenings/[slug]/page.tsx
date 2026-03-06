@@ -123,7 +123,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             {/* Description */}
             {happening.description && (
               <div className="mb-6">
-                <RichText data={happening.description} className="prose-p:my-2 prose-p:text-base" />
+                <RichText data={happening.description} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
               </div>
             )}
 
