@@ -43,7 +43,7 @@ export function CookieConsent() {
       className="fixed bottom-0 left-0 right-0 z-[9999] bg-navy text-off-white shadow-lg"
     >
       <div className="container mx-auto px-4 py-4 sm:px-6 sm:py-5 flex flex-col sm:flex-row items-center gap-4">
-        <p className="flex-1 text-sm text-center sm:text-left">
+        <p className="flex-1 text-sm text-center sm:text-left text-off-white">
           We use cookies to enhance your browsing experience, analyze site traffic, and personalize content.
         </p>
         <div className="flex gap-3 shrink-0">

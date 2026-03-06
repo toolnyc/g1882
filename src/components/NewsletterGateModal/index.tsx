@@ -91,7 +91,7 @@ export function NewsletterGateModal() {
             {/* Close button */}
             <button
               onClick={handleDismiss}
-              className="absolute top-4 right-4 text-navy/40 hover:text-navy transition-colors text-2xl leading-none"
+              className="absolute top-4 right-4 text-navy/40 hover:text-navy transition-colors text-2xl leading-none focus:outline-none"
               aria-label="Close modal"
             >
               ×
