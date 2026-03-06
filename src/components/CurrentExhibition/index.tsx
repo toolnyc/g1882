@@ -25,15 +25,12 @@ interface Happening {
   title?: string | null
   type?: HappeningType | string | null
   artists?: (Artist | string)[] | null
-  featuredPerson?: { name?: string | null } | string | null
-  featuredPersonName?: string | null
   startDate?: string | Date | null
   endDate?: string | Date | null
   description?: Record<string, unknown> | null
   heroImage?: { url?: string; alt?: string } | string | null
   featured?: boolean
   isActive?: boolean
-  category?: string | null
 }
 
 interface CurrentExhibitionProps {
@@ -54,13 +51,6 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
         })
         .filter(Boolean) as { name: string; slug?: string | null }[]
     }
-    // Fall back to legacy fields
-    if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
-      return [{ name: happening.featuredPerson.name }]
-    }
-    if (happening.featuredPersonName) {
-      return [{ name: happening.featuredPersonName }]
-    }
     return []
   }
 
@@ -74,10 +64,6 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
   const getButtonText = () => {
     const typeName = getTypeName()
     if (typeName) return `View ${typeName}`
-    // Fall back to category
-    const category = happening.category?.toLowerCase() || ''
-    if (category.includes('exhibition')) return 'View Exhibition'
-    if (category.includes('event')) return 'View Event'
     return 'View Happening'
   }
 

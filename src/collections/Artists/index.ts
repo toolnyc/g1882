@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import {
   FixedToolbarFeature,
+  HeadingFeature,
+  HorizontalRuleFeature,
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
@@ -54,10 +56,15 @@ export const Artists: CollectionConfig = {
               name: 'bio',
               type: 'richText',
               editor: lexicalEditor({
-                features: () => [
-                  FixedToolbarFeature(),
-                  InlineToolbarFeature(),
-                ],
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                    HorizontalRuleFeature(),
+                  ]
+                },
               }),
             },
             {

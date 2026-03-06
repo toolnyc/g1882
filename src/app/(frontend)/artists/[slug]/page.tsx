@@ -178,7 +178,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
                 </div>
               }
             >
-              <RelatedHappenings artistId={artist.id} artistName={artist.name} />
+              <RelatedHappenings artistId={artist.id} />
             </Suspense>
           </div>
         </div>

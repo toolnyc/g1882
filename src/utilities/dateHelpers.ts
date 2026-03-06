@@ -101,6 +101,41 @@ const formatDateTimeDisplay = (
 }
 
 /**
+ * Split date parts for independent styling.
+ * Returns { date, time } where time may be null (e.g. date-range mode).
+ */
+export const formatHappeningDateParts = (
+  startDate: string | Date | null | undefined,
+  endDate: string | Date | null | undefined,
+  dateDisplayMode: DateDisplayMode,
+): { date: string; time: string | null } => {
+  if (!startDate) return { date: '', time: null }
+
+  const start = parseDate(startDate)
+  if (Number.isNaN(start.getTime())) return { date: '', time: null }
+
+  const end = endDate ? parseDate(endDate) : null
+  if (end && Number.isNaN(end.getTime())) {
+    return formatHappeningDateParts(startDate, null, dateDisplayMode)
+  }
+
+  if (dateDisplayMode === 'date-range') {
+    return { date: formatDateRangeDisplay(start, end), time: null }
+  }
+
+  // datetime mode: split date from time
+  const dayLabel = formatMonthDay(start)
+  const startTime = formatTime12(start)
+
+  if (end) {
+    const endTime = formatTime12(end)
+    return { date: dayLabel, time: `${startTime}\u2013${endTime}` }
+  }
+
+  return { date: dayLabel, time: startTime }
+}
+
+/**
  * Main entry point for type-driven date formatting.
  * Dispatches to the right formatter based on dateDisplayMode.
  */

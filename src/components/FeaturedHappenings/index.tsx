@@ -5,13 +5,21 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
+import { formatHappeningDateParts, type DateDisplayMode } from '@/utilities/dateHelpers'
+import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+
+interface Artist {
+  id?: string
+  name?: string | null
+  slug?: string | null
+}
 
 interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
-  featuredPerson?: { name?: string | null } | string | null
-  featuredPersonName?: string | null
+  type?: { name?: string | null; slug?: string | null; dateDisplayMode?: string | null } | string | null
+  artists?: (Artist | string)[] | null
   startDate?: string | Date | null
   endDate?: string | Date | null
   description?: string | { root?: { type?: string; text?: string; children?: unknown[] } } | null
@@ -25,20 +33,24 @@ interface FeaturedHappeningsProps {
 }
 
 export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenings }) => {
-  const formatDate = (dateString: string | Date) => {
-    const date = typeof dateString === 'string' ? new Date(dateString) : dateString
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
+  const getDateParts = (happening: Happening) => {
+    if (!happening.startDate) return { date: '', time: null }
+    const happeningType = resolveHappeningType(happening.type)
+    const mode: DateDisplayMode = (happeningType?.dateDisplayMode as DateDisplayMode) || 'datetime'
+    return formatHappeningDateParts(happening.startDate, happening.endDate, mode)
   }
 
-  const getFeaturedPersonName = (happening: Happening) => {
-    if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
-      return happening.featuredPerson.name
+  const getArtistNames = (happening: Happening): string => {
+    if (happening.artists && happening.artists.length > 0) {
+      return happening.artists
+        .map((a) => {
+          if (typeof a === 'object' && a?.name) return a.name
+          return null
+        })
+        .filter(Boolean)
+        .join(', ')
     }
-    return happening.featuredPersonName || ''
+    return ''
   }
 
   const getImageUrl = (happening: Happening) => {
@@ -55,7 +67,7 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
     if (typeof happening.heroImage === 'object' && happening.heroImage?.alt) {
       return happening.heroImage.alt
     }
-    return `${happening.title || 'Happening'}${getFeaturedPersonName(happening) ? ` by ${getFeaturedPersonName(happening)}` : ''}`
+    return `${happening.title || 'Happening'}${getArtistNames(happening) ? ` by ${getArtistNames(happening)}` : ''}`
   }
 
   if (happenings.length === 0) {
@@ -114,16 +126,22 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
                   <h3 className="text-xl font-bold text-navy mb-1 truncate group-hover:text-bright-lake transition-colors">
                     {happening.title}
                   </h3>
-                  {getFeaturedPersonName(happening) && (
+                  {getArtistNames(happening) && (
                     <p className="text-sm text-navy/70 mb-2">
-                      {getFeaturedPersonName(happening)}
+                      {getArtistNames(happening)}
                     </p>
                   )}
-                  {happening.startDate && (
-                    <p className="text-xs text-navy/60">
-                      {formatDate(happening.startDate)}
-                    </p>
-                  )}
+                  {happening.startDate && (() => {
+                    const parts = getDateParts(happening)
+                    return parts.date ? (
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-xs font-medium text-navy/70">{parts.date}</span>
+                        {parts.time && (
+                          <span className="text-xs text-navy/45">{parts.time}</span>
+                        )}
+                      </div>
+                    ) : null
+                  })()}
                 </div>
               </div>
             </Link>
