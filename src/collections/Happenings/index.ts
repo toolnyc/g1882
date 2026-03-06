@@ -83,35 +83,6 @@ export const Happenings: CollectionConfig = {
               relationTo: 'media',
               required: false,
             },
-            {
-              name: 'category',
-              type: 'text',
-              required: false,
-              maxLength: 255,
-              admin: {
-                description: 'Deprecated -- use the "type" field instead',
-              },
-            },
-            {
-              name: 'featuredPerson',
-              type: 'relationship',
-              relationTo: 'artists',
-              required: false,
-              admin: {
-                position: 'sidebar',
-                description: 'Deprecated -- use the "artists" field instead',
-              },
-            },
-            {
-              name: 'featuredPersonName',
-              type: 'text',
-              required: false,
-              maxLength: 255,
-              admin: {
-                description: 'Deprecated -- use the "artists" field instead',
-                position: 'sidebar',
-              },
-            },
           ],
         },
         {

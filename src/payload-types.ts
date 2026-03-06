@@ -199,6 +199,8 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Max file size: 50MB. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM. Images larger than 2560px are auto-resized. Images are automatically converted to WebP for optimal performance.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -226,6 +228,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Details about automatic processing applied to this upload
+   */
+  processingInfo?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -377,18 +383,6 @@ export interface Happening {
     [k: string]: unknown;
   } | null;
   heroImage?: (string | null) | Media;
-  /**
-   * Deprecated -- use the "type" field instead
-   */
-  category?: string | null;
-  /**
-   * Deprecated -- use the "artists" field instead
-   */
-  featuredPerson?: (string | null) | Artist;
-  /**
-   * Deprecated -- use the "artists" field instead
-   */
-  featuredPersonName?: string | null;
   /**
    * For Date Range types, only the date portion is displayed. For Date+Time types, both date and time are shown.
    */
@@ -957,6 +951,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  processingInfo?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1125,9 +1120,6 @@ export interface HappeningsSelect<T extends boolean = true> {
   type?: T;
   description?: T;
   heroImage?: T;
-  category?: T;
-  featuredPerson?: T;
-  featuredPersonName?: T;
   startDate?: T;
   endDate?: T;
   isActiveOverride?: T;

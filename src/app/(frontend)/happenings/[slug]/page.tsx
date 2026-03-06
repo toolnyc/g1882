@@ -8,7 +8,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
-import { formatHappeningDate } from '@/utilities/dateHelpers'
+import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
@@ -40,24 +40,10 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   const heroImage =
     typeof happening.heroImage === 'object' && happening.heroImage ? happening.heroImage : null
 
-  // Resolve all artists from the new array field
+  // Resolve all artists from the artists array field
   const artists: Artist[] = (happening.artists || [])
     .map((a) => (typeof a === 'object' && a ? (a as Artist) : null))
     .filter(Boolean) as Artist[]
-
-  // Fall back to legacy featuredPerson
-  if (artists.length === 0) {
-    const featuredPerson =
-      typeof happening.featuredPerson === 'object' && happening.featuredPerson
-        ? happening.featuredPerson
-        : null
-    if (featuredPerson) {
-      artists.push(featuredPerson as Artist)
-    }
-  }
-
-  const legacyPersonName =
-    artists.length === 0 ? (happening.featuredPersonName || '') : ''
 
   const happeningType = resolveHappeningType(happening.type)
   const typeLabel = happeningType?.name || null
@@ -65,7 +51,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
   const hasHeroImage = heroImage && typeof heroImage === 'object' && heroImage.url
 
-  const dateDisplay = formatHappeningDate(
+  const dateParts = formatHappeningDateParts(
     happening.startDate,
     happening.endDate,
     dateDisplayMode,
@@ -115,22 +101,22 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                   ))}
                 </div>
               )}
-              {legacyPersonName && (
-                <p className="text-2xl text-bright-lake font-semibold">{legacyPersonName}</p>
-              )}
             </div>
 
             {/* Date Display */}
-            {dateDisplay && (
+            {dateParts.date && (
               <div className="mb-8 pb-8 border-b border-navy/20">
-                <span className="text-lg text-navy">{dateDisplay}</span>
+                <span className="text-lg text-navy">{dateParts.date}</span>
+                {dateParts.time && (
+                  <span className="text-base text-navy/60 ml-2">{dateParts.time}</span>
+                )}
               </div>
             )}
 
-            {/* Type / Category Tag */}
-            {(typeLabel || happening.category) && (
+            {/* Type Tag */}
+            {typeLabel && (
               <div className="mb-8">
-                <CategoryTag category={typeLabel || happening.category!} />
+                <CategoryTag category={typeLabel} />
               </div>
             )}
 

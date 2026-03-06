@@ -7,30 +7,20 @@ import type { Artist } from '@/payload-types'
 
 type RelatedHappeningsProps = {
   artistId: string
-  artistName: string | null
 }
 
-export async function RelatedHappenings({ artistId, artistName }: RelatedHappeningsProps) {
+export async function RelatedHappenings({ artistId }: RelatedHappeningsProps) {
   const getHappenings = getCachedHappenings({}, 2)
   const allHappenings = await getHappenings()
 
   const relatedHappenings = allHappenings.filter((happening) => {
-    // Check new artists array
     if (happening.artists && happening.artists.length > 0) {
-      const match = happening.artists.some((a) => {
+      return happening.artists.some((a) => {
         if (typeof a === 'object' && a) return (a as Artist).id === artistId
         if (typeof a === 'string') return a === artistId
         return false
       })
-      if (match) return true
     }
-    // Check legacy featuredPerson
-    const featuredPerson =
-      typeof happening.featuredPerson === 'object' && happening.featuredPerson
-        ? happening.featuredPerson
-        : null
-    if (featuredPerson?.id === artistId) return true
-    if (happening.featuredPersonName === artistName) return true
     return false
   })
 

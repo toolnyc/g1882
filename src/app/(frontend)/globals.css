@@ -74,12 +74,13 @@
     overscroll-behavior: none;
     /* Ensure locomotive scroll works properly */
     overflow-x: hidden;
+    letter-spacing: -0.01em;
   }
 
   /* Gallery 1882 Typography System */
   h1, h2, h3 {
     @apply font-bold leading-tight tracking-tight text-navy;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.041em;
   }
 
   p {
@@ -122,7 +123,7 @@
     position: relative;
     overflow: hidden;
     border: 1px solid transparent;
-    letter-spacing: 0.015em;
+    letter-spacing: 0.01em;
     font-size: 0.8125rem;
   }
 
@@ -153,7 +154,7 @@
     border-radius: 1px;
     position: relative;
     overflow: hidden;
-    letter-spacing: 0.015em;
+    letter-spacing: 0.01em;
     font-size: 0.8125rem;
   }
 
@@ -183,7 +184,7 @@
     position: relative;
     overflow: hidden;
     background: var(--gallery-lake);
-    letter-spacing: 0.015em;
+    letter-spacing: 0.01em;
     font-size: 0.8125rem;
     border: 1px solid transparent;
   }
