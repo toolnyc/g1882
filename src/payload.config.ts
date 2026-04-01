@@ -24,7 +24,8 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 if (!process.env.PREVIEW_SECRET) {
-  console.warn('PREVIEW_SECRET environment variable is not set — live preview will be disabled')
+  // Using console.warn here because Payload logger is not yet initialized at config load time
+  console.warn('[g1882] PREVIEW_SECRET environment variable is not set — live preview will be disabled')
 }
 
 export default buildConfig({

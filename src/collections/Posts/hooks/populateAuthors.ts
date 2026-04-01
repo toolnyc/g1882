@@ -1,4 +1,5 @@
 import type { CollectionAfterReadHook } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 import { User } from 'src/payload-types'
 
 // The `user` collection has access control locked so that users are not publicly accessible
@@ -33,8 +34,9 @@ export const populateAuthors: CollectionAfterReadHook = async ({ doc, req: _req,
           name: authorDoc.name,
         }))
       }
-    } catch {
-      // swallow error
+    } catch (err) {
+      Sentry.captureException(err, { tags: { source: 'payload', hook: 'populateAuthors' } })
+      payload.logger.error({ err, msg: 'Failed to populate authors', docId: doc.id })
     }
   }
 

@@ -1,3 +1,4 @@
+import { withSentryConfig } from '@sentry/nextjs'
 import { withPayload } from '@payloadcms/next/withPayload'
 
 import redirects from './redirects.js'
@@ -63,4 +64,17 @@ const nextConfig = {
   redirects,
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+export default withSentryConfig(withPayload(nextConfig, { devBundleServerPackages: false }), {
+  // Suppresses source map upload logs during build
+  silent: true,
+  // Upload source maps for better stack traces
+  widenClientFileUpload: true,
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+  // Tree-shakes Sentry debug logging statements to reduce bundle size
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+})

@@ -100,7 +100,9 @@ export const FormBlock: React.FC<
             if (redirectUrl) router.push(redirectUrl)
           }
         } catch (err) {
-          console.warn(err)
+          if (typeof window !== 'undefined' && 'Sentry' in window) {
+            import('@sentry/nextjs').then((Sentry) => Sentry.captureException(err))
+          }
           setIsLoading(false)
           setError({
             message: 'Something went wrong.',

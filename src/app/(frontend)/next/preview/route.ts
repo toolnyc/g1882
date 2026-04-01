@@ -1,4 +1,5 @@
 import type { CollectionSlug, PayloadRequest } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 import { getPayload } from 'payload'
 
 import { draftMode } from 'next/headers'
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest): Promise<Response> {
       headers: req.headers,
     })
   } catch (error) {
+    Sentry.captureException(error, { tags: { route: '/next/preview', action: 'auth' } })
     payload.logger.error({ err: error }, 'Error verifying token for live preview')
     return new Response('You are not allowed to preview this page', { status: 403 })
   }

@@ -59,7 +59,8 @@ export function NewsletterGateModal() {
       } else {
         toast.error(data.error || 'Failed to subscribe. Please try again.')
       }
-    } catch (_error) {
+    } catch (error) {
+      import('@sentry/nextjs').then((Sentry) => Sentry.captureException(error))
       toast.error('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)

@@ -1,4 +1,5 @@
 import { createLocalReq, getPayload } from 'payload'
+import * as Sentry from '@sentry/nextjs'
 import { seed } from '@/endpoints/seed'
 import config from '@payload-config'
 import { headers } from 'next/headers'
@@ -38,6 +39,7 @@ export async function POST(): Promise<Response> {
 
     return Response.json({ success: true })
   } catch (e) {
+    Sentry.captureException(e, { tags: { route: '/next/seed', action: 'seed' } })
     payload.logger.error({ err: e, message: 'Error seeding data' })
 
     // Check if this is a validation error with structured data

@@ -1,0 +1,8 @@
+# Gallery 1882 — Windsurf Rules
+# Primary instruction source: AGENTS.md
+# This file is a thin wrapper. Read AGENTS.md for full project context.
+
+Read and follow all instructions in AGENTS.md in this repository root.
+It contains the tech stack, conventions, observability patterns, and deployment workflow.
+
+Key points: Next.js 15 + Payload CMS 3 + MongoDB + Vercel. Use pnpm. Never use npm or yarn.

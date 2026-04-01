@@ -16,6 +16,8 @@ import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getAuthStatus } from '@/utilities/getAuthStatus'
 import { draftMode } from 'next/headers'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -68,6 +70,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </LanderModeGuard>
           <CookieConsent />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

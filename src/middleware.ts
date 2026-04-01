@@ -66,16 +66,16 @@ export function middleware(request: NextRequest) {
       'Content-Security-Policy',
       [
         "default-src 'self'",
-        // Scripts: self + inline for Next.js hydration + eval for dev
-        `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
+        // Scripts: self + inline for Next.js hydration + eval for dev + Vercel analytics
+        `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
         // Styles: self + inline for Tailwind/Next.js
         "style-src 'self' 'unsafe-inline'",
         // Images: self + Vercel Blob + data URIs
         "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
         // Fonts: self
         "font-src 'self'",
-        // Connect: self + weather API
-        "connect-src 'self' https://api.open-meteo.com",
+        // Connect: self + weather API + Sentry + Vercel analytics
+        "connect-src 'self' https://api.open-meteo.com https://*.ingest.sentry.io https://vitals.vercel-insights.com",
         // Media: self + Vercel Blob
         "media-src 'self' https://*.public.blob.vercel-storage.com",
         // Frames: Cloudflare Stream for hero video

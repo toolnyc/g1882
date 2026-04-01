@@ -3,8 +3,13 @@ dist / media
 node_modules
 .DS_Store
 .env
+.env*.local
 .next
 .vercel
+.sentryclirc
+
+# Claude agentic state (machine-local, ephemeral)
+.claude/state/
 
 # Payload default media upload directory
 public/media/
