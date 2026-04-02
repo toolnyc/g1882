@@ -24,6 +24,7 @@ interface HomePageClientProps {
   featuredArtistData: ReturnType<typeof import('@/utilities/dataTransformers').transformFeaturedArtist>
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
   heroVideoUrl?: string | null
+  heroVideoPosterUrl?: string | null
   structuredHours?: { day: string; open: string; close: string }[] | null
   isUpNext?: boolean
 }
@@ -35,6 +36,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   featuredArtistData,
   visitSectionData,
   heroVideoUrl,
+  heroVideoPosterUrl,
   structuredHours,
   isUpNext = false,
 }) => {
@@ -57,6 +59,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
           statusText="Coming Soon"
           statusIndicatorColor="bg-lake"
           heroVideoUrl={heroVideoUrl}
+          heroVideoPosterUrl={heroVideoPosterUrl}
           structuredHours={structuredHours}
         />
       )}
