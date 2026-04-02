@@ -1,15 +1,52 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Policy } from '@/payload-types'
+import RichText from '@/components/RichText'
 
-export const metadata: Metadata = {
-  title: 'Cookie Policy | Gallery 1882',
-  description: 'Cookie policy for Gallery 1882 website.',
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Cookie Policy | Gallery 1882',
+    description: 'Cookie policy for Gallery 1882 website.',
+  }
 }
 
-export default function CookiePolicyPage() {
+export default async function CookiePolicyPage() {
+  const policies = (await getCachedGlobal('policies', 1)()) as Policy
+
+  const hasContent = policies?.cookiesContent?.root?.children?.length
+
   return (
     <main className="container py-24 max-w-3xl">
       <h1 className="text-3xl font-bold mb-8">Cookie Policy</h1>
+
+      {hasContent ? (
+        <>
+          {policies.cookiesLastUpdated && (
+            <p className="text-navy/70 mb-8 text-sm">
+              Last updated:{' '}
+              {new Date(policies.cookiesLastUpdated).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+              })}
+            </p>
+          )}
+          <div className="prose prose-navy max-w-none">
+            <RichText data={policies.cookiesContent!} enableGutter={false} />
+          </div>
+        </>
+      ) : (
+        <DefaultCookiesContent />
+      )}
+    </main>
+  )
+}
+
+function DefaultCookiesContent() {
+  return (
+    <>
       <p className="text-navy/70 mb-8 text-sm">Last updated: February 2026</p>
 
       <div className="prose prose-navy max-w-none space-y-8">
@@ -109,6 +146,6 @@ export default function CookiePolicyPage() {
           </p>
         </section>
       </div>
-    </main>
+    </>
   )
 }

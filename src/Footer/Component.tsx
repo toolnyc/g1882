@@ -109,7 +109,7 @@ export async function Footer() {
             <p className="text-off-white">
               &copy; {new Date().getFullYear()} Gallery 1882. All rights reserved.
             </p>
-            <nav className="mt-2 flex justify-center gap-4" aria-label="Legal">
+            <nav className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1" aria-label="Legal">
               <Link
                 href="/privacy"
                 className="text-off-white/70 hover:text-lake transition-colors text-xs"
@@ -121,6 +121,18 @@ export async function Footer() {
                 className="text-off-white/70 hover:text-lake transition-colors text-xs"
               >
                 Cookie Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-off-white/70 hover:text-lake transition-colors text-xs"
+              >
+                Terms &amp; Conditions
+              </Link>
+              <Link
+                href="/land-acknowledgement"
+                className="text-off-white/70 hover:text-lake transition-colors text-xs"
+              >
+                Land Acknowledgement
               </Link>
             </nav>
           </div>

@@ -108,11 +108,13 @@ export interface Config {
     space: Space;
     home: Home;
     visit: Visit;
+    policies: Policy;
   };
   globalsSelect: {
     space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
+    policies: PoliciesSelect<false> | PoliciesSelect<true>;
   };
   locale: null;
   user: User & {
@@ -199,6 +201,8 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Max file size: 50MB. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM. Images larger than 2560px are auto-resized. Images are automatically converted to WebP for optimal performance.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -226,6 +230,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Details about automatic processing applied to this upload
+   */
+  processingInfo?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -957,6 +965,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  processingInfo?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1626,6 +1635,90 @@ export interface Visit {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies".
+ */
+export interface Policy {
+  id: string;
+  /**
+   * Full privacy policy content. Leave empty to display the default hardcoded policy.
+   */
+  privacyContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  privacyLastUpdated?: string | null;
+  /**
+   * Full cookie policy content. Leave empty to display the default hardcoded policy.
+   */
+  cookiesContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cookiesLastUpdated?: string | null;
+  /**
+   * Full terms and conditions content.
+   */
+  termsContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  termsLastUpdated?: string | null;
+  /**
+   * Land acknowledgement statement.
+   */
+  landAcknowledgementContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "space_select".
  */
 export interface SpaceSelect<T extends boolean = true> {
@@ -1795,6 +1888,22 @@ export interface VisitSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies_select".
+ */
+export interface PoliciesSelect<T extends boolean = true> {
+  privacyContent?: T;
+  privacyLastUpdated?: T;
+  cookiesContent?: T;
+  cookiesLastUpdated?: T;
+  termsContent?: T;
+  termsLastUpdated?: T;
+  landAcknowledgementContent?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
