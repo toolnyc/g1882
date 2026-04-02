@@ -12,7 +12,7 @@
  */
 import fs from 'fs'
 import { execSync } from 'child_process'
-import { check } from './sentinels.mjs'
+import { check, clear } from './sentinels.mjs'
 
 const input = JSON.parse(fs.readFileSync('/dev/stdin', 'utf-8').trim() || '{}')
 
@@ -152,11 +152,52 @@ if (toolName === 'Bash') {
   }
 
   // Gate: warn on branch creation from wrong base
-  if (/git\s+(checkout\s+-b|switch\s+-c)/.test(cmd) && branch === 'prod') {
-    warn(
-      `⚠️ Creating a branch from \`prod\`. Feature/fix branches should typically branch from \`preview\` instead. ` +
-        `Switch to preview first: \`git checkout preview\``,
-    )
+  if (/git\s+(checkout\s+-b|switch\s+-c)/.test(cmd)) {
+    if (branch === 'prod') {
+      warn(
+        `⚠️ Creating a branch from \`prod\`. Feature/fix branches should typically branch from \`preview\` instead. ` +
+          `Switch to preview first: \`git checkout preview\``,
+      )
+    }
+    if (branch === 'main') {
+      warn(
+        `⚠️ Creating a branch from \`main\` (deprecated). Feature/fix branches should branch from \`preview\`. ` +
+          `Switch to preview first: \`git checkout preview\``,
+      )
+    }
+  }
+
+  // Gate: warn on merge that will require post-merge actions
+  if (/git\s+merge/.test(cmd) && branch !== 'prod') {
+    // Extract the branch being merged
+    const mergeMatch = cmd.match(/git\s+merge\s+(?:--no-ff\s+)?(\S+)/)
+    if (mergeMatch) {
+      const mergingBranch = mergeMatch[1]
+      const schemaChangingBranches = [
+        'hero-video', 'our-story', 'exhibition-works', 'homepage-happening',
+        'footer-policy', 'newsletter-popup', 'search-directory', 'visit-page',
+      ]
+      const needsTypes = schemaChangingBranches.some((b) => mergingBranch.includes(b))
+      const importmapBranches = ['our-story', 'footer-policy', 'search-directory']
+      const needsImportmap = importmapBranches.some((b) => mergingBranch.includes(b))
+
+      const actions = []
+      if (needsTypes) {
+        actions.push('`pnpm generate:types`')
+        clear('types-current')
+      }
+      if (needsImportmap) actions.push('`pnpm generate:importmap`')
+      // Any merge invalidates verify
+      clear('verify-passed')
+
+      if (actions.length > 0) {
+        warn(
+          `📋 Post-merge actions needed after merging \`${mergingBranch}\`:\n` +
+            actions.map((a) => `  - Run ${a}`).join('\n') +
+            `\n  - Run \`/verify\` to confirm everything builds`,
+        )
+      }
+    }
   }
 }
 

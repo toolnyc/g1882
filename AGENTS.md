@@ -182,6 +182,26 @@ Ephemeral JSON state files that track workflow progress. Soft warnings only — 
 | `/docs-sync` | Documentation synchronization |
 | `/observability` | Logging/monitoring reference |
 
+## Agent Team Conventions
+
+When spawning parallel agents (e.g., worktree-isolated epic implementations):
+
+| Guideline | Why |
+|-----------|-----|
+| Use `dontAsk` mode, not `bypassPermissions` | `bypassPermissions` causes write failures in worktrees |
+| Always branch from `preview` | `main` is deprecated; `prod` has empty DB. Verify with `git merge-base HEAD preview` after completion |
+| Prefer smaller agent scope | One sub-task per agent. Shorter runs = less exposure to session drops |
+| Research-only agents are more reliable | Agents that only read/search rarely fail; use them for exploration |
+| Include fallback instructions | Tell agents to document progress so work can be completed manually if auth drops |
+| Frame prompts idempotently | Agents should check if work already exists before creating, so re-runs are safe |
+| Verify branch base after completion | Run `git merge-base HEAD preview` to confirm the branch descends from `preview` |
+
+### Worktree Notes
+
+- Sentinels resolve from `git rev-parse --git-common-dir`, so they're shared across worktrees
+- Hooks in `.claude/hooks/` reference sentinels via import, so they work in worktrees automatically
+- If hooks aren't firing in a worktree, ensure `.claude/` is accessible from the worktree root
+
 ## Knowledge Base
 
 Session reports and architecture decisions are stored in the Obsidian vault:

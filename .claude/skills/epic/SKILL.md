@@ -40,6 +40,21 @@ Components to create or modify.
 
 ## Known Risks
 - Anything that might go wrong
+
+## Sub-tasks
+Ordered list of discrete implementation steps. Each should be completable
+independently and verifiable in isolation.
+
+1. [ ] Sub-task description (files: list of files)
+2. [ ] ...
+
+## Progress
+Updated by implementing agents as sub-tasks complete. Enables resume after
+session drops.
+
+| Sub-task | Status | Agent / Commit |
+|----------|--------|----------------|
+| 1        | pending | — |
 ```
 
 5. Present the plan to the user for confirmation
@@ -49,3 +64,11 @@ Components to create or modify.
 - This skill is **optional** — not required before writing code
 - Useful for larger features that span multiple files
 - The epic document is git-tracked project history
+
+## Agent Resilience
+
+When epics are implemented by spawned agents:
+- Agents should update the **Progress** table as they complete sub-tasks
+- Prompts should be **idempotent** — agents check if work exists before creating
+- Each sub-task should be scoped small enough to survive a session drop
+- If an agent fails mid-task, re-launch it with the same epic doc — it reads Progress to resume

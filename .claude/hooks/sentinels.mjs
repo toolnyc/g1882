@@ -3,13 +3,35 @@
  *
  * Sentinels are ephemeral JSON files in .claude/state/ that track workflow
  * stage. They are gitignored and machine-local.
+ *
+ * Resolves state directory from the git common dir so sentinels work
+ * correctly in worktrees (worktrees share the main repo's .claude/state/).
  */
 import fs from 'fs'
 import path from 'path'
+import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const STATE_DIR = path.resolve(__dirname, '..', 'state')
+
+function resolveStateDir() {
+  try {
+    // git rev-parse --git-common-dir returns the shared .git dir,
+    // which is the main repo's .git even when run from a worktree.
+    const commonDir = execSync('git rev-parse --git-common-dir', {
+      encoding: 'utf-8',
+      timeout: 3000,
+    }).trim()
+    // commonDir is either ".git" (main repo) or an absolute path (worktree)
+    const repoRoot = path.resolve(commonDir, '..')
+    return path.join(repoRoot, '.claude', 'state')
+  } catch {
+    // Fallback to __dirname-relative resolution
+    return path.resolve(__dirname, '..', 'state')
+  }
+}
+
+const STATE_DIR = resolveStateDir()
 
 // Max ages in milliseconds (0 = no expiration)
 const MAX_AGES = {
