@@ -11,6 +11,7 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { CookieConsent } from '@/components/CookieConsent'
+import { AccessibilityWidget } from '@/components/AccessibilityWidget'
 import { LayoutClient } from '@/components/LayoutClient'
 import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -69,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </LayoutClient>
           </LanderModeGuard>
           <CookieConsent />
+          <AccessibilityWidget />
         </Providers>
         <Analytics />
         <SpeedInsights />
