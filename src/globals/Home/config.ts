@@ -153,6 +153,49 @@ export const Home: GlobalConfig = {
             },
           ],
         },
+        {
+          label: 'Newsletter Popup',
+          fields: [
+            {
+              name: 'popupHeadline',
+              type: 'text',
+              label: 'Popup Headline',
+              required: false,
+              admin: {
+                description: 'Headline for the newsletter popup (defaults to "Opening Soon")',
+              },
+            },
+            {
+              name: 'popupDescription',
+              type: 'textarea',
+              label: 'Popup Description',
+              required: false,
+              admin: {
+                description:
+                  'Description text for the newsletter popup (defaults to launch announcement copy)',
+              },
+            },
+            {
+              name: 'popupButtonText',
+              type: 'text',
+              label: 'Popup Button Text',
+              required: false,
+              admin: {
+                description: 'Submit button text (defaults to "Subscribe")',
+              },
+            },
+            {
+              name: 'popupSuccessMessage',
+              type: 'text',
+              label: 'Popup Success Message',
+              required: false,
+              admin: {
+                description:
+                  'Message shown after successful signup (defaults to "You\'ve been added to the newsletter!")',
+              },
+            },
+          ],
+        },
       ],
     },
   ],
