@@ -39,7 +39,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               viewport={{ once: true }}
             >
               <div className="caption text-lake mb-6">Featured Artist</div>
-              <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">{name}</h2>
+              <h2 className="mb-6 text-6xl font-bold tracking-tight md:text-7xl">{name}</h2>
               <p className="mb-8 text-xl font-medium text-lake">{title}</p>
               {bio && <p className="mb-8 text-lg leading-relaxed text-navy/80">{bio}</p>}
               <div className="flex flex-col gap-4 sm:flex-row">

@@ -60,15 +60,17 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   return (
     <main className="min-h-screen bg-off-white">
       <article className={`pb-24${hasHeroImage ? '' : ' pt-48'}`}>
-        {/* Hero Image */}
+        {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
-          <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
+          <div className="w-full mb-16">
             <Image
               src={heroImage.url!}
               alt={heroImage.alt || happening.title || ''}
-              fill
-              className="object-cover"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
               priority
+              sizes="100vw"
             />
           </div>
         )}
@@ -80,20 +82,23 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-navy mb-4">
                 {happening.title}
               </h1>
+              {happening.subcaption && (
+                <p className="text-xl text-navy/70 mb-4">{happening.subcaption}</p>
+              )}
               {artists.length > 0 && (
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.id}>
-                      {i > 0 && <span className="text-2xl text-bright-lake">,</span>}
+                      {i > 0 && <span className="text-lg text-bright-lake">,</span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-2xl text-bright-lake font-semibold hover:text-lake transition-colors"
+                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-2xl text-bright-lake font-semibold">
+                        <span className="text-lg text-bright-lake font-semibold">
                           {artist.name}
                         </span>
                       )}
@@ -107,6 +112,9 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             {dateParts.date && (
               <div className="mb-8 pb-8 border-b border-navy/20">
                 <span className="text-lg text-navy">{dateParts.date}</span>
+                {dateParts.endDate && (
+                  <span className="text-lg text-navy">{` \u2013 ${dateParts.endDate}`}</span>
+                )}
                 {dateParts.time && (
                   <span className="text-base text-navy/60 ml-2">{dateParts.time}</span>
                 )}

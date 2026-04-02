@@ -364,6 +364,10 @@ export interface Happening {
   id: string;
   title: string;
   /**
+   * Optional subtitle displayed between the title and artist list
+   */
+  subcaption?: string | null;
+  /**
    * Determines how dates are displayed. Date Range types show "March 16–June 20"; Date+Time types show "March 28 from 7–9pm".
    */
   type: string | HappeningType;
@@ -1117,6 +1121,7 @@ export interface ArtistsSelect<T extends boolean = true> {
  */
 export interface HappeningsSelect<T extends boolean = true> {
   title?: T;
+  subcaption?: T;
   type?: T;
   description?: T;
   heroImage?: T;
@@ -1513,6 +1518,18 @@ export interface Home {
   visitImage?: (string | null) | Media;
   visitCtaText?: string | null;
   visitCtaUrl?: string | null;
+  /**
+   * Toggle the What's Happening section on the homepage
+   */
+  whatsHappeningEnabled?: boolean | null;
+  /**
+   * Override the section title (defaults to "What's Happening?")
+   */
+  whatsHappeningTitle?: string | null;
+  /**
+   * Show the decorative icon next to the section heading
+   */
+  whatsHappeningIcon?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1686,6 +1703,9 @@ export interface HomeSelect<T extends boolean = true> {
   visitImage?: T;
   visitCtaText?: T;
   visitCtaUrl?: T;
+  whatsHappeningEnabled?: T;
+  whatsHappeningTitle?: T;
+  whatsHappeningIcon?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

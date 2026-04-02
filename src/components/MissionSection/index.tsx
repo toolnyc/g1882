@@ -20,7 +20,7 @@ export const MissionSection: React.FC<MissionSectionProps> = ({
   const { scrollYProgress } = useScroll()
 
   // Animate border from 0 to 100% width
-  const borderWidth = useTransform(scrollYProgress, [0, 0.2], ['0%', '100%'])
+  const borderWidth = useTransform(scrollYProgress, [0, 0.12], ['0%', '100%'])
 
   const statement = missionStatement || ''
   const words = statement.split(' ').reduce<string[]>((acc, word, idx) => {
