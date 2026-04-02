@@ -108,11 +108,13 @@ export interface Config {
     space: Space;
     home: Home;
     visit: Visit;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1618,6 +1620,19 @@ export interface Visit {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  search?: {
+    artistsShowSearch?: boolean | null;
+    happeningsShowSearch?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "space_select".
  */
 export interface SpaceSelect<T extends boolean = true> {
@@ -1786,6 +1801,21 @@ export interface VisitSelect<T extends boolean = true> {
               answer?: T;
               id?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  search?:
+    | T
+    | {
+        artistsShowSearch?: T;
+        happeningsShowSearch?: T;
       };
   updatedAt?: T;
   createdAt?: T;
