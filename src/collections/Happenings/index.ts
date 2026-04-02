@@ -178,6 +178,26 @@ export const Happenings: CollectionConfig = {
             },
           ],
         },
+        {
+          label: 'Exhibition Details',
+          fields: [
+            {
+              name: 'contactInfo',
+              type: 'richText',
+              required: false,
+              editor: lexicalEditor({
+                features: () => [
+                  FixedToolbarFeature(),
+                  InlineToolbarFeature(),
+                ],
+              }),
+              admin: {
+                description:
+                  'Contact information displayed below the works grid (e.g. gallery contact, sales inquiries)',
+              },
+            },
+          ],
+        },
       ],
     },
     {

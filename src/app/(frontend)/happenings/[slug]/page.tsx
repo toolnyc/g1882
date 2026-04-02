@@ -12,6 +12,8 @@ import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
+import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
+import type { WorkItem } from '@/components/WorksMasonryGrid'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
@@ -44,6 +46,18 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   const artists: Artist[] = (happening.artists || [])
     .map((a) => (typeof a === 'object' && a ? (a as Artist) : null))
     .filter(Boolean) as Artist[]
+
+  // Collect works from all artists that are tagged with this happening
+  const exhibitionWorks: WorkItem[] = artists.flatMap((artist) => {
+    const works = artist.works || []
+    return works.filter((work) => {
+      const taggedHappenings = work.happenings || []
+      return taggedHappenings.some((h) => {
+        const happeningId = typeof h === 'object' && h ? h.id : h
+        return happeningId === happening.id
+      })
+    })
+  })
 
   const happeningType = resolveHappeningType(happening.type)
   const typeLabel = happeningType?.name || null
@@ -124,6 +138,24 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             {happening.description && (
               <div className="mb-6">
                 <RichText data={happening.description} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
+              </div>
+            )}
+
+            {/* Exhibition Works */}
+            {exhibitionWorks.length > 0 && (
+              <div className="mt-12 pt-8 border-t border-navy/20">
+                <h2 className="text-2xl font-bold text-navy mb-6">Works</h2>
+                <WorksMasonryGrid
+                  works={exhibitionWorks}
+                  fallbackAlt={happening.title || ''}
+                />
+              </div>
+            )}
+
+            {/* Contact Info */}
+            {happening.contactInfo && (
+              <div className="mt-12 pt-8 border-t border-navy/20">
+                <RichText data={happening.contactInfo} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
               </div>
             )}
 
