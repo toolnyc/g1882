@@ -199,6 +199,8 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Max file size: 50MB. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM. Images larger than 2560px are auto-resized. Images are automatically converted to WebP for optimal performance.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -226,6 +228,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Details about automatic processing applied to this upload
+   */
+  processingInfo?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -957,6 +963,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  processingInfo?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1581,6 +1588,10 @@ export interface Visit {
      * Multi-line address
      */
     address?: string | null;
+    /**
+     * Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.
+     */
+    googleMapsUrl?: string | null;
     parkingDescription?: string | null;
     parkingFeatures?:
       | {
@@ -1609,6 +1620,15 @@ export interface Visit {
           id?: string | null;
         }[]
       | null;
+  };
+  /**
+   * Toggle visibility of the "Explore the Duneland Community" section
+   */
+  dunelandCommunityEnabled?: boolean | null;
+  dunelandCommunity?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
   };
   faqsSection?: {
     caption?: string | null;
@@ -1751,6 +1771,7 @@ export interface VisitSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         address?: T;
+        googleMapsUrl?: T;
         parkingDescription?: T;
         parkingFeatures?:
           | T
@@ -1781,6 +1802,14 @@ export interface VisitSelect<T extends boolean = true> {
               icon?: T;
               id?: T;
             };
+      };
+  dunelandCommunityEnabled?: T;
+  dunelandCommunity?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
       };
   faqsSection?:
     | T
