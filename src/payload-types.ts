@@ -108,11 +108,13 @@ export interface Config {
     space: Space;
     home: Home;
     visit: Visit;
+    'our-story': OurStory;
   };
   globalsSelect: {
     space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
+    'our-story': OurStorySelect<false> | OurStorySelect<true>;
   };
   locale: null;
   user: User & {
@@ -1618,6 +1620,46 @@ export interface Visit {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story".
+ */
+export interface OurStory {
+  id: string;
+  /**
+   * Up to 10 photos displayed in the carousel. Drag to reorder.
+   */
+  photos?:
+    | {
+        image: string | Media;
+        /**
+         * Optional caption displayed below the image
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The gallery story content, displayed below the photo carousel
+   */
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "space_select".
  */
 export interface SpaceSelect<T extends boolean = true> {
@@ -1787,6 +1829,23 @@ export interface VisitSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story_select".
+ */
+export interface OurStorySelect<T extends boolean = true> {
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  story?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
