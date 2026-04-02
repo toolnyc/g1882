@@ -17,7 +17,11 @@ and updating documentation if needed.
    - If any skill procedures are now inaccurate, fix them
 4. Check if ARCHITECTURE.md needs updates (new files, changed patterns)
 5. Clear all sentinels
-6. Write a session summary (output to the user)
+6. Write a session summary to the Obsidian vault:
+   - Path: `/Users/pete/Dropbox/Notes/Obsidian/Clients/Gallery 1882/Session Reports/YYYY-MM-DD-<slug>.md`
+   - Use a descriptive slug (e.g., `agentic-build-improvements`, `epic-batch-implementation`)
+   - Include all sections from the Session Summary Format below
+7. Output the summary to the user as well
 
 ## Session Summary Format
 
