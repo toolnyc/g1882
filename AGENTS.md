@@ -56,6 +56,24 @@ pnpm test:pre-deploy      # Lint + unit + integration (run before merging)
 
 The `main` branch exists for backwards compatibility but should not be used for new work.
 
+### Branch Safety Rules
+
+| Rule | Why |
+|------|-----|
+| **Never edit source files directly on `prod`** | Auto-deploys to live site; production MongoDB is empty (no test data) |
+| **Prefer feature/fix branches over direct `preview` edits** | Keeps staging clean; allows PR review before merge |
+| **Always branch from `preview`**, not `prod` | `preview` has the full development database and latest validated code |
+| **Run `/verify` before any push** | Lint + tests + build must pass; sentinel tracks this |
+| **Merge to `prod` only after validating on `preview`** | Production has no test data — broken code is immediately visible to users |
+
+### Environment Context
+
+| Branch | Deploys to | Database | Risk |
+|--------|-----------|----------|------|
+| `prod` | Production domain | Production MongoDB (empty — no test data) | **High** |
+| `preview` | Preview environment | Development MongoDB (has test data) | Medium |
+| `feature/*`, `fix/*` | Preview (on push) | Development MongoDB | Low |
+
 ## Key Patterns
 
 - **Route groups**: `src/app/(frontend)/` for public site, `src/app/(payload)/` for admin
