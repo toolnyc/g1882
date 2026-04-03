@@ -26,9 +26,10 @@ export const Happenings: CollectionConfig = {
   versions: {
     maxPerDoc: 3,
     drafts: {
-      autosave: {
-        interval: 800,
-      },
+      // autosave temporarily disabled — suspected cause of blank create page
+      // autosave: {
+      //   interval: 800,
+      // },
       schedulePublish: true,
     },
   },
