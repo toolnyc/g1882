@@ -57,6 +57,7 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
   structuredHours,
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('')
+  const galleryStatus = getGalleryStatus(structuredHours, 'Open')
 
   const formatCentralTime = (): string => {
     const formatter = new Intl.DateTimeFormat('en-US', {
@@ -123,8 +124,11 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="px-4 py-3 flex gap-2"
-          ></motion.div>
+            className="px-4 py-3 flex items-center gap-2"
+          >
+            <span className={`inline-block w-2 h-2 rounded-full ${galleryStatus.color}`} />
+            <span className="text-xs text-off-white">{galleryStatus.text}</span>
+          </motion.div>
         </div>
       </motion.div>
     </section>
