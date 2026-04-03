@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "src/app/(payload)/api/[...slug]/route.ts": {
-      "maxDuration": 120
-    }
-  }
-}
