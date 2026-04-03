@@ -61,7 +61,7 @@ export const Space: GlobalConfig = {
       label: 'Operating Hours',
       admin: {
         description:
-          'Structured hours for open/closed status. Day: 0=Sunday, 1=Monday, ... 6=Saturday',
+          'Structured operating hours. Day: 0=Sunday, 1=Monday, ... 6=Saturday',
       },
       fields: [
         {

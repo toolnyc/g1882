@@ -89,13 +89,6 @@ export default async function HomePage() {
       }
     : undefined
 
-  // Extract structured hours for open/closed calculation
-  const structuredHours = space?.structuredHours?.map((h: { day: string; open: string; close: string }) => ({
-    day: h.day,
-    open: h.open,
-    close: h.close,
-  })) || null
-
   return (
     <HomePageClient
       homeData={homeData}
@@ -107,7 +100,6 @@ export default async function HomePage() {
       featuredArtistData={featuredArtistData}
       visitSectionData={visitSectionData}
       heroVideoUrl={homeData?.heroVideoUrl}
-      structuredHours={structuredHours}
       isUpNext={isUpNext}
     />
   )

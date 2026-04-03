@@ -1415,7 +1415,7 @@ export interface Space {
    */
   hours?: string | null;
   /**
-   * Structured hours for open/closed status. Day: 0=Sunday, 1=Monday, ... 6=Saturday
+   * Structured operating hours. Day: 0=Sunday, 1=Monday, ... 6=Saturday
    */
   structuredHours?:
     | {
