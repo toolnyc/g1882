@@ -320,6 +320,35 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                         <p className="text-lg text-navy/80 whitespace-pre-line">
                           {visit.location.address}
                         </p>
+                        {visit.location?.googleMapsUrl && (
+                          <a
+                            href={visit.location.googleMapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-navy text-off-white text-sm font-semibold tracking-wide uppercase rounded-lg hover:bg-navy/90 transition-colors"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                            Get Directions
+                          </a>
+                        )}
                       </div>
                     )}
                     {(visit.location?.parkingDescription || parkingFeatures) && (
@@ -390,6 +419,37 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                   </div>
                 )}
               </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Duneland Community Section — only show when enabled */}
+      {visit.dunelandCommunityEnabled && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center max-w-4xl mx-auto"
+            >
+              {visit.dunelandCommunity?.caption && (
+                <div className="caption text-lake mb-6">{visit.dunelandCommunity.caption}</div>
+              )}
+              <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                {visit.dunelandCommunity?.title || 'Explore the Duneland Community'}
+              </h2>
+              {visit.dunelandCommunity?.description ? (
+                <p className="text-lg leading-relaxed text-navy/80">
+                  {visit.dunelandCommunity.description}
+                </p>
+              ) : (
+                <p className="text-lg leading-relaxed text-navy/50 italic">
+                  Content coming soon.
+                </p>
+              )}
             </motion.div>
           </div>
         </section>

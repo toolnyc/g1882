@@ -1573,6 +1573,10 @@ export interface Visit {
      * Multi-line address
      */
     address?: string | null;
+    /**
+     * Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.
+     */
+    googleMapsUrl?: string | null;
     parkingDescription?: string | null;
     parkingFeatures?:
       | {
@@ -1601,6 +1605,15 @@ export interface Visit {
           id?: string | null;
         }[]
       | null;
+  };
+  /**
+   * Toggle visibility of the "Explore the Duneland Community" section
+   */
+  dunelandCommunityEnabled?: boolean | null;
+  dunelandCommunity?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
   };
   faqsSection?: {
     caption?: string | null;
@@ -1743,6 +1756,7 @@ export interface VisitSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         address?: T;
+        googleMapsUrl?: T;
         parkingDescription?: T;
         parkingFeatures?:
           | T
@@ -1773,6 +1787,14 @@ export interface VisitSelect<T extends boolean = true> {
               icon?: T;
               id?: T;
             };
+      };
+  dunelandCommunityEnabled?: T;
+  dunelandCommunity?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
       };
   faqsSection?:
     | T
