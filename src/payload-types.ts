@@ -109,12 +109,16 @@ export interface Config {
     home: Home;
     visit: Visit;
     policies: Policy;
+    'our-story': OurStory;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
     policies: PoliciesSelect<false> | PoliciesSelect<true>;
+    'our-story': OurStorySelect<false> | OurStorySelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -369,6 +373,10 @@ export interface Artist {
 export interface Happening {
   id: string;
   title: string;
+  /**
+   * Optional subtitle displayed between the title and artist list
+   */
+  subcaption?: string | null;
   /**
    * Determines how dates are displayed. Date Range types show "March 16–June 20"; Date+Time types show "March 28 from 7–9pm".
    */
@@ -1142,6 +1150,7 @@ export interface ArtistsSelect<T extends boolean = true> {
  */
 export interface HappeningsSelect<T extends boolean = true> {
   title?: T;
+  subcaption?: T;
   type?: T;
   description?: T;
   heroImage?: T;
@@ -1559,6 +1568,18 @@ export interface Home {
    * Message shown after successful signup (defaults to "You've been added to the newsletter!")
    */
   popupSuccessMessage?: string | null;
+  /**
+   * Toggle the What's Happening section on the homepage
+   */
+  whatsHappeningEnabled?: boolean | null;
+  /**
+   * Override the section title (defaults to "What's Happening?")
+   */
+  whatsHappeningTitle?: string | null;
+  /**
+   * Show the decorative icon next to the section heading
+   */
+  whatsHappeningIcon?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1761,6 +1782,59 @@ export interface Policy {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story".
+ */
+export interface OurStory {
+  id: string;
+  /**
+   * Up to 10 photos displayed in the carousel. Drag to reorder.
+   */
+  photos?:
+    | {
+        image: string | Media;
+        /**
+         * Optional caption displayed below the image
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The gallery story content, displayed below the photo carousel
+   */
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  search?: {
+    artistsShowSearch?: boolean | null;
+    happeningsShowSearch?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "space_select".
  */
 export interface SpaceSelect<T extends boolean = true> {
@@ -1834,6 +1908,9 @@ export interface HomeSelect<T extends boolean = true> {
   popupDescription?: T;
   popupButtonText?: T;
   popupSuccessMessage?: T;
+  whatsHappeningEnabled?: T;
+  whatsHappeningTitle?: T;
+  whatsHappeningIcon?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1960,6 +2037,38 @@ export interface PoliciesSelect<T extends boolean = true> {
   termsContent?: T;
   termsLastUpdated?: T;
   landAcknowledgementContent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story_select".
+ */
+export interface OurStorySelect<T extends boolean = true> {
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  story?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  search?:
+    | T
+    | {
+        artistsShowSearch?: T;
+        happeningsShowSearch?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
