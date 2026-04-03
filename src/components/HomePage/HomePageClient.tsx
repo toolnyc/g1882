@@ -25,7 +25,6 @@ interface HomePageClientProps {
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
   heroVideoUrl?: string | null
   heroVideoPosterUrl?: string | null
-  structuredHours?: { day: string; open: string; close: string }[] | null
   isUpNext?: boolean
 }
 
@@ -37,7 +36,6 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   visitSectionData,
   heroVideoUrl,
   heroVideoPosterUrl,
-  structuredHours,
   isUpNext = false,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
@@ -58,7 +56,6 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
         <GalleryHero
           heroVideoUrl={heroVideoUrl}
           heroVideoPosterUrl={heroVideoPosterUrl}
-          structuredHours={structuredHours}
         />
       )}
 
@@ -68,7 +65,6 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
           <GalleryHero
             heroVideoUrl={heroVideoUrl}
             heroVideoPosterUrl={heroVideoPosterUrl}
-            structuredHours={structuredHours}
           />
 
           <MissionSection

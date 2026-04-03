@@ -101,7 +101,6 @@ export default async function HomePage() {
       visitSectionData={visitSectionData}
       heroVideoUrl={resolveMediaUrl(homeData?.heroVideo) || null}
       heroVideoPosterUrl={resolveMediaUrl(homeData?.heroVideoPoster) || null}
-      structuredHours={space?.structuredHours || null}
       isUpNext={isUpNext}
     />
   )

@@ -4,57 +4,14 @@ import { motion } from 'framer-motion'
 import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
 import { useState, useEffect } from 'react'
 
-interface StructuredHour {
-  day: string
-  open: string
-  close: string
-}
-
 interface GalleryHeroProps {
   heroVideoUrl?: string | null
   heroVideoPosterUrl?: string | null
-  structuredHours?: StructuredHour[] | null
-}
-
-/**
- * Determine if the gallery is currently open based on structured hours.
- * Returns 'Open' or 'Closed'. Falls back to the provided statusText if no hours data.
- */
-const _getGalleryStatus = (
-  structuredHours: StructuredHour[] | null | undefined,
-  fallbackStatus: string,
-): { text: string; color: string } => {
-  if (!structuredHours || structuredHours.length === 0) {
-    return { text: fallbackStatus, color: fallbackStatus === 'Open' ? 'bg-bright-lake' : 'bg-lake' }
-  }
-
-  const now = new Date(
-    new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
-  )
-  const currentDay = now.getDay().toString()
-  const currentMinutes = now.getHours() * 60 + now.getMinutes()
-
-  const todayHours = structuredHours.find((h) => h.day === currentDay)
-  if (!todayHours) {
-    return { text: 'Closed', color: 'bg-red-400' }
-  }
-
-  const [openH, openM] = todayHours.open.split(':').map(Number)
-  const [closeH, closeM] = todayHours.close.split(':').map(Number)
-  const openMinutes = openH * 60 + (openM || 0)
-  const closeMinutes = closeH * 60 + (closeM || 0)
-
-  if (currentMinutes >= openMinutes && currentMinutes < closeMinutes) {
-    return { text: 'Open', color: 'bg-bright-lake' }
-  }
-
-  return { text: 'Closed', color: 'bg-red-400' }
 }
 
 export const GalleryHero: React.FC<GalleryHeroProps> = ({
   heroVideoUrl,
   heroVideoPosterUrl,
-  structuredHours: _structuredHours,
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('')
 
