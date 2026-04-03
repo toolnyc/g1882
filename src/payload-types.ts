@@ -335,6 +335,10 @@ export interface Artist {
         image: string | Media;
         title?: string | null;
         caption?: string | null;
+        /**
+         * Tag which shows/exhibitions this work appears in
+         */
+        happenings?: (string | Happening)[] | null;
         id?: string | null;
       }[]
     | null;
@@ -405,6 +409,24 @@ export interface Happening {
    * Artists involved in this happening (supports multiple for group shows)
    */
   artists?: (string | Artist)[] | null;
+  /**
+   * Contact information displayed below the works grid (e.g. gallery contact, sales inquiries)
+   */
+  contactInfo?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   featured?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1097,6 +1119,7 @@ export interface ArtistsSelect<T extends boolean = true> {
         image?: T;
         title?: T;
         caption?: T;
+        happenings?: T;
         id?: T;
       };
   website?: T;
@@ -1127,6 +1150,7 @@ export interface HappeningsSelect<T extends boolean = true> {
   isActiveOverride?: T;
   isActive?: T;
   artists?: T;
+  contactInfo?: T;
   featured?: T;
   generateSlug?: T;
   slug?: T;
