@@ -39,7 +39,7 @@
     "@payloadcms/plugin-nested-docs": "3.59.1",
     "@payloadcms/plugin-redirects": "3.59.1",
     "@payloadcms/plugin-search": "3.59.1",
-    "@payloadcms/plugin-sentry": "^3.81.0",
+    "@payloadcms/plugin-sentry": "3.59.1",
     "@payloadcms/plugin-seo": "3.59.1",
     "@payloadcms/richtext-lexical": "3.59.1",
     "@payloadcms/storage-vercel-blob": "3.59.1",
