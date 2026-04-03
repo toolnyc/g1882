@@ -196,6 +196,38 @@ export const Home: GlobalConfig = {
             },
           ],
         },
+        {
+          label: "What's Happening",
+          fields: [
+            {
+              name: 'whatsHappeningEnabled',
+              type: 'checkbox',
+              label: "Show What's Happening Section",
+              defaultValue: true,
+              admin: {
+                description: "Toggle the What's Happening section on the homepage",
+              },
+            },
+            {
+              name: 'whatsHappeningTitle',
+              type: 'text',
+              label: "What's Happening Title",
+              required: false,
+              admin: {
+                description: 'Override the section title (defaults to "What\'s Happening?")',
+              },
+            },
+            {
+              name: 'whatsHappeningIcon',
+              type: 'checkbox',
+              label: 'Show Section Icon',
+              defaultValue: true,
+              admin: {
+                description: 'Show the decorative icon next to the section heading',
+              },
+            },
+          ],
+        },
       ],
     },
   ],

@@ -23,6 +23,7 @@ interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
+  subcaption?: string | null
   type?: HappeningType | string | null
   artists?: (Artist | string)[] | null
   startDate?: string | Date | null
@@ -138,20 +139,23 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
               <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">
                 {happening.title}
               </h2>
+              {happening.subcaption && (
+                <p className="text-lg text-navy/70 mb-4">{happening.subcaption}</p>
+              )}
               {artists.length > 0 && (
                 <div className="mb-4">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.slug || i}>
-                      {i > 0 && <span className="text-xl text-bright-lake">, </span>}
+                      {i > 0 && <span className="text-base text-bright-lake">, </span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-xl font-semibold text-bright-lake hover:text-lake transition-colors"
+                          className="text-base font-semibold text-bright-lake hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-xl font-semibold text-bright-lake">
+                        <span className="text-base font-semibold text-bright-lake">
                           {artist.name}
                         </span>
                       )}

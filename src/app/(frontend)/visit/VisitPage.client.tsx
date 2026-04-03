@@ -206,7 +206,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                     </div>
                   )}
                   {visit.hours?.note && (
-                    <p className="text-sm text-navy/60 mt-6">{visit.hours.note}</p>
+                    <p className="text-base text-navy/60 mt-6 font-medium">{visit.hours.note}</p>
                   )}
                 </div>
               </div>

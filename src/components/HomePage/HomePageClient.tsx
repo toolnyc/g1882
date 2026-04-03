@@ -72,7 +72,13 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
 
           {featuredArtistData && <ArtistFeature {...featuredArtistData} />}
 
-          {upcomingHappenings.length > 0 && <UpcomingHappenings happenings={upcomingHappenings} />}
+          {upcomingHappenings.length > 0 && homeData?.whatsHappeningEnabled !== false && (
+            <UpcomingHappenings
+              happenings={upcomingHappenings}
+              sectionTitle={homeData?.whatsHappeningTitle}
+              showIcon={homeData?.whatsHappeningIcon !== false}
+            />
+          )}
 
           {visitSectionData && homeData?.visitSectionEnabled !== false && (
             <VisitSection {...visitSectionData} />

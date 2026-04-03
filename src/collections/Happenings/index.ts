@@ -46,6 +46,15 @@ export const Happenings: CollectionConfig = {
       maxLength: 255,
     },
     {
+      name: 'subcaption',
+      type: 'text',
+      required: false,
+      maxLength: 500,
+      admin: {
+        description: 'Optional subtitle displayed between the title and artist list',
+      },
+    },
+    {
       name: 'type',
       type: 'relationship',
       relationTo: 'happening-types',
