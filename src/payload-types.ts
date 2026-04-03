@@ -1508,9 +1508,13 @@ export interface Home {
     };
   };
   /**
-   * Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.
+   * Upload an MP4 or WebM video for the hero background. Leave blank to show no video.
    */
-  heroVideoUrl?: string | null;
+  heroVideo?: (string | null) | Media;
+  /**
+   * Optional poster image shown while the video loads. Should be a still frame or preview of the video.
+   */
+  heroVideoPoster?: (string | null) | Media;
   /**
    * Caption above the mission statement (defaults to "Our Mission")
    */
@@ -1811,7 +1815,8 @@ export interface HomeSelect<T extends boolean = true> {
               media?: T;
             };
       };
-  heroVideoUrl?: T;
+  heroVideo?: T;
+  heroVideoPoster?: T;
   missionCaption?: T;
   missionStatement?: T;
   missionCtaText?: T;

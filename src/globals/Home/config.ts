@@ -30,13 +30,25 @@ export const Home: GlobalConfig = {
               fields: [hero],
             },
             {
-              name: 'heroVideoUrl',
-              type: 'text',
-              label: 'Hero Video URL',
+              name: 'heroVideo',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video',
               required: false,
               admin: {
                 description:
-                  'Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.',
+                  'Upload an MP4 or WebM video for the hero background. Leave blank to show no video.',
+              },
+            },
+            {
+              name: 'heroVideoPoster',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video Poster Image',
+              required: false,
+              admin: {
+                description:
+                  'Optional poster image shown while the video loads. Should be a still frame or preview of the video.',
               },
             },
           ],

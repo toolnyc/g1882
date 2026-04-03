@@ -99,7 +99,9 @@ export default async function HomePage() {
       }))}
       featuredArtistData={featuredArtistData}
       visitSectionData={visitSectionData}
-      heroVideoUrl={homeData?.heroVideoUrl}
+      heroVideoUrl={resolveMediaUrl(homeData?.heroVideo) || null}
+      heroVideoPosterUrl={resolveMediaUrl(homeData?.heroVideoPoster) || null}
+      structuredHours={space?.structuredHours || null}
       isUpNext={isUpNext}
     />
   )
