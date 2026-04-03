@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "src/app/(payload)/api/[...slug]/route.ts": {
+      "maxBodySize": "50mb",
+      "maxDuration": 120
+    }
+  }
+}
