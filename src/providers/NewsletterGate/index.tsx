@@ -3,15 +3,22 @@
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { NewsletterGateContext } from './context'
-import { NewsletterGateModal } from '@/components/NewsletterGateModal'
+import { NewsletterGateModal, type NewsletterGateModalProps } from '@/components/NewsletterGateModal'
 import { checkNewsletterSignupStatus, setNewsletterSignupStatus } from '@/utilities/newsletterGate'
 
-interface NewsletterGateProviderProps {
+interface NewsletterGateProviderProps extends NewsletterGateModalProps {
   children: React.ReactNode
   isAdmin?: boolean
 }
 
-export function NewsletterGateProvider({ children, isAdmin = false }: NewsletterGateProviderProps) {
+export function NewsletterGateProvider({
+  children,
+  isAdmin = false,
+  popupHeadline,
+  popupDescription,
+  popupButtonText,
+  popupSuccessMessage,
+}: NewsletterGateProviderProps) {
   const pathname = usePathname()
   const [hasSignedUp, setHasSignedUp] = useState(false)
   const [isReady, setIsReady] = useState(false)
@@ -45,7 +52,14 @@ export function NewsletterGateProvider({ children, isAdmin = false }: Newsletter
   return (
     <NewsletterGateContext.Provider value={{ hasSignedUp, markAsSignedUp, isInLanderMode, shouldShowFullSite }}>
       {children}
-      {showModal && <NewsletterGateModal />}
+      {showModal && (
+        <NewsletterGateModal
+          popupHeadline={popupHeadline}
+          popupDescription={popupDescription}
+          popupButtonText={popupButtonText}
+          popupSuccessMessage={popupSuccessMessage}
+        />
+      )}
     </NewsletterGateContext.Provider>
   )
 }

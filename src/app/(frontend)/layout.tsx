@@ -17,6 +17,8 @@ import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getAuthStatus } from '@/utilities/getAuthStatus'
 import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -26,6 +28,9 @@ import { getServerSideURL } from '@/utilities/getURL'
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
   const { isAuthenticated } = await getAuthStatus()
+
+  const payload = await getPayload({ config: configPromise })
+  const homeData = await payload.findGlobal({ slug: 'home', depth: 0 })
 
   return (
     <html
@@ -49,7 +54,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           Skip to main content
         </a>
-        <Providers isAdmin={isAuthenticated}>
+        <Providers
+          isAdmin={isAuthenticated}
+          popupHeadline={homeData?.popupHeadline}
+          popupDescription={homeData?.popupDescription}
+          popupButtonText={homeData?.popupButtonText}
+          popupSuccessMessage={homeData?.popupSuccessMessage}
+        >
           <LanderModeGuard>
             <CustomCursor />
             {(isEnabled || isAuthenticated) && (

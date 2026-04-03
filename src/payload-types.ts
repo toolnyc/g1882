@@ -1515,6 +1515,22 @@ export interface Home {
   visitImage?: (string | null) | Media;
   visitCtaText?: string | null;
   visitCtaUrl?: string | null;
+  /**
+   * Headline for the newsletter popup (defaults to "Opening Soon")
+   */
+  popupHeadline?: string | null;
+  /**
+   * Description text for the newsletter popup (defaults to launch announcement copy)
+   */
+  popupDescription?: string | null;
+  /**
+   * Submit button text (defaults to "Subscribe")
+   */
+  popupButtonText?: string | null;
+  /**
+   * Message shown after successful signup (defaults to "You've been added to the newsletter!")
+   */
+  popupSuccessMessage?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1785,6 +1801,10 @@ export interface HomeSelect<T extends boolean = true> {
   visitImage?: T;
   visitCtaText?: T;
   visitCtaUrl?: T;
+  popupHeadline?: T;
+  popupDescription?: T;
+  popupButtonText?: T;
+  popupSuccessMessage?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

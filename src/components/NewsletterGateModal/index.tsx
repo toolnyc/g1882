@@ -7,7 +7,25 @@ import Link from 'next/link'
 import { useNewsletterGate } from '@/providers/NewsletterGate/context'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 
-export function NewsletterGateModal() {
+export interface NewsletterGateModalProps {
+  popupHeadline?: string | null
+  popupDescription?: string | null
+  popupButtonText?: string | null
+  popupSuccessMessage?: string | null
+}
+
+const DEFAULT_HEADLINE = 'Opening Soon'
+const DEFAULT_DESCRIPTION =
+  'Gallery 1882 is preparing to open its doors. Sign up to be notified when we launch and receive exclusive updates about our inaugural exhibitions and artists.'
+const DEFAULT_BUTTON_TEXT = 'Subscribe'
+const DEFAULT_SUCCESS_MESSAGE = "You've been added to the newsletter!"
+
+export function NewsletterGateModal({
+  popupHeadline,
+  popupDescription,
+  popupButtonText,
+  popupSuccessMessage,
+}: NewsletterGateModalProps) {
   const { markAsSignedUp } = useNewsletterGate()
   const [email, setEmail] = useState('')
   const [consent, setConsent] = useState(false)
@@ -53,7 +71,7 @@ export function NewsletterGateModal() {
       const data = await response.json()
 
       if (response.ok) {
-        toast.success("You've been added to the newsletter!")
+        toast.success(popupSuccessMessage || DEFAULT_SUCCESS_MESSAGE)
         setEmail('')
         markAsSignedUp() // Store signup status
       } else {
@@ -100,11 +118,10 @@ export function NewsletterGateModal() {
 
             {/* Content */}
             <h2 id="newsletter-modal-title" className="text-2xl font-bold mb-3">
-              Opening Soon
+              {popupHeadline || DEFAULT_HEADLINE}
             </h2>
             <p className="text-navy/70 mb-6">
-              Gallery 1882 is preparing to open its doors. Sign up to be notified when we launch and
-              receive exclusive updates about our inaugural exhibitions and artists.
+              {popupDescription || DEFAULT_DESCRIPTION}
             </p>
 
             {/* Form */}
@@ -139,7 +156,7 @@ export function NewsletterGateModal() {
                 disabled={isLoading || !consent}
                 className="bg-lake text-off-white px-4 py-3 font-medium rounded-[3px] hover:bg-lake/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Subscribing...' : 'Subscribe'}
+                {isLoading ? 'Subscribing...' : (popupButtonText || DEFAULT_BUTTON_TEXT)}
               </button>
             </form>
           </motion.div>
