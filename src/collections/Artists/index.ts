@@ -27,7 +27,7 @@ export const Artists: CollectionConfig = {
     maxPerDoc: 3,
     drafts: {
       autosave: {
-        interval: 100,
+        interval: 800,
       },
       schedulePublish: true,
     },
