@@ -43,9 +43,8 @@ export const AdminBar: React.FC<{
   }, [])
 
   // Cmd+. (Mac) or Ctrl+. (Windows/Linux) to jump to admin
+  // Available to all users — unauthenticated users land on the login page
   useEffect(() => {
-    if (!show) return
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === '.' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
@@ -55,7 +54,7 @@ export const AdminBar: React.FC<{
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [show, router])
+  }, [router])
 
   return (
     <div
