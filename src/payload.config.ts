@@ -88,6 +88,16 @@ export default buildConfig({
       clientUploads: true,
     }),
   ],
+  onInit: async (payload) => {
+    const { totalDocs } = await payload.count({
+      collection: 'happening-types',
+    })
+    if (totalDocs === 0) {
+      payload.logger.warn(
+        '[g1882] The happening-types collection is empty. Creating new Happenings will fail because the required "type" field has no options. Run the seed endpoint or create types manually in the admin panel.',
+      )
+    }
+  },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {
