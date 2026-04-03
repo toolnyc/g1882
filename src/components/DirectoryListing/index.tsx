@@ -25,6 +25,7 @@ interface DirectoryListingProps {
   groupBy: 'alphabetical' | 'chronological'
   className?: string
   banner?: React.ReactNode
+  showSearch?: boolean
 }
 
 export const DirectoryListing: React.FC<DirectoryListingProps> = ({
@@ -33,6 +34,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   groupBy,
   className = '',
   banner,
+  showSearch = true,
 }) => {
   const [activeGroup, setActiveGroup] = useState<string>('')
   const [groupRefs, setGroupRefs] = useState<{ [key: string]: HTMLDivElement | null }>({})
@@ -225,15 +227,17 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
           )}
 
           {/* Search Bar */}
-          <div>
-            <Input
-              type="text"
-              placeholder={`Search ${title.toLowerCase()}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full opacity-60 focus:opacity-100 transition-opacity"
-            />
-          </div>
+          {showSearch && (
+            <div>
+              <Input
+                type="text"
+                placeholder={`Search ${title.toLowerCase()}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full opacity-60 focus:opacity-100 transition-opacity"
+              />
+            </div>
+          )}
         </div>
       </div>
 
