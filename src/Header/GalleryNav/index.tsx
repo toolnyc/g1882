@@ -10,6 +10,7 @@ import { useFocusTrap } from '@/hooks/useFocusTrap'
 const NAV_ITEMS = [
   { label: 'Happenings', url: '/happenings' },
   { label: 'Artists', url: '/artists' },
+  { label: 'Our Story', url: '/our-story' },
   { label: 'Visit', url: '/visit' },
 ] as const
 

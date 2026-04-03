@@ -17,6 +17,7 @@ import { Home } from './globals/Home/config'
 import { Space } from './globals/Space/config'
 import { Visit } from './globals/Visit/config'
 import { Policies } from './globals/Policies/config'
+import { OurStory } from './globals/OurStory/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -78,7 +79,7 @@ export default buildConfig({
   }),
   collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Space, Home, Visit, Policies],
+  globals: [Space, Home, Visit, Policies, OurStory],
   plugins: [
     ...plugins,
     vercelBlobStorage({
