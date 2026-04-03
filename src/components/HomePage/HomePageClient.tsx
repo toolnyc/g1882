@@ -24,7 +24,6 @@ interface HomePageClientProps {
   featuredArtistData: ReturnType<typeof import('@/utilities/dataTransformers').transformFeaturedArtist>
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
   heroVideoUrl?: string | null
-  structuredHours?: { day: string; open: string; close: string }[] | null
   isUpNext?: boolean
 }
 
@@ -35,7 +34,6 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   featuredArtistData,
   visitSectionData,
   heroVideoUrl,
-  structuredHours,
   isUpNext = false,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
@@ -53,23 +51,13 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
     <main className="min-h-screen bg-off-white">
       {/* Gate enabled (pre-launch): show only video with "Coming Soon" */}
       {showLanderContent && (
-        <GalleryHero
-          statusText="Coming Soon"
-          statusIndicatorColor="bg-lake"
-          heroVideoUrl={heroVideoUrl}
-          structuredHours={structuredHours}
-        />
+        <GalleryHero heroVideoUrl={heroVideoUrl} />
       )}
 
       {/* Gate disabled (launched): show full site */}
       {showFullSite && (
         <>
-          <GalleryHero
-            statusText="Open"
-            statusIndicatorColor="bg-bright-lake"
-            heroVideoUrl={heroVideoUrl}
-            structuredHours={structuredHours}
-          />
+          <GalleryHero heroVideoUrl={heroVideoUrl} />
 
           <MissionSection
             missionCaption={homeData?.missionCaption}

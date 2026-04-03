@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
-import { formatHappeningDate } from '@/utilities/dateHelpers'
+import { formatHappeningDate, formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import type { Artist, Happening } from '@/payload-types'
 
@@ -21,14 +21,11 @@ const getArtistNames = (happening: Happening): string => {
       .filter(Boolean)
       .join(', ')
   }
-  if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
-    return happening.featuredPerson.name
-  }
-  return happening.featuredPersonName || ''
+  return ''
 }
 
 export default async function HappeningsPage() {
-  // Fetch with depth 2 to populate heroImage, artists, featuredPerson, and type relations
+  // Fetch with depth 2 to populate heroImage, artists, and type relations
   const getHappenings = getCachedHappenings({}, 2)
   const allHappenings = await getHappenings()
 
@@ -92,7 +89,7 @@ export default async function HappeningsPage() {
         label="Coming Up"
         href={`/happenings/${upcomingBannerHappening.slug || upcomingBannerHappening.id}`}
         showLiveIndicator={false}
-        category={bannerType?.name || upcomingBannerHappening.category || undefined}
+        category={bannerType?.name || undefined}
       />
     )
   }
@@ -104,14 +101,12 @@ export default async function HappeningsPage() {
         items={timelineHappenings.map((happening) => {
           const happeningType = resolveHappeningType(happening.type)
           const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
-          const subtitle = formatHappeningDate(
+          const dateParts = formatHappeningDateParts(
             happening.startDate,
             happening.endDate,
             dateDisplayMode,
           )
           const personName = getArtistNames(happening)
-          const fullSubtitle =
-            personName && subtitle ? `${subtitle} \u2022 ${personName}` : subtitle || personName || ''
 
           return {
             ...happening,
@@ -120,10 +115,10 @@ export default async function HappeningsPage() {
             groupKey: happening.startDate
               ? new Date(happening.startDate as string).getFullYear().toString()
               : 'Unknown',
-            subtitle: fullSubtitle,
+            dateParts,
+            subtitle: personName || undefined,
             href: `/happenings/${happening.slug || happening.id}`,
-            featuredPersonName: personName,
-            category: happeningType?.name || happening.category || null,
+            category: happeningType?.name || null,
           }
         })}
         title="Happenings"

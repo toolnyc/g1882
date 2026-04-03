@@ -59,7 +59,8 @@ export function NewsletterGateModal() {
       } else {
         toast.error(data.error || 'Failed to subscribe. Please try again.')
       }
-    } catch (_error) {
+    } catch (error) {
+      import('@sentry/nextjs').then((Sentry) => Sentry.captureException(error))
       toast.error('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)
@@ -91,7 +92,7 @@ export function NewsletterGateModal() {
             {/* Close button */}
             <button
               onClick={handleDismiss}
-              className="absolute top-4 right-4 text-navy/40 hover:text-navy transition-colors text-2xl leading-none"
+              className="absolute top-4 right-4 text-navy/40 hover:text-navy transition-colors text-2xl leading-none focus:outline-none"
               aria-label="Close modal"
             >
               ×

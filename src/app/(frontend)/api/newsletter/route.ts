@@ -1,5 +1,7 @@
 import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
+import { logger } from '@/lib/logger'
 
 // Lazily initialize Resend to avoid build-time errors when API key is not set
 let _resend: Resend | null = null
@@ -65,10 +67,10 @@ export async function POST(request: Request) {
           return NextResponse.json({ success: true, message: 'Successfully subscribed to newsletter' })
         }
         // If contact creation fails, fall through to email confirmation
-        console.warn('Contact creation failed, falling back to email:', error)
+        logger.warn('Contact creation failed, falling back to email', { error: String(error) })
       } catch (contactError) {
         // If contact creation throws, fall through to email confirmation
-        console.warn('Contact creation error, falling back to email:', contactError)
+        logger.warn('Contact creation error, falling back to email', { error: String(contactError) })
       }
     }
 
@@ -83,11 +85,13 @@ export async function POST(request: Request) {
       })
       return NextResponse.json({ success: true, message: 'Successfully subscribed to newsletter' })
     } catch (emailError) {
-      console.error('Email send error:', emailError)
+      Sentry.captureException(emailError, { tags: { route: '/api/newsletter', action: 'email-send' } })
+      logger.error('Email send error', { error: String(emailError), route: '/api/newsletter' })
       return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 })
     }
   } catch (error) {
-    console.error('Newsletter subscription error:', error)
+    Sentry.captureException(error, { tags: { route: '/api/newsletter', action: 'subscription' } })
+    logger.error('Newsletter subscription error', { error: String(error), route: '/api/newsletter' })
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

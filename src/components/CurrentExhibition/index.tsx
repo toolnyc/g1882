@@ -25,15 +25,12 @@ interface Happening {
   title?: string | null
   type?: HappeningType | string | null
   artists?: (Artist | string)[] | null
-  featuredPerson?: { name?: string | null } | string | null
-  featuredPersonName?: string | null
   startDate?: string | Date | null
   endDate?: string | Date | null
   description?: Record<string, unknown> | null
   heroImage?: { url?: string; alt?: string } | string | null
   featured?: boolean
   isActive?: boolean
-  category?: string | null
 }
 
 interface CurrentExhibitionProps {
@@ -54,13 +51,6 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
         })
         .filter(Boolean) as { name: string; slug?: string | null }[]
     }
-    // Fall back to legacy fields
-    if (typeof happening.featuredPerson === 'object' && happening.featuredPerson?.name) {
-      return [{ name: happening.featuredPerson.name }]
-    }
-    if (happening.featuredPersonName) {
-      return [{ name: happening.featuredPersonName }]
-    }
     return []
   }
 
@@ -74,10 +64,6 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
   const getButtonText = () => {
     const typeName = getTypeName()
     if (typeName) return `View ${typeName}`
-    // Fall back to category
-    const category = happening.category?.toLowerCase() || ''
-    if (category.includes('exhibition')) return 'View Exhibition'
-    if (category.includes('event')) return 'View Event'
     return 'View Happening'
   }
 
@@ -153,10 +139,10 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
                 {happening.title}
               </h2>
               {artists.length > 0 && (
-                <div className="mb-4 flex flex-wrap gap-x-2 gap-y-1">
+                <div className="mb-4">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.slug || i}>
-                      {i > 0 && <span className="text-xl text-bright-lake">,</span>}
+                      {i > 0 && <span className="text-xl text-bright-lake">, </span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
@@ -175,7 +161,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
               )}
               {happening.description && typeof happening.description === 'object' && happening.description.root ? (
                 <div className="mb-8 text-lg leading-relaxed text-navy/80">
-                  <RichText data={happening.description as never} className="prose-p:my-2 prose-p:text-base" />
+                  <RichText data={happening.description as never} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
                 </div>
               ) : null}
               <div className="flex flex-col gap-4 sm:flex-row">

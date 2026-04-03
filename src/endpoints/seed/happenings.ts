@@ -57,10 +57,10 @@ export async function seedHappenings(
   for (const mockHappening of mockHappenings) {
     const slug = toKebabCase(mockHappening.title)
 
-    // Find artist if featuredPersonName matches
-    let featuredPerson: Artist | undefined
-    if (mockHappening.featuredPersonName) {
-      featuredPerson = artistMap.get(mockHappening.featuredPersonName)
+    // Find artist if artistName matches
+    let artist: Artist | undefined
+    if (mockHappening.artistName) {
+      artist = artistMap.get(mockHappening.artistName)
     }
 
     // Find media for hero image
@@ -70,21 +70,18 @@ export async function seedHappenings(
       heroImage = mediaMap.get(imageFilename) || null
     }
 
-    const typeSlug = mockHappening.category === 'Exhibition' ? 'exhibition' : 'event'
-    const happeningType = typeMap.get(typeSlug)
+    const happeningType = typeMap.get('exhibition')
 
     const happening = await payload.create({
       collection: 'happenings',
       data: {
         title: mockHappening.title,
-        type: happeningType?.id || typeSlug,
+        type: happeningType?.id || 'exhibition',
         slug,
         startDate: mockHappening.startDate,
         endDate: mockHappening.endDate || undefined,
         description: descriptionToLexical(mockHappening.description),
-        category: mockHappening.category || '',
-        featuredPerson: featuredPerson?.id || undefined,
-        featuredPersonName: mockHappening.featuredPersonName || '',
+        artists: artist ? [artist.id] : [],
         heroImage: heroImage?.id || undefined,
         featured: mockHappening.featured || false,
         isActive: mockHappening.isActive || false,

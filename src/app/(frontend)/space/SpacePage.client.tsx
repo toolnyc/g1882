@@ -74,7 +74,7 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
       setHasSubmitted(true)
       reset()
     } catch (err) {
-      console.error('Form submission error:', err)
+      import('@sentry/nextjs').then((Sentry) => Sentry.captureException(err))
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
       setIsLoading(false)
     }

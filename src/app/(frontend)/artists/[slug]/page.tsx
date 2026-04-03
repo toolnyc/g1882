@@ -72,7 +72,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
             {/* Bio */}
             {artist.bio && (
               <div className="mb-6">
-                <RichText data={artist.bio} className="text-base leading-relaxed text-navy/80" />
+                <RichText data={artist.bio} enableGutter={false} className="text-base leading-relaxed text-navy/80" />
               </div>
             )}
 
@@ -178,7 +178,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
                 </div>
               }
             >
-              <RelatedHappenings artistId={artist.id} artistName={artist.name} />
+              <RelatedHappenings artistId={artist.id} />
             </Suspense>
           </div>
         </div>

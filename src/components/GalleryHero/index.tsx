@@ -2,7 +2,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
-import { LiveIndicator } from '../LiveIndicator'
 import { useState, useEffect } from 'react'
 
 const DEFAULT_VIDEO_URL =
@@ -11,62 +10,14 @@ const DEFAULT_VIDEO_URL =
 const POSTER_IMAGE_URL =
   'https://customer-dz4f40f4nnmmdd6e.cloudflarestream.com/8aa90e2afac27de9b53b72d6feda8fc5/thumbnails/thumbnail.jpg?time=&height=600'
 
-interface StructuredHour {
-  day: string
-  open: string
-  close: string
-}
-
 interface GalleryHeroProps {
-  statusText?: string
-  statusIndicatorColor?: string
   heroVideoUrl?: string | null
-  structuredHours?: StructuredHour[] | null
-}
-
-/**
- * Determine if the gallery is currently open based on structured hours.
- * Returns 'Open' or 'Closed'. Falls back to the provided statusText if no hours data.
- */
-const getGalleryStatus = (
-  structuredHours: StructuredHour[] | null | undefined,
-  fallbackStatus: string,
-): { text: string; color: string } => {
-  if (!structuredHours || structuredHours.length === 0) {
-    return { text: fallbackStatus, color: fallbackStatus === 'Open' ? 'bg-bright-lake' : 'bg-lake' }
-  }
-
-  const now = new Date(
-    new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }),
-  )
-  const currentDay = now.getDay().toString()
-  const currentMinutes = now.getHours() * 60 + now.getMinutes()
-
-  const todayHours = structuredHours.find((h) => h.day === currentDay)
-  if (!todayHours) {
-    return { text: 'Closed', color: 'bg-red-400' }
-  }
-
-  const [openH, openM] = todayHours.open.split(':').map(Number)
-  const [closeH, closeM] = todayHours.close.split(':').map(Number)
-  const openMinutes = openH * 60 + (openM || 0)
-  const closeMinutes = closeH * 60 + (closeM || 0)
-
-  if (currentMinutes >= openMinutes && currentMinutes < closeMinutes) {
-    return { text: 'Open', color: 'bg-bright-lake' }
-  }
-
-  return { text: 'Closed', color: 'bg-red-400' }
 }
 
 export const GalleryHero: React.FC<GalleryHeroProps> = ({
-  statusText = 'Open',
-  statusIndicatorColor = 'bg-bright-lake',
   heroVideoUrl,
-  structuredHours,
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('')
-  const [status, setStatus] = useState({ text: statusText, color: statusIndicatorColor })
 
   const formatCentralTime = (): string => {
     const formatter = new Intl.DateTimeFormat('en-US', {
@@ -80,15 +31,13 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
 
   useEffect(() => {
     setCurrentTime(formatCentralTime())
-    setStatus(getGalleryStatus(structuredHours, statusText))
 
     const interval = setInterval(() => {
       setCurrentTime(formatCentralTime())
-      setStatus(getGalleryStatus(structuredHours, statusText))
     }, 60000)
 
     return () => clearInterval(interval)
-  }, [structuredHours, statusText])
+  }, [])
 
   const videoUrl = heroVideoUrl?.trim() || DEFAULT_VIDEO_URL
 
@@ -122,17 +71,6 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
         className="absolute bottom-8 right-8 z-[2] opacity-60"
       >
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg px-6 pt-4   ">
-          <div className="flex items-center">
-            <LiveIndicator size="sm" colorClassName={status.color} />
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.4 }}
-              className="text-lg text-off-white tracking-tight pl-4"
-            >
-              {status.text}
-            </motion.p>
-          </div>
           <span className="text-xs text-off-white">{currentTime}</span>
           <WeatherWidget />
           <motion.div

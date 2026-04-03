@@ -143,19 +143,19 @@ const config = {
               h1: {
                 fontWeight: 'bold',
                 lineHeight: '1.1',
-                letterSpacing: '-0.04em',
+                letterSpacing: '-0.041em',
                 color: '#14233a',
               },
               h2: {
                 fontWeight: 'bold',
                 lineHeight: '1.1',
-                letterSpacing: '-0.04em',
+                letterSpacing: '-0.041em',
                 color: '#14233a',
               },
               h3: {
                 fontWeight: 'bold',
                 lineHeight: '1.1',
-                letterSpacing: '-0.04em',
+                letterSpacing: '-0.041em',
                 color: '#14233a',
               },
               p: {

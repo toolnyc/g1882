@@ -100,7 +100,9 @@ export const FormBlock: React.FC<
             if (redirectUrl) router.push(redirectUrl)
           }
         } catch (err) {
-          console.warn(err)
+          if (typeof window !== 'undefined' && 'Sentry' in window) {
+            import('@sentry/nextjs').then((Sentry) => Sentry.captureException(err))
+          }
           setIsLoading(false)
           setError({
             message: 'Something went wrong.',
@@ -121,7 +123,7 @@ export const FormBlock: React.FC<
       <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
-            <RichText data={confirmationMessage} />
+            <RichText data={confirmationMessage} enableGutter={false} />
           )}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}

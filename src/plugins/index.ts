@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
@@ -13,6 +14,27 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+
+/**
+ * Payload plugin that forwards all collection/global errors to Sentry.
+ * This replaces @payloadcms/plugin-sentry to avoid peer dependency mismatches.
+ */
+const sentryPlugin: Plugin = (config) => {
+  return {
+    ...config,
+    hooks: {
+      ...config.hooks,
+      afterError: [
+        ...(config.hooks?.afterError || []),
+        (error) => {
+          Sentry.captureException(error instanceof Error ? error : error?.error, {
+            tags: { source: 'payload' },
+          })
+        },
+      ],
+    },
+  }
+}
 
 const generateTitle: GenerateTitle<Post> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -91,4 +113,5 @@ export const plugins: Plugin[] = [
     },
   }),
   payloadCloudPlugin(),
+  sentryPlugin,
 ]

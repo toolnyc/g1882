@@ -39,13 +39,6 @@ export default async function ArtistsPage() {
         artistExhibitionMap.set(artistObj.id, existing)
       }
     }
-    // Also check legacy featuredPerson
-    const fp = typeof exhibition.featuredPerson === 'object' && exhibition.featuredPerson
-      ? (exhibition.featuredPerson as Artist)
-      : null
-    if (fp && !artistExhibitionMap.has(fp.id)) {
-      artistExhibitionMap.set(fp.id, [exhibition.title || 'Exhibition'])
-    }
   }
 
   // Find an artist for the "Currently Showing" banner — only from active exhibitions
@@ -77,22 +70,6 @@ export default async function ArtistsPage() {
         slug: firstArtist.slug,
       }
       exhibitionTitle = firstExhibition.title
-    } else {
-      // Fall back to legacy featuredPerson
-      const fp = typeof firstExhibition.featuredPerson === 'object' && firstExhibition.featuredPerson
-        ? (firstExhibition.featuredPerson as Artist)
-        : null
-      if (fp) {
-        bannerArtist = {
-          id: fp.id,
-          name: fp.name,
-          bio: extractPlainText(fp.bio),
-          image: resolveMediaUrl(fp.image),
-          exhibitions: [],
-          slug: fp.slug,
-        }
-        exhibitionTitle = firstExhibition.title
-      }
     }
   }
 

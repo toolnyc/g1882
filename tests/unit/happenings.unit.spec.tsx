@@ -86,7 +86,6 @@ describe('HappeningPage', () => {
       },
       startDate: '2024-01-01T10:00:00Z',
       endDate: '2024-01-31T18:00:00Z',
-      category: 'exhibition',
       heroImage: {
         id: '1',
         url: '/media/test-space.jpg',
@@ -181,7 +180,7 @@ describe('HappeningPage', () => {
     expect(getByRole('heading', { name: 'Test Happening' })).toBeDefined()
   })
 
-  it('displays featured person name when available', async () => {
+  it('displays artist name when available', async () => {
     const { getCachedHappeningBySlug } = await import('@/utilities/getHappeningBySlug')
 
     const mockArtist: Partial<Artist> = {
@@ -194,7 +193,7 @@ describe('HappeningPage', () => {
       id: '1',
       title: 'Test Happening',
       slug: 'test-happening',
-      featuredPerson: mockArtist as Artist,
+      artists: [mockArtist as Artist],
       startDate: '2024-01-01T10:00:00Z',
     }
 

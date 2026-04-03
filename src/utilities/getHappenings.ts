@@ -24,9 +24,6 @@ const defaultListSelect: Partial<Record<keyof Happening, true>> = {
   heroImage: true,
   isActive: true,
   isActiveOverride: true,
-  category: true,
-  featuredPerson: true,
-  featuredPersonName: true,
 }
 
 async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) {

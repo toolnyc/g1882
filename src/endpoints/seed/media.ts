@@ -1,5 +1,6 @@
 import type { Payload, PayloadRequest, File } from 'payload'
 import type { Media } from '@/payload-types'
+import * as Sentry from '@sentry/nextjs'
 import path from 'path'
 import fs from 'fs/promises'
 import { fileURLToPath } from 'url'
@@ -92,6 +93,7 @@ export async function seedMedia(
     } catch (error) {
       // This should not happen since we validated file existence upfront,
       // but handle it gracefully just in case
+      Sentry.captureException(error, { tags: { source: 'seed', file: mediaFile.filename } })
       payload.logger.error(`Failed to seed media file ${mediaFile.filename}: ${error}`)
       throw new Error(`Failed to seed media file ${mediaFile.filename}: ${error}`)
     }

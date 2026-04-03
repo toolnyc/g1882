@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface VisitSectionProps {
@@ -14,12 +15,30 @@ interface VisitSectionProps {
 export const VisitSection: React.FC<VisitSectionProps> = ({
   title,
   description,
+  image,
   ctaText,
   ctaUrl,
 }) => {
   return (
     <section className="py-20 gallery-section">
       <div className="container">
+        {image && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative w-full aspect-[21/9] rounded-lg overflow-hidden mb-12"
+          >
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 1200px"
+            />
+          </motion.div>
+        )}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -13,6 +13,7 @@ interface DirectoryItem {
   groupKey?: string
   displayName?: string
   subtitle?: string
+  dateParts?: { date: string; time: string | null }
   href?: string | null
   category?: string | null
   [key: string]: unknown
@@ -331,6 +332,14 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                                   </h3>
                                   {item.category && <CategoryTag category={item.category} />}
                                 </div>
+                                {item.dateParts && item.dateParts.date && (
+                                  <div className="flex items-baseline gap-2 mt-1">
+                                    <span className="text-sm font-medium text-navy/80">{item.dateParts.date}</span>
+                                    {item.dateParts.time && (
+                                      <span className="text-xs text-navy/50">{item.dateParts.time}</span>
+                                    )}
+                                  </div>
+                                )}
                                 {item.subtitle && (
                                   <p className="text-sm text-navy/70 mt-1">{item.subtitle}</p>
                                 )}
