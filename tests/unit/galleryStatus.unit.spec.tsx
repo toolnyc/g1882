@@ -65,20 +65,7 @@ describe('getGalleryStatus', () => {
     expect(result).toEqual({ text: 'Coming Soon', color: 'bg-lake' })
   })
 
-  it('returns Closed when today has no hours entry', () => {
-    // Only has hours for day "0" (Sunday)
-    const hours: StructuredHour[] = [{ day: '0', open: '10:00', close: '18:00' }]
-
-    // Mock a date that's not Sunday
-    const mockDate = new Date('2026-04-06T14:00:00') // Monday
-    vi.spyOn(global, 'Date').mockImplementation((...args) => {
-      if (args.length === 0) return mockDate
-      // @ts-expect-error: spread args to Date constructor
-      return new (Function.prototype.bind.apply(Date, [null, ...args]))()
-    })
-
-    // Since the function creates `new Date()` internally with locale string,
-    // we test the logic path: no entry for current day → Closed
+  it('returns fallback when hours array is empty (no entry for any day)', () => {
     const result = getGalleryStatus([], 'Open')
     expect(result.text).toBe('Open') // Falls back because empty array
   })
