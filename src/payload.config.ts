@@ -40,7 +40,7 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
-      afterNavLinks: ['@/components/BackToSite'],
+      afterNavLinks: ['@/components/BackToSite', '@/components/AdminDiagnostics'],
       graphics: {
         Logo: '@/components/Logo/Logo#Logo',
         Icon: '@/components/Logo/Icon#Icon',
