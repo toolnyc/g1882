@@ -119,4 +119,10 @@ On-demand revalidation is handled by collection hooks that call `revalidatePath(
 
 ## Jobs and Scheduled Publishing
 
-Payload jobs queue is configured in `payload.config.ts` with cron-based access control using `CRON_SECRET` environment variable. Used for scheduled publish/unpublish operations.
+Payload jobs queue is configured in `payload.config.ts` with cron-based access control using `CRON_SECRET` environment variable.
+
+### Image Size Generation (`generateImageSizes` task)
+
+Media uploads generate only a `thumbnail` synchronously for fast response (~1-2s). The remaining 6 sizes (square, small, medium, large, xlarge, og) are generated asynchronously by the `generateImageSizes` job in `src/jobs/generateImageSizes.ts`. The job fetches the original from Vercel Blob, resizes with sharp, uploads each variant, and updates the media document. Vercel Cron hits `/api/payload-jobs/run` every minute as a fallback; the `afterChange` hook also triggers immediate processing.
+
+Processing status is tracked via `processingStatus` field (pending → processing → complete/failed) visible in the admin sidebar. The `MediaWithSizes` type in `src/types/media-sizes.d.ts` extends the generated `Media` type to include the deferred size fields.
