@@ -19,6 +19,7 @@ import { Visit } from './globals/Visit/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { generateImageSizesTask } from './jobs/generateImageSizes'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -105,6 +106,6 @@ export default buildConfig({
         return authHeader === `Bearer ${process.env.CRON_SECRET}`
       },
     },
-    tasks: [],
+    tasks: [generateImageSizesTask],
   },
 })

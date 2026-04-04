@@ -120,6 +120,7 @@ export interface Config {
   };
   jobs: {
     tasks: {
+      generateImageSizes: TaskGenerateImageSizes;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -232,6 +233,14 @@ export interface Media {
    * Details about automatic processing applied to this upload
    */
   processingInfo?: string | null;
+  /**
+   * Status of background image size generation
+   */
+  processingStatus?: ('pending' | 'processing' | 'complete' | 'failed') | null;
+  /**
+   * Error details from image processing
+   */
+  processingError?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -245,54 +254,6 @@ export interface Media {
   focalY?: number | null;
   sizes?: {
     thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    xlarge?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    og?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -775,7 +736,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug: 'inline' | 'generateImageSizes' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -808,7 +769,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'generateImageSizes' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -952,6 +913,8 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   processingInfo?: T;
+  processingStatus?: T;
+  processingError?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -967,66 +930,6 @@ export interface MediaSelect<T extends boolean = true> {
     | T
     | {
         thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        xlarge?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        og?:
           | T
           | {
               url?: T;
@@ -1790,6 +1693,18 @@ export interface VisitSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskGenerateImageSizes".
+ */
+export interface TaskGenerateImageSizes {
+  input: {
+    mediaId: string;
+  };
+  output: {
+    sizesGenerated?: number | null;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
