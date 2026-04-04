@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
 
-import type { Media, Post, Config } from '../payload-types'
+import type { Post, Config } from '../payload-types'
+import type { MediaWithSizes } from '@/types/media-sizes'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
-const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
+const getImageURL = (image?: MediaWithSizes | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
   let url = serverUrl + '/website-template-OG.webp'
 
   if (image && typeof image === 'object' && 'url' in image) {
-    const ogUrl = image.sizes?.og?.url
+    const ogUrl = (image as MediaWithSizes).sizes?.og?.url
 
     url = ogUrl ? serverUrl + ogUrl : serverUrl + image.url
   }
@@ -20,7 +21,7 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 }
 
 export const generateMeta = async (args: {
-  doc: Partial<Post> | { meta?: { title?: string | null; description?: string | null; image?: Media | string | null } } | null
+  doc: Partial<Post> | { meta?: { title?: string | null; description?: string | null; image?: MediaWithSizes | string | null } } | null
 }): Promise<Metadata> => {
   const { doc } = args
 
