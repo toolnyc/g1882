@@ -27,7 +27,7 @@ export const Artists: CollectionConfig = {
     maxPerDoc: 3,
     drafts: {
       autosave: {
-        interval: 100,
+        interval: 800,
       },
       schedulePublish: true,
     },
@@ -82,7 +82,7 @@ export const Artists: CollectionConfig = {
               name: 'works',
               type: 'array',
               label: 'Works',
-              maxRows: 50,
+              maxRows: 100,
               admin: {
                 description: 'Gallery of artist works with images and captions',
               },
@@ -104,6 +104,16 @@ export const Artists: CollectionConfig = {
                   type: 'text',
                   required: false,
                   maxLength: 1000,
+                },
+                {
+                  name: 'happenings',
+                  type: 'relationship',
+                  relationTo: 'happenings',
+                  hasMany: true,
+                  required: false,
+                  admin: {
+                    description: 'Tag which shows/exhibitions this work appears in',
+                  },
                 },
               ],
             },

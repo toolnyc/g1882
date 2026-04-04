@@ -12,6 +12,8 @@ import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
+import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
+import type { WorkItem } from '@/components/WorksMasonryGrid'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
@@ -45,6 +47,18 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
     .map((a) => (typeof a === 'object' && a ? (a as Artist) : null))
     .filter(Boolean) as Artist[]
 
+  // Collect works from all artists that are tagged with this happening
+  const exhibitionWorks: WorkItem[] = artists.flatMap((artist) => {
+    const works = artist.works || []
+    return works.filter((work) => {
+      const taggedHappenings = work.happenings || []
+      return taggedHappenings.some((h) => {
+        const happeningId = typeof h === 'object' && h ? h.id : h
+        return happeningId === happening.id
+      })
+    })
+  })
+
   const happeningType = resolveHappeningType(happening.type)
   const typeLabel = happeningType?.name || null
   const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
@@ -60,15 +74,17 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   return (
     <main className="min-h-screen bg-off-white">
       <article className={`pb-24${hasHeroImage ? '' : ' pt-48'}`}>
-        {/* Hero Image */}
+        {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
-          <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
+          <div className="w-full mb-16">
             <Image
               src={heroImage.url!}
               alt={heroImage.alt || happening.title || ''}
-              fill
-              className="object-cover"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
               priority
+              sizes="100vw"
             />
           </div>
         )}
@@ -80,20 +96,23 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-navy mb-4">
                 {happening.title}
               </h1>
+              {happening.subcaption && (
+                <p className="text-xl text-navy/70 mb-4">{happening.subcaption}</p>
+              )}
               {artists.length > 0 && (
                 <div className="flex flex-wrap gap-x-2 gap-y-1">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.id}>
-                      {i > 0 && <span className="text-2xl text-bright-lake">,</span>}
+                      {i > 0 && <span className="text-lg text-bright-lake">,</span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-2xl text-bright-lake font-semibold hover:text-lake transition-colors"
+                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-2xl text-bright-lake font-semibold">
+                        <span className="text-lg text-bright-lake font-semibold">
                           {artist.name}
                         </span>
                       )}
@@ -107,6 +126,9 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             {dateParts.date && (
               <div className="mb-8 pb-8 border-b border-navy/20">
                 <span className="text-lg text-navy">{dateParts.date}</span>
+                {dateParts.endDate && (
+                  <span className="text-lg text-navy">{` \u2013 ${dateParts.endDate}`}</span>
+                )}
                 {dateParts.time && (
                   <span className="text-base text-navy/60 ml-2">{dateParts.time}</span>
                 )}
@@ -124,6 +146,24 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             {happening.description && (
               <div className="mb-6">
                 <RichText data={happening.description} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
+              </div>
+            )}
+
+            {/* Exhibition Works */}
+            {exhibitionWorks.length > 0 && (
+              <div className="mt-12 pt-8 border-t border-navy/20">
+                <h2 className="text-2xl font-bold text-navy mb-6">Works</h2>
+                <WorksMasonryGrid
+                  works={exhibitionWorks}
+                  fallbackAlt={happening.title || ''}
+                />
+              </div>
+            )}
+
+            {/* Contact Info */}
+            {happening.contactInfo && (
+              <div className="mt-12 pt-8 border-t border-navy/20">
+                <RichText data={happening.contactInfo} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
               </div>
             )}
 

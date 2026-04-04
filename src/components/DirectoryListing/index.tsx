@@ -13,7 +13,7 @@ interface DirectoryItem {
   groupKey?: string
   displayName?: string
   subtitle?: string
-  dateParts?: { date: string; time: string | null }
+  dateParts?: { date: string; time: string | null; endDate?: string | null }
   href?: string | null
   category?: string | null
   [key: string]: unknown
@@ -25,6 +25,7 @@ interface DirectoryListingProps {
   groupBy: 'alphabetical' | 'chronological'
   className?: string
   banner?: React.ReactNode
+  showSearch?: boolean
 }
 
 export const DirectoryListing: React.FC<DirectoryListingProps> = ({
@@ -33,6 +34,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   groupBy,
   className = '',
   banner,
+  showSearch = true,
 }) => {
   const [activeGroup, setActiveGroup] = useState<string>('')
   const [groupRefs, setGroupRefs] = useState<{ [key: string]: HTMLDivElement | null }>({})
@@ -225,15 +227,17 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
           )}
 
           {/* Search Bar */}
-          <div>
-            <Input
-              type="text"
-              placeholder={`Search ${title.toLowerCase()}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full opacity-60 focus:opacity-100 transition-opacity"
-            />
-          </div>
+          {showSearch && (
+            <div>
+              <Input
+                type="text"
+                placeholder={`Search ${title.toLowerCase()}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full opacity-60 focus:opacity-100 transition-opacity"
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -327,14 +331,17 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
                             <div className="flex items-center justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-1">
-                                  <h3 className="text-xl font-semibold text-navy group-hover:text-bright-lake transition-colors duration-200">
+                                  <h3 className="text-lg font-semibold text-navy group-hover:text-bright-lake transition-colors duration-200">
                                     {displayName}
                                   </h3>
                                   {item.category && <CategoryTag category={item.category} />}
                                 </div>
                                 {item.dateParts && item.dateParts.date && (
                                   <div className="flex items-baseline gap-2 mt-1">
-                                    <span className="text-sm font-medium text-navy/80">{item.dateParts.date}</span>
+                                    <span className="text-sm font-medium text-navy/80">
+                                      {item.dateParts.date}
+                                      {item.dateParts.endDate && ` \u2013 ${item.dateParts.endDate}`}
+                                    </span>
                                     {item.dateParts.time && (
                                       <span className="text-xs text-navy/50">{item.dateParts.time}</span>
                                     )}

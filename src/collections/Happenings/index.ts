@@ -26,9 +26,10 @@ export const Happenings: CollectionConfig = {
   versions: {
     maxPerDoc: 3,
     drafts: {
-      autosave: {
-        interval: 800,
-      },
+      // autosave temporarily disabled — suspected cause of blank create page
+      // autosave: {
+      //   interval: 800,
+      // },
       schedulePublish: true,
     },
   },
@@ -44,6 +45,15 @@ export const Happenings: CollectionConfig = {
       type: 'text',
       required: true,
       maxLength: 255,
+    },
+    {
+      name: 'subcaption',
+      type: 'text',
+      required: false,
+      maxLength: 500,
+      admin: {
+        description: 'Optional subtitle displayed between the title and artist list',
+      },
     },
     {
       name: 'type',
@@ -174,6 +184,26 @@ export const Happenings: CollectionConfig = {
               admin: {
                 description:
                   'Artists involved in this happening (supports multiple for group shows)',
+              },
+            },
+          ],
+        },
+        {
+          label: 'Exhibition Details',
+          fields: [
+            {
+              name: 'contactInfo',
+              type: 'richText',
+              required: false,
+              editor: lexicalEditor({
+                features: () => [
+                  FixedToolbarFeature(),
+                  InlineToolbarFeature(),
+                ],
+              }),
+              admin: {
+                description:
+                  'Contact information displayed below the works grid (e.g. gallery contact, sales inquiries)',
               },
             },
           ],

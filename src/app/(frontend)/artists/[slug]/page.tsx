@@ -4,7 +4,7 @@ import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
 import { RelatedHappenings } from './RelatedHappenings'
-import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
 import RichText from '@/components/RichText'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 
@@ -109,53 +109,11 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
               </div>
             )}
 
-            {/* Works Gallery */}
+            {/* Works Gallery — masonry layout with natural aspect ratios */}
             {works.length > 0 && (
               <div className="mt-12 pt-8 border-t border-navy/20">
                 <h2 className="text-2xl font-bold text-navy mb-6">Works</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {works.map((work) => {
-                    const imageUrl = resolveMediaUrl(work.image)
-                    if (!imageUrl) return null
-
-                    return (
-                      <div key={work.id} className="group">
-                        <div className="aspect-square relative overflow-hidden rounded-lg bg-navy/5">
-                          <Image
-                            src={imageUrl}
-                            alt={work.title || work.caption || artist.name || ''}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-                          {/* Hover overlay with caption reveal */}
-                          {(work.title || work.caption) && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-4">
-                              <div className="translate-y-3 group-hover:translate-y-0 transition-transform duration-400">
-                                {work.title && (
-                                  <p className="text-off-white text-sm font-semibold">{work.title}</p>
-                                )}
-                                {work.caption && (
-                                  <p className="text-off-white/80 text-xs mt-0.5">{work.caption}</p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        {(work.title || work.caption) && (
-                          <div className="mt-3">
-                            {work.title && (
-                              <p className="font-semibold text-navy text-sm">{work.title}</p>
-                            )}
-                            {work.caption && (
-                              <p className="text-navy/60 text-sm">{work.caption}</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
+                <WorksMasonryGrid works={works} fallbackAlt={artist.name || ''} />
               </div>
             )}
 

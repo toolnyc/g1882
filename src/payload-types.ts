@@ -108,11 +108,17 @@ export interface Config {
     space: Space;
     home: Home;
     visit: Visit;
+    policies: Policy;
+    'our-story': OurStory;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
+    policies: PoliciesSelect<false> | PoliciesSelect<true>;
+    'our-story': OurStorySelect<false> | OurStorySelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -333,6 +339,10 @@ export interface Artist {
         image: string | Media;
         title?: string | null;
         caption?: string | null;
+        /**
+         * Tag which shows/exhibitions this work appears in
+         */
+        happenings?: (string | Happening)[] | null;
         id?: string | null;
       }[]
     | null;
@@ -363,6 +373,10 @@ export interface Artist {
 export interface Happening {
   id: string;
   title: string;
+  /**
+   * Optional subtitle displayed between the title and artist list
+   */
+  subcaption?: string | null;
   /**
    * Determines how dates are displayed. Date Range types show "March 16–June 20"; Date+Time types show "March 28 from 7–9pm".
    */
@@ -403,6 +417,24 @@ export interface Happening {
    * Artists involved in this happening (supports multiple for group shows)
    */
   artists?: (string | Artist)[] | null;
+  /**
+   * Contact information displayed below the works grid (e.g. gallery contact, sales inquiries)
+   */
+  contactInfo?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   featured?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1095,6 +1127,7 @@ export interface ArtistsSelect<T extends boolean = true> {
         image?: T;
         title?: T;
         caption?: T;
+        happenings?: T;
         id?: T;
       };
   website?: T;
@@ -1117,6 +1150,7 @@ export interface ArtistsSelect<T extends boolean = true> {
  */
 export interface HappeningsSelect<T extends boolean = true> {
   title?: T;
+  subcaption?: T;
   type?: T;
   description?: T;
   heroImage?: T;
@@ -1125,6 +1159,7 @@ export interface HappeningsSelect<T extends boolean = true> {
   isActiveOverride?: T;
   isActive?: T;
   artists?: T;
+  contactInfo?: T;
   featured?: T;
   generateSlug?: T;
   slug?: T;
@@ -1482,9 +1517,13 @@ export interface Home {
     };
   };
   /**
-   * Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.
+   * Upload an MP4 or WebM video for the hero background. Leave blank to show no video.
    */
-  heroVideoUrl?: string | null;
+  heroVideo?: (string | null) | Media;
+  /**
+   * Optional poster image shown while the video loads. Should be a still frame or preview of the video.
+   */
+  heroVideoPoster?: (string | null) | Media;
   /**
    * Caption above the mission statement (defaults to "Our Mission")
    */
@@ -1513,6 +1552,34 @@ export interface Home {
   visitImage?: (string | null) | Media;
   visitCtaText?: string | null;
   visitCtaUrl?: string | null;
+  /**
+   * Headline for the newsletter popup (defaults to "Opening Soon")
+   */
+  popupHeadline?: string | null;
+  /**
+   * Description text for the newsletter popup (defaults to launch announcement copy)
+   */
+  popupDescription?: string | null;
+  /**
+   * Submit button text (defaults to "Subscribe")
+   */
+  popupButtonText?: string | null;
+  /**
+   * Message shown after successful signup (defaults to "You've been added to the newsletter!")
+   */
+  popupSuccessMessage?: string | null;
+  /**
+   * Toggle the What's Happening section on the homepage
+   */
+  whatsHappeningEnabled?: boolean | null;
+  /**
+   * Override the section title (defaults to "What's Happening?")
+   */
+  whatsHappeningTitle?: string | null;
+  /**
+   * Show the decorative icon next to the section heading
+   */
+  whatsHappeningIcon?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1573,6 +1640,10 @@ export interface Visit {
      * Multi-line address
      */
     address?: string | null;
+    /**
+     * Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.
+     */
+    googleMapsUrl?: string | null;
     parkingDescription?: string | null;
     parkingFeatures?:
       | {
@@ -1602,6 +1673,15 @@ export interface Visit {
         }[]
       | null;
   };
+  /**
+   * Toggle visibility of the "Explore the Duneland Community" section
+   */
+  dunelandCommunityEnabled?: boolean | null;
+  dunelandCommunity?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+  };
   faqsSection?: {
     caption?: string | null;
     title?: string | null;
@@ -1612,6 +1692,143 @@ export interface Visit {
           id?: string | null;
         }[]
       | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies".
+ */
+export interface Policy {
+  id: string;
+  /**
+   * Full privacy policy content. Leave empty to display the default hardcoded policy.
+   */
+  privacyContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  privacyLastUpdated?: string | null;
+  /**
+   * Full cookie policy content. Leave empty to display the default hardcoded policy.
+   */
+  cookiesContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cookiesLastUpdated?: string | null;
+  /**
+   * Full terms and conditions content.
+   */
+  termsContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  termsLastUpdated?: string | null;
+  /**
+   * Land acknowledgement statement.
+   */
+  landAcknowledgementContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story".
+ */
+export interface OurStory {
+  id: string;
+  /**
+   * Up to 10 photos displayed in the carousel. Drag to reorder.
+   */
+  photos?:
+    | {
+        image: string | Media;
+        /**
+         * Optional caption displayed below the image
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The gallery story content, displayed below the photo carousel
+   */
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  search?: {
+    artistsShowSearch?: boolean | null;
+    happeningsShowSearch?: boolean | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1672,7 +1889,8 @@ export interface HomeSelect<T extends boolean = true> {
               media?: T;
             };
       };
-  heroVideoUrl?: T;
+  heroVideo?: T;
+  heroVideoPoster?: T;
   missionCaption?: T;
   missionStatement?: T;
   missionCtaText?: T;
@@ -1686,6 +1904,13 @@ export interface HomeSelect<T extends boolean = true> {
   visitImage?: T;
   visitCtaText?: T;
   visitCtaUrl?: T;
+  popupHeadline?: T;
+  popupDescription?: T;
+  popupButtonText?: T;
+  popupSuccessMessage?: T;
+  whatsHappeningEnabled?: T;
+  whatsHappeningTitle?: T;
+  whatsHappeningIcon?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1743,6 +1968,7 @@ export interface VisitSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         address?: T;
+        googleMapsUrl?: T;
         parkingDescription?: T;
         parkingFeatures?:
           | T
@@ -1774,6 +2000,14 @@ export interface VisitSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  dunelandCommunityEnabled?: T;
+  dunelandCommunity?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+      };
   faqsSection?:
     | T
     | {
@@ -1786,6 +2020,54 @@ export interface VisitSelect<T extends boolean = true> {
               answer?: T;
               id?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies_select".
+ */
+export interface PoliciesSelect<T extends boolean = true> {
+  privacyContent?: T;
+  privacyLastUpdated?: T;
+  cookiesContent?: T;
+  cookiesLastUpdated?: T;
+  termsContent?: T;
+  termsLastUpdated?: T;
+  landAcknowledgementContent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story_select".
+ */
+export interface OurStorySelect<T extends boolean = true> {
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  story?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  search?:
+    | T
+    | {
+        artistsShowSearch?: T;
+        happeningsShowSearch?: T;
       };
   updatedAt?: T;
   createdAt?: T;

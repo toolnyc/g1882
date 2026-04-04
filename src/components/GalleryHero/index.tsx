@@ -4,18 +4,14 @@ import { motion } from 'framer-motion'
 import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
 import { useState, useEffect } from 'react'
 
-const DEFAULT_VIDEO_URL =
-  'https://customer-dz4f40f4nnmmdd6e.cloudflarestream.com/8aa90e2afac27de9b53b72d6feda8fc5/iframe?muted=true&preload=true&loop=true&autoplay=true&controls=false&poster=https%3A%2F%2Fcustomer-dz4f40f4nnmmdd6e.cloudflarestream.com%2F8aa90e2afac27de9b53b72d6feda8fc5%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600'
-
-const POSTER_IMAGE_URL =
-  'https://customer-dz4f40f4nnmmdd6e.cloudflarestream.com/8aa90e2afac27de9b53b72d6feda8fc5/thumbnails/thumbnail.jpg?time=&height=600'
-
 interface GalleryHeroProps {
   heroVideoUrl?: string | null
+  heroVideoPosterUrl?: string | null
 }
 
 export const GalleryHero: React.FC<GalleryHeroProps> = ({
   heroVideoUrl,
+  heroVideoPosterUrl,
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('')
 
@@ -39,25 +35,33 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
     return () => clearInterval(interval)
   }, [])
 
-  const videoUrl = heroVideoUrl?.trim() || DEFAULT_VIDEO_URL
-
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* Cloudflare Stream Video */}
+      {/* Hero Video */}
       <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="relative h-full w-full overflow-hidden"
-          style={{ backgroundImage: `url(${POSTER_IMAGE_URL})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-        >
-          <iframe
-            src={videoUrl}
-            title="Gallery 1882 hero video"
-            loading="lazy"
-            className="hero-video-iframe"
-            allow="accelerometer; gyroscope; autoplay; encrypted-media;"
-            allowFullScreen={true}
-            sandbox="allow-scripts allow-same-origin"
-          />
+        <div className="relative h-full w-full overflow-hidden">
+          {heroVideoUrl ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={heroVideoPosterUrl || undefined}
+              className="hero-video-iframe"
+            >
+              <source src={heroVideoUrl} />
+            </video>
+          ) : heroVideoPosterUrl ? (
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${heroVideoPosterUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          ) : null}
         </div>
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/20" />

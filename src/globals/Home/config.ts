@@ -30,13 +30,25 @@ export const Home: GlobalConfig = {
               fields: [hero],
             },
             {
-              name: 'heroVideoUrl',
-              type: 'text',
-              label: 'Hero Video URL',
+              name: 'heroVideo',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video',
               required: false,
               admin: {
                 description:
-                  'Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.',
+                  'Upload an MP4 or WebM video for the hero background. Leave blank to show no video.',
+              },
+            },
+            {
+              name: 'heroVideoPoster',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video Poster Image',
+              required: false,
+              admin: {
+                description:
+                  'Optional poster image shown while the video loads. Should be a still frame or preview of the video.',
               },
             },
           ],
@@ -150,6 +162,81 @@ export const Home: GlobalConfig = {
               type: 'text',
               label: 'Visit CTA URL',
               required: false,
+            },
+          ],
+        },
+        {
+          label: 'Newsletter Popup',
+          fields: [
+            {
+              name: 'popupHeadline',
+              type: 'text',
+              label: 'Popup Headline',
+              required: false,
+              admin: {
+                description: 'Headline for the newsletter popup (defaults to "Opening Soon")',
+              },
+            },
+            {
+              name: 'popupDescription',
+              type: 'textarea',
+              label: 'Popup Description',
+              required: false,
+              admin: {
+                description:
+                  'Description text for the newsletter popup (defaults to launch announcement copy)',
+              },
+            },
+            {
+              name: 'popupButtonText',
+              type: 'text',
+              label: 'Popup Button Text',
+              required: false,
+              admin: {
+                description: 'Submit button text (defaults to "Subscribe")',
+              },
+            },
+            {
+              name: 'popupSuccessMessage',
+              type: 'text',
+              label: 'Popup Success Message',
+              required: false,
+              admin: {
+                description:
+                  'Message shown after successful signup (defaults to "You\'ve been added to the newsletter!")',
+              },
+            },
+          ],
+        },
+        {
+          label: "What's Happening",
+          fields: [
+            {
+              name: 'whatsHappeningEnabled',
+              type: 'checkbox',
+              label: "Show What's Happening Section",
+              defaultValue: true,
+              admin: {
+                description: "Toggle the What's Happening section on the homepage",
+              },
+            },
+            {
+              name: 'whatsHappeningTitle',
+              type: 'text',
+              label: "What's Happening Title",
+              required: false,
+              admin: {
+                description: 'Override the section title (defaults to "What\'s Happening?")',
+              },
+            },
+            {
+              name: 'whatsHappeningIcon',
+              type: 'checkbox',
+              label: 'Show Section Icon',
+              defaultValue: true,
+              admin: {
+                description: 'Show the decorative icon next to the section heading',
+              },
             },
           ],
         },

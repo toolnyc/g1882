@@ -43,10 +43,20 @@ function ScrollAwareToaster() {
 export const Providers: React.FC<{
   children: React.ReactNode
   isAdmin?: boolean
-}> = ({ children, isAdmin = false }) => {
+  popupHeadline?: string | null
+  popupDescription?: string | null
+  popupButtonText?: string | null
+  popupSuccessMessage?: string | null
+}> = ({ children, isAdmin = false, popupHeadline, popupDescription, popupButtonText, popupSuccessMessage }) => {
   return (
     <HeaderThemeProvider>
-      <NewsletterGateProvider isAdmin={isAdmin}>
+      <NewsletterGateProvider
+        isAdmin={isAdmin}
+        popupHeadline={popupHeadline}
+        popupDescription={popupDescription}
+        popupButtonText={popupButtonText}
+        popupSuccessMessage={popupSuccessMessage}
+      >
         {children}
         <ScrollAwareToaster />
       </NewsletterGateProvider>

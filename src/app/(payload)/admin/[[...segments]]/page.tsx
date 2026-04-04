@@ -1,5 +1,5 @@
 /* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+/* Modified to add server-side diagnostics for blank page debugging. */
 import type { Metadata } from 'next'
 
 import config from '@payload-config'
@@ -18,7 +18,25 @@ type Args = {
 export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
   generatePageMetadata({ config, params, searchParams })
 
-const Page = ({ params, searchParams }: Args) =>
-  RootPage({ config, params, searchParams, importMap })
+const Page = async ({ params, searchParams }: Args) => {
+  const resolvedParams = await params
+  const segments = resolvedParams?.segments || []
+  const route = `/admin/${segments.join('/')}`
+
+  // Diagnostic: log which admin route is being rendered server-side
+  console.log(`[g1882-admin-diagnostics] Rendering admin route: ${route}`)
+
+  try {
+    const result = RootPage({ config, params, searchParams, importMap })
+    console.log(`[g1882-admin-diagnostics] RootPage returned successfully for: ${route}`)
+    return result
+  } catch (err) {
+    console.error(`[g1882-admin-diagnostics] RootPage threw during server render:`, {
+      route,
+      error: err instanceof Error ? { name: err.name, message: err.message, stack: err.stack } : err,
+    })
+    throw err
+  }
+}
 
 export default Page

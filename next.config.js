@@ -64,12 +64,15 @@ const nextConfig = {
   redirects,
 }
 
+const isProduction = process.env.VERCEL_ENV === 'production'
+
 export default withSentryConfig(withPayload(nextConfig, { devBundleServerPackages: false }), {
   // Suppresses source map upload logs during build
   silent: true,
-  // Upload source maps for better stack traces
-  widenClientFileUpload: true,
-  // Hides source maps from generated client bundles
+  // Only upload source maps for production deploys (saves ~15-30s on preview builds)
+  disableServerWebpackPlugin: !isProduction,
+  disableClientWebpackPlugin: !isProduction,
+  widenClientFileUpload: isProduction,
   hideSourceMaps: true,
   // Tree-shakes Sentry debug logging statements to reduce bundle size
   webpack: {

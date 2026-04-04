@@ -10,6 +10,8 @@ import { getCachedHappenings } from '@/utilities/getHappenings'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
 import { extractPlainText } from '@/utilities/richTextHelpers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import type { Artist } from '@/payload-types'
 
 const getLastName = (name: string): string => {
@@ -18,6 +20,10 @@ const getLastName = (name: string): string => {
 }
 
 export default async function ArtistsPage() {
+  const payload = await getPayload({ config: configPromise })
+  const siteSettings = await payload.findGlobal({ slug: 'site-settings' })
+  const showSearch = siteSettings?.search?.artistsShowSearch !== false
+
   const artists = await getCachedArtists(1)()
   // Fetch with depth 2 to populate artists array relations
   const happenings = await getCachedHappenings({ active: true }, 2)()
@@ -86,7 +92,7 @@ export default async function ArtistsPage() {
     const exhibitions = artistExhibitionMap.get(artist.id)
     const subtitle = exhibitions
       ? `Currently in: ${exhibitions.join(', ')}`
-      : (artist.bio ? extractPlainText(artist.bio) : undefined)
+      : undefined
 
     return {
       id: artist.id,
@@ -106,6 +112,7 @@ export default async function ArtistsPage() {
         items={artistItems}
         title="Artists"
         groupBy="alphabetical"
+        showSearch={showSearch}
         banner={
           bannerArtist && exhibitionTitle ? (
             <CurrentArtistBanner artist={bannerArtist} exhibitionTitle={exhibitionTitle} />

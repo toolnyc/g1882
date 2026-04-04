@@ -23,7 +23,7 @@ type SlideOptions = {
 }
 
 const withViewport = (props: MotionProps, once = true): MotionProps => ({
-  viewport: { once },
+  viewport: { once, margin: '0px 0px 100px 0px' },
   ...props,
 })
 

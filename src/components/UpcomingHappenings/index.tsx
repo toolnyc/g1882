@@ -16,6 +16,7 @@ interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
+  subcaption?: string | null
   type?: { name?: string | null; slug?: string | null; dateDisplayMode?: string | null } | string | null
   artists?: (Artist | string)[] | null
   startDate?: string | Date | null
@@ -26,9 +27,15 @@ interface Happening {
 
 interface UpcomingHappeningsProps {
   happenings: Happening[]
+  sectionTitle?: string | null
+  showIcon?: boolean
 }
 
-export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenings }) => {
+export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
+  happenings,
+  sectionTitle,
+  showIcon = true,
+}) => {
   const getDateParts = (happening: Happening) => {
     if (!happening.startDate) return { date: '', time: null, endDate: null }
     const happeningType = resolveHappeningType(happening.type)
@@ -85,7 +92,10 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
           <div className="mb-20 text-center">
             <div className="caption text-bright-lake mb-6">Upcoming</div>
             <h2 className="text-4xl font-bold tracking-tight md:text-5xl text-off-white">
-              What&apos;s Happening?
+              {showIcon && (
+                <span className="mr-3" aria-hidden="true">&#9670;</span>
+              )}
+              {sectionTitle || "What\u2019s Happening?"}
             </h2>
           </div>
 
@@ -145,22 +155,25 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                             <h3 className="text-2xl lg:text-3xl font-bold tracking-tight text-off-white mb-3 leading-tight">
                               {happening.title}
                             </h3>
+                            {happening.subcaption && (
+                              <p className="text-base text-off-white/60 mb-3">{happening.subcaption}</p>
+                            )}
                             {artists.length > 0 && (
                               <div className="mb-4">
                                 {artists.map((artist, i) => (
                                   <React.Fragment key={artist.slug || i}>
                                     {i > 0 && (
-                                      <span className="text-xl text-bright-lake">, </span>
+                                      <span className="text-base text-bright-lake">, </span>
                                     )}
                                     {artist.slug ? (
                                       <Link
                                         href={`/artists/${artist.slug}`}
-                                        className="text-xl font-semibold text-bright-lake hover:text-lake transition-colors"
+                                        className="text-base font-semibold text-bright-lake hover:text-lake transition-colors"
                                       >
                                         {artist.name}
                                       </Link>
                                     ) : (
-                                      <span className="text-xl font-semibold text-bright-lake">
+                                      <span className="text-base font-semibold text-bright-lake">
                                         {artist.name}
                                       </span>
                                     )}

@@ -201,6 +201,15 @@ export const Visit: GlobalConfig = {
           },
         },
         {
+          name: 'googleMapsUrl',
+          type: 'text',
+          label: 'Google Maps URL',
+          admin: {
+            description:
+              'Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.',
+          },
+        },
+        {
           name: 'parkingDescription',
           type: 'textarea',
           label: 'Parking Description',
@@ -303,6 +312,44 @@ export const Visit: GlobalConfig = {
               ],
             },
           ],
+        },
+      ],
+    },
+
+    // Duneland Community Section
+    {
+      name: 'dunelandCommunityEnabled',
+      type: 'checkbox',
+      label: 'Show Duneland Community Section',
+      defaultValue: false,
+      admin: {
+        description: 'Toggle visibility of the "Explore the Duneland Community" section',
+      },
+    },
+    {
+      name: 'dunelandCommunity',
+      type: 'group',
+      label: 'Duneland Community Section',
+      admin: {
+        condition: (data) => Boolean(data?.dunelandCommunityEnabled),
+      },
+      fields: [
+        {
+          name: 'caption',
+          type: 'text',
+          label: 'Caption',
+          defaultValue: 'Community',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Title',
+          defaultValue: 'Explore the Duneland Community',
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Description',
         },
       ],
     },

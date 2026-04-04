@@ -131,44 +131,45 @@ export const Media: CollectionConfig = {
     resizeOptions: {
       withoutEnlargement: true,
     },
+    // WebP quality 90: higher fidelity for art gallery imagery at the cost of larger file sizes
     imageSizes: [
       {
         name: 'thumbnail',
         width: 300,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
       {
         name: 'square',
         width: 500,
         height: 500,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
       {
         name: 'small',
         width: 600,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
       {
         name: 'medium',
         width: 900,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
       {
         name: 'large',
         width: 1400,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
       {
         name: 'xlarge',
         width: 1920,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
       {
         name: 'og',
         width: 1200,
         height: 630,
         position: 'center',
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 90 } },
       },
     ],
   },

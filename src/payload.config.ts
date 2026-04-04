@@ -16,6 +16,9 @@ import { Users } from './collections/Users'
 import { Home } from './globals/Home/config'
 import { Space } from './globals/Space/config'
 import { Visit } from './globals/Visit/config'
+import { Policies } from './globals/Policies/config'
+import { OurStory } from './globals/OurStory/config'
+import { SiteSettings } from './globals/SiteSettings/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -37,7 +40,7 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
-      afterNavLinks: ['@/components/BackToSite'],
+      afterNavLinks: ['@/components/BackToSite', '@/components/AdminDiagnostics'],
       graphics: {
         Logo: '@/components/Logo/Logo#Logo',
         Icon: '@/components/Logo/Icon#Icon',
@@ -77,7 +80,7 @@ export default buildConfig({
   }),
   collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Space, Home, Visit],
+  globals: [Space, Home, Visit, Policies, OurStory, SiteSettings],
   plugins: [
     ...plugins,
     vercelBlobStorage({
@@ -85,8 +88,19 @@ export default buildConfig({
         media: true,
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      clientUploads: true,
     }),
   ],
+  onInit: async (payload) => {
+    const { totalDocs } = await payload.count({
+      collection: 'happening-types',
+    })
+    if (totalDocs === 0) {
+      payload.logger.warn(
+        '[g1882] The happening-types collection is empty. Creating new Happenings will fail because the required "type" field has no options. Run the seed endpoint or create types manually in the admin panel.',
+      )
+    }
+  },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {

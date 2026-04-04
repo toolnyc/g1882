@@ -70,13 +70,14 @@ export async function seedHappenings(
       heroImage = mediaMap.get(imageFilename) || null
     }
 
-    const happeningType = typeMap.get('exhibition')
+    const happeningTypeSlug = mockHappening.type || 'exhibition'
+    const happeningType = typeMap.get(happeningTypeSlug)
 
     const happening = await payload.create({
       collection: 'happenings',
       data: {
         title: mockHappening.title,
-        type: happeningType?.id || 'exhibition',
+        type: happeningType?.id || '',
         slug,
         startDate: mockHappening.startDate,
         endDate: mockHappening.endDate || undefined,

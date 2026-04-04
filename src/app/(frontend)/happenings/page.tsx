@@ -9,6 +9,8 @@ import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatHappeningDate, formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import type { Artist, Happening } from '@/payload-types'
 
 const getArtistNames = (happening: Happening): string => {
@@ -25,6 +27,10 @@ const getArtistNames = (happening: Happening): string => {
 }
 
 export default async function HappeningsPage() {
+  const payload = await getPayload({ config: configPromise })
+  const siteSettings = await payload.findGlobal({ slug: 'site-settings' })
+  const showSearch = siteSettings?.search?.happeningsShowSearch !== false
+
   // Fetch with depth 2 to populate heroImage, artists, and type relations
   const getHappenings = getCachedHappenings({}, 2)
   const allHappenings = await getHappenings()
@@ -98,6 +104,7 @@ export default async function HappeningsPage() {
     <main className="bg-off-white">
       {/* Timeline View */}
       <DirectoryListing
+        showSearch={showSearch}
         items={timelineHappenings.map((happening) => {
           const happeningType = resolveHappeningType(happening.type)
           const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'

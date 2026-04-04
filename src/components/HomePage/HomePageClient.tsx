@@ -24,6 +24,7 @@ interface HomePageClientProps {
   featuredArtistData: ReturnType<typeof import('@/utilities/dataTransformers').transformFeaturedArtist>
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
   heroVideoUrl?: string | null
+  heroVideoPosterUrl?: string | null
   isUpNext?: boolean
 }
 
@@ -34,6 +35,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   featuredArtistData,
   visitSectionData,
   heroVideoUrl,
+  heroVideoPosterUrl,
   isUpNext = false,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
@@ -51,13 +53,19 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
     <main className="min-h-screen bg-off-white">
       {/* Gate enabled (pre-launch): show only video with "Coming Soon" */}
       {showLanderContent && (
-        <GalleryHero heroVideoUrl={heroVideoUrl} />
+        <GalleryHero
+          heroVideoUrl={heroVideoUrl}
+          heroVideoPosterUrl={heroVideoPosterUrl}
+        />
       )}
 
       {/* Gate disabled (launched): show full site */}
       {showFullSite && (
         <>
-          <GalleryHero heroVideoUrl={heroVideoUrl} />
+          <GalleryHero
+            heroVideoUrl={heroVideoUrl}
+            heroVideoPosterUrl={heroVideoPosterUrl}
+          />
 
           <MissionSection
             missionCaption={homeData?.missionCaption}
@@ -72,7 +80,13 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
 
           {featuredArtistData && <ArtistFeature {...featuredArtistData} />}
 
-          {upcomingHappenings.length > 0 && <UpcomingHappenings happenings={upcomingHappenings} />}
+          {upcomingHappenings.length > 0 && homeData?.whatsHappeningEnabled !== false && (
+            <UpcomingHappenings
+              happenings={upcomingHappenings}
+              sectionTitle={homeData?.whatsHappeningTitle}
+              showIcon={homeData?.whatsHappeningIcon !== false}
+            />
+          )}
 
           {visitSectionData && homeData?.visitSectionEnabled !== false && (
             <VisitSection {...visitSectionData} />
