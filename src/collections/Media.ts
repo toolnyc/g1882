@@ -87,7 +87,47 @@ export const Media: CollectionConfig = {
           data.processingInfo = `Auto-resized from ${metadata.width}x${metadata.height} to fit within ${MAX_DIMENSION}px. File size: ${(originalSize / (1024 * 1024)).toFixed(1)}MB → ${(resized.length / (1024 * 1024)).toFixed(1)}MB.`
         }
 
+        // Reset processing status for new image uploads
+        if (req.file?.data && req.file.mimetype?.startsWith('image/')) {
+          data.processingStatus = 'pending'
+          data.processingError = null
+        }
+
         return data
+      },
+    ],
+    afterChange: [
+      async ({ doc, req }) => {
+        // Only queue for images with a URL
+        if (!doc.mimeType?.startsWith('image/')) return doc
+        if (!doc.url) return doc
+
+        // Only queue if processing is needed
+        if (doc.processingStatus === 'complete') return doc
+
+        try {
+          await req.payload.jobs.queue({
+            task: 'generateImageSizes',
+            input: { mediaId: String(doc.id) },
+          })
+          req.payload.logger.info(
+            `[media] Queued image size generation for media ${doc.id}`,
+          )
+
+          // Trigger immediate job processing (don't await — fire and forget)
+          // This avoids waiting for the cron to pick it up
+          req.payload.jobs.run().catch((err: Error) => {
+            req.payload.logger.warn(
+              `[media] Background job trigger failed (cron will catch it): ${err.message}`,
+            )
+          })
+        } catch (err) {
+          req.payload.logger.error(
+            `[media] Failed to queue image size generation for media ${doc.id}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+          )
+        }
+
+        return doc
       },
     ],
   },
@@ -121,6 +161,32 @@ export const Media: CollectionConfig = {
         description: 'Details about automatic processing applied to this upload',
       },
     },
+    {
+      name: 'processingStatus',
+      type: 'select',
+      defaultValue: 'pending',
+      options: [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Processing', value: 'processing' },
+        { label: 'Complete', value: 'complete' },
+        { label: 'Failed', value: 'failed' },
+      ],
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'Status of background image size generation',
+      },
+    },
+    {
+      name: 'processingError',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        condition: (data) => data?.processingStatus === 'failed',
+        description: 'Error details from image processing',
+      },
+    },
   ],
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
@@ -136,39 +202,6 @@ export const Media: CollectionConfig = {
       {
         name: 'thumbnail',
         width: 300,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-      {
-        name: 'square',
-        width: 500,
-        height: 500,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-      {
-        name: 'small',
-        width: 600,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-      {
-        name: 'medium',
-        width: 900,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-      {
-        name: 'large',
-        width: 1400,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-      {
-        name: 'xlarge',
-        width: 1920,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-      {
-        name: 'og',
-        width: 1200,
-        height: 630,
-        position: 'center',
         formatOptions: { format: 'webp', options: { quality: 90 } },
       },
     ],
