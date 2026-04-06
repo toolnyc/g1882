@@ -20,6 +20,7 @@ import { Policies } from './globals/Policies/config'
 import { OurStory } from './globals/OurStory/config'
 import { SiteSettings } from './globals/SiteSettings/config'
 import { plugins } from './plugins'
+import { robustBlobFetchPlugin } from './plugins/robustBlobFetch'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { generateImageSizesTask } from './jobs/generateImageSizes'
@@ -93,6 +94,8 @@ export default buildConfig({
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
       clientUploads: true,
     }),
+    // Must run AFTER vercelBlobStorage to patch its handler
+    robustBlobFetchPlugin,
   ],
   onInit: async (payload) => {
     const { totalDocs } = await payload.count({

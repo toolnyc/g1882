@@ -57,6 +57,13 @@ export const Media: CollectionConfig = {
           })
         }
 
+        // Normalize filenames that would cause Vercel Blob CDN 404s
+        // (SENTRY-CITRINE-CANVAS-8): collapse consecutive whitespace, trim,
+        // and replace remaining spaces with hyphens for URL safety.
+        if (file.name) {
+          file.name = file.name.trim().replace(/\s+/g, '-')
+        }
+
         if (errors.length > 0) {
           throw new ValidationError({
             errors,
