@@ -4,6 +4,7 @@ import Image from 'next/image'
 import React, { useCallback, useState } from 'react'
 
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import type { Media } from '@/payload-types'
 
 export type WorkItem = {
@@ -33,10 +34,10 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
   return (
     <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:_balance]">
       {works.map((work, index) => {
-        const imageUrl = resolveMediaUrl(work.image)
-        if (!imageUrl) return null
-
         const media = typeof work.image === 'object' && work.image ? work.image : null
+        // Use optimized WebP size (medium=900px) for masonry grid items
+        const imageUrl = media ? resolveOptimizedUrl(media, 900) : resolveMediaUrl(work.image)
+        if (!imageUrl) return null
         const width = media?.width || 800
         const height = media?.height || 600
         const workId = work.id || imageUrl

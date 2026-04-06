@@ -6,6 +6,7 @@ import { getCachedHappeningBySlug } from '@/utilities/getHappeningBySlug'
 import RichText from '@/components/RichText'
 import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
 import { formatHappeningDateParts } from '@/utilities/dateHelpers'
@@ -63,7 +64,8 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   const typeLabel = happeningType?.name || null
   const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
 
-  const hasHeroImage = heroImage && typeof heroImage === 'object' && heroImage.url
+  const heroUrl = resolveOptimizedUrl(heroImage, 1920)
+  const hasHeroImage = heroImage && heroUrl
 
   const dateParts = formatHappeningDateParts(
     happening.startDate,
@@ -76,13 +78,13 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
       <article className={`pb-24${hasHeroImage ? '' : ' pt-48'}`}>
         {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
-          <div className="w-full mb-16">
+          <div className="w-full max-h-[80vh] overflow-hidden flex items-center mb-16">
             <Image
-              src={heroImage.url!}
+              src={heroUrl}
               alt={heroImage.alt || happening.title || ''}
-              width={1920}
-              height={1080}
-              className="w-full h-auto"
+              width={heroImage.width || 1920}
+              height={heroImage.height || 1080}
+              className="w-full h-auto max-h-[80vh] object-contain"
               priority
               sizes="100vw"
             />

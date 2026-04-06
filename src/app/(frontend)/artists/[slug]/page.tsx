@@ -3,6 +3,7 @@ import Image from 'next/image'
 import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import { RelatedHappenings } from './RelatedHappenings'
 import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
 import RichText from '@/components/RichText'
@@ -40,7 +41,8 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
     )
   }
 
-  const artistImage = typeof artist.image === 'object' && artist.image ? artist.image : null
+  const artistImageObj = typeof artist.image === 'object' && artist.image ? artist.image : null
+  const artistImage = resolveOptimizedUrl(artistImageObj, 1400)
   const works = artist.works || []
   const socialLinks = artist.socialLinks || []
 
@@ -48,14 +50,16 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
     <main className="min-h-screen bg-off-white">
       <article className="pt-48 pb-24">
         {/* Hero Image — optional, graceful layout without */}
-        {artistImage && typeof artistImage === 'object' && artistImage.url && (
-          <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
+        {artistImage && (
+          <div className="w-full max-h-[80vh] overflow-hidden flex items-center mb-16">
             <Image
-              src={artistImage.url}
-              alt={artistImage.alt || artist.name || ''}
-              fill
-              className="object-contain"
+              src={artistImage}
+              alt={artistImageObj?.alt || artist.name || ''}
+              width={artistImageObj?.width || 1400}
+              height={artistImageObj?.height || 900}
+              className="w-full h-auto max-h-[80vh] object-contain"
               priority
+              sizes="100vw"
             />
           </div>
         )}

@@ -3,6 +3,7 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react'
 import NextImage from 'next/image'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import type { Media } from '@/payload-types'
 
 type Photo = {
@@ -96,7 +97,7 @@ export const PhotoCarousel: React.FC<Props> = ({ photos }) => {
           const media = typeof photo.image === 'object' ? photo.image : null
           if (!media) return null
 
-          const src = getMediaUrl(media.url, media.updatedAt)
+          const src = resolveOptimizedUrl(media, 900) || getMediaUrl(media.url, media.updatedAt)
           if (!src) return null
 
           return (

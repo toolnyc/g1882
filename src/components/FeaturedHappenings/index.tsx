@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
 import { formatHappeningDateParts, type DateDisplayMode } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
+import type { Media } from '@/payload-types'
 
 interface Artist {
   id?: string
@@ -56,6 +58,9 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
 
   const getImageUrl = (happening: Happening) => {
     if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
+      // Use square (500px) WebP for 96px thumbnails
+      const optimized = resolveOptimizedUrl(happening.heroImage as Media, 500)
+      if (optimized) return optimized
       return happening.heroImage.url
     }
     if (typeof happening.heroImage === 'string' && happening.heroImage) {
