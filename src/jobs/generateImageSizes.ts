@@ -90,9 +90,30 @@ export const generateImageSizesTask: TaskConfig<'generateImageSizes'> = {
     })
 
     try {
-      // 3. Fetch original image from Blob
+      // 3. Fetch original image from Blob (or local storage fallback)
+      // doc.url is normally an absolute Blob URL, but legacy uploads or Blob
+      // misconfiguration can leave a relative path like /api/media/file/name.jpg.
+      // Node.js fetch() requires an absolute URL, so resolve relative paths.
+      let fetchUrl = doc.url as string
+      if (!fetchUrl.startsWith('http')) {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SERVER_URL ||
+          (process.env.VERCEL_PROJECT_PRODUCTION_URL
+            ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+            : '')
+        if (!baseUrl) {
+          throw new Error(
+            `Media ${mediaId} has a relative URL (${fetchUrl}) and no server base URL is configured. Re-upload the file to store it in Blob storage.`,
+          )
+        }
+        fetchUrl = `${baseUrl}${fetchUrl.startsWith('/') ? '' : '/'}${fetchUrl}`
+        req.payload.logger.warn(
+          `[generateImageSizes] Media ${mediaId} has relative URL, resolved to: ${fetchUrl}`,
+        )
+      }
+
       req.payload.logger.info(`[generateImageSizes] Fetching original image for media ${mediaId}`)
-      const response = await fetch(doc.url)
+      const response = await fetch(fetchUrl)
       if (!response.ok) {
         throw new Error(
           `Failed to fetch original image: ${response.status} ${response.statusText}`,
