@@ -111,16 +111,13 @@ export const Media: CollectionConfig = {
             input: { mediaId: String(doc.id) },
           })
           req.payload.logger.info(
-            `[media] Queued image size generation for media ${doc.id}`,
+            `[media] Queued image size generation for media ${doc.id} (cron picks up within 1 min)`,
           )
 
-          // Trigger immediate job processing (don't await — fire and forget)
-          // This avoids waiting for the cron to pick it up
-          req.payload.jobs.run().catch((err: Error) => {
-            req.payload.logger.warn(
-              `[media] Background job trigger failed (cron will catch it): ${err.message}`,
-            )
-          })
+          // Do NOT call jobs.run() here — the originating save transaction may
+          // still be open, and the job's payload.update() on the same document
+          // causes a MongoDB write conflict. The vercel.json cron runs every
+          // minute and processes queued jobs in its own request context.
         } catch (err) {
           req.payload.logger.error(
             `[media] Failed to queue image size generation for media ${doc.id}: ${err instanceof Error ? err.message : 'Unknown error'}`,
