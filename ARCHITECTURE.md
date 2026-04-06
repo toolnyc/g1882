@@ -123,6 +123,8 @@ Payload jobs queue is configured in `payload.config.ts` with cron-based access c
 
 ### Image Size Generation (`generateImageSizes` task)
 
-Media uploads generate only a `thumbnail` synchronously for fast response (~1-2s). The remaining 6 sizes (square, small, medium, large, xlarge, og) are generated asynchronously by the `generateImageSizes` job in `src/jobs/generateImageSizes.ts`. The job fetches the original from Vercel Blob, resizes with sharp, uploads each variant, and updates the media document. Vercel Cron hits `/api/payload-jobs/run` every minute as a fallback; the `afterChange` hook also triggers immediate processing.
+Media uploads generate only a `thumbnail` synchronously for fast response (~1-2s). The remaining 6 sizes (square, small, medium, large, xlarge, og) are generated asynchronously by the `generateImageSizes` job in `src/jobs/generateImageSizes.ts`. The job fetches the original from Vercel Blob, resizes with sharp, uploads each variant, and updates the media document. Vercel Cron hits `/api/payload-jobs/run` every minute to process queued jobs. The `afterChange` hook queues the job but does **not** trigger `jobs.run()` immediately — doing so caused MongoDB write conflicts by racing with the originating save transaction.
+
+Blob storage uses `disablePayloadAccessControl: true` so media URLs resolve directly to Blob CDN (`https://<store>.public.blob.vercel-storage.com/...`) rather than being proxied through a serverless function. A diagnostic endpoint at `/next/media-audit` (admin-only) audits all media documents for URL health.
 
 Processing status is tracked via `processingStatus` field (pending → processing → complete/failed) visible in the admin sidebar. The `MediaWithSizes` type in `src/types/media-sizes.d.ts` extends the generated `Media` type to include the deferred size fields.
