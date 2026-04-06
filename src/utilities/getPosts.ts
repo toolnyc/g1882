@@ -1,6 +1,7 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
+import { draftMode } from 'next/headers'
 
 async function getPosts(depth = 1) {
   const payload = await getPayload({ config: configPromise })
@@ -30,12 +31,21 @@ async function getPosts(depth = 1) {
 
 /**
  * Returns a cached function to fetch posts
+ * Bypasses cache in draft mode
  */
 export const getCachedPosts = (depth = 1) =>
-  unstable_cache(async () => getPosts(depth), ['posts'], {
-    tags: ['posts'],
-    revalidate: 60,
-  })
+  async () => {
+    const { isEnabled } = await draftMode()
+
+    if (isEnabled) {
+      return getPosts(depth)
+    }
+
+    return unstable_cache(async () => getPosts(depth), ['posts'], {
+      tags: ['posts'],
+      revalidate: 60,
+    })()
+  }
 
 export { getPosts }
 

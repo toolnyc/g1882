@@ -19,7 +19,7 @@ export default async function PrivacyPolicyPage() {
   const hasContent = policies?.privacyContent?.root?.children?.length
 
   return (
-    <main className="container py-24 max-w-3xl">
+    <main className="container pt-48 pb-24 max-w-3xl">
       <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
 
       {hasContent ? (

@@ -3,32 +3,16 @@ import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 
-async function getSpace(depth = 0) {
+async function getSpace(depth = 0, draft = false) {
   const payload = await getPayload({ config: configPromise })
-  const { isEnabled } = await draftMode()
 
   const space = await payload.findGlobal({
     slug: 'space',
     depth,
-    draft: isEnabled,
+    draft,
   })
 
   return space
-}
-
-const spaceCache = new Map<number, ReturnType<typeof unstable_cache>>()
-
-const ensureSpaceCache = (depth: number) => {
-  if (!spaceCache.has(depth)) {
-    spaceCache.set(
-      depth,
-      unstable_cache(async () => getSpace(depth), ['space', `space-depth-${depth}`], {
-        tags: ['space'],
-      }),
-    )
-  }
-
-  return spaceCache.get(depth)!
 }
 
 /**
@@ -41,10 +25,16 @@ export const getCachedSpace = (depth = 0) => {
 
     // When in draft mode, bypass cache to always get fresh draft content
     if (isEnabled) {
-      return getSpace(depth)
+      return getSpace(depth, true)
     }
 
-    return ensureSpaceCache(depth)()
+    return unstable_cache(
+      async () => getSpace(depth, false),
+      ['space', `space-depth-${depth}`],
+      {
+        tags: ['space'],
+        revalidate: 60,
+      },
+    )()
   }
 }
-

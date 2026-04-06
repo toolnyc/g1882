@@ -25,7 +25,7 @@ export default async function OurStoryPage() {
   if (!hasPhotos && !hasStory) {
     return (
       <main className="min-h-screen bg-off-white">
-        <div className="container py-32 text-center">
+        <div className="container pt-48 pb-32 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-navy mb-4">Our Story</h1>
           <p className="text-navy/60 text-lg">Coming soon.</p>
         </div>
@@ -36,7 +36,7 @@ export default async function OurStoryPage() {
   return (
     <main className="min-h-screen bg-off-white">
       {/* Header */}
-      <section className="container pt-24 pb-8 md:pt-32 md:pb-12">
+      <section className="container pt-40 pb-8 md:pt-48 md:pb-12">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-navy">Our Story</h1>
       </section>
 

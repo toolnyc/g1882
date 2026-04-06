@@ -75,10 +75,10 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
   return (
     <main className="min-h-screen bg-off-white">
-      <article className={`pb-24${hasHeroImage ? '' : ' pt-48'}`}>
+      <article className={`pb-24${hasHeroImage ? ' pt-40' : ' pt-48'}`}>
         {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
-          <div className="w-full max-h-[80vh] overflow-hidden flex items-center mb-16">
+          <div className="w-full max-h-[80vh] overflow-hidden flex items-center justify-center mb-16">
             <Image
               src={heroUrl}
               alt={heroImage.alt || happening.title || ''}
@@ -102,19 +102,19 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 <p className="text-xl text-navy/70 mb-4">{happening.subcaption}</p>
               )}
               {artists.length > 0 && (
-                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                <div className="flex flex-wrap gap-y-1">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.id}>
-                      {i > 0 && <span className="text-lg text-bright-lake">,</span>}
+                      {i > 0 && <span className="text-lg text-bright-lake mr-1.5">,</span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors"
+                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors mr-1.5"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-lg text-bright-lake font-semibold">
+                        <span className="text-lg text-bright-lake font-semibold mr-1.5">
                           {artist.name}
                         </span>
                       )}

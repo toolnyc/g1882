@@ -28,7 +28,7 @@ export const VisitSection: React.FC<VisitSectionProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="relative w-full aspect-[21/9] rounded-lg overflow-hidden mb-12"
+            className="relative w-full aspect-[16/9] rounded-lg overflow-hidden mb-12"
           >
             <Image
               src={image}

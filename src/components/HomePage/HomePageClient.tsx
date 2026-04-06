@@ -84,7 +84,6 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
             <UpcomingHappenings
               happenings={upcomingHappenings}
               sectionTitle={homeData?.whatsHappeningTitle}
-              showIcon={homeData?.whatsHappeningIcon !== false}
             />
           )}
 

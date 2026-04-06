@@ -32,7 +32,7 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
   if (works.length === 0) return null
 
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:_balance]">
+    <div className="columns-1 sm:columns-2 lg:columns-3 gap-6">
       {works.map((work, index) => {
         const media = typeof work.image === 'object' && work.image ? work.image : null
         // Use optimized WebP size (medium=900px) for masonry grid items

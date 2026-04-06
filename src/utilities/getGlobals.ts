@@ -7,35 +7,16 @@ import { draftMode } from 'next/headers'
 
 type Global = keyof Config['globals']
 
-async function getGlobal(slug: Global, depth = 0) {
+async function getGlobal(slug: Global, depth = 0, draft = false) {
   const payload = await getPayload({ config: configPromise })
-  const { isEnabled } = await draftMode()
 
   const global = await payload.findGlobal({
     slug,
     depth,
-    draft: isEnabled,
+    draft,
   })
 
   return global
-}
-
-const globalCache = new Map<string, ReturnType<typeof unstable_cache>>()
-const getCacheKey = (slug: Global, depth: number) => `${slug}-depth-${depth}`
-
-const ensureGlobalCache = (slug: Global, depth: number) => {
-  const key = getCacheKey(slug, depth)
-
-  if (!globalCache.has(key)) {
-    globalCache.set(
-      key,
-      unstable_cache(async () => getGlobal(slug, depth), [`global-${slug}`, `depth-${depth}`], {
-        tags: [`global_${slug}`],
-      }),
-    )
-  }
-
-  return globalCache.get(key)!
 }
 
 /**
@@ -48,9 +29,16 @@ export const getCachedGlobal = (slug: Global, depth = 0) => {
 
     // When in draft mode, bypass cache to always get fresh draft content
     if (isEnabled) {
-      return getGlobal(slug, depth)
+      return getGlobal(slug, depth, true)
     }
 
-    return ensureGlobalCache(slug, depth)()
+    return unstable_cache(
+      async () => getGlobal(slug, depth, false),
+      [`global-${slug}`, `depth-${depth}`],
+      {
+        tags: [`global_${slug}`],
+        revalidate: 60,
+      },
+    )()
   }
 }

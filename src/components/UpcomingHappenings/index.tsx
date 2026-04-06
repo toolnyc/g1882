@@ -28,13 +28,11 @@ interface Happening {
 interface UpcomingHappeningsProps {
   happenings: Happening[]
   sectionTitle?: string | null
-  showIcon?: boolean
 }
 
 export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
   happenings,
   sectionTitle,
-  showIcon = true,
 }) => {
   const getDateParts = (happening: Happening) => {
     if (!happening.startDate) return { date: '', time: null, endDate: null }
@@ -92,9 +90,6 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
           <div className="mb-20 text-center">
             <div className="caption text-bright-lake mb-6">Upcoming</div>
             <h2 className="text-4xl font-bold tracking-tight md:text-5xl text-off-white">
-              {showIcon && (
-                <span className="mr-3" aria-hidden="true">&#9670;</span>
-              )}
               {sectionTitle || "What\u2019s Happening?"}
             </h2>
           </div>

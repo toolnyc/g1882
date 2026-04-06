@@ -1,6 +1,7 @@
 import configPromise from '@payload-config'
 import { getPayload, Where } from 'payload'
 import { unstable_cache } from 'next/cache'
+import { draftMode } from 'next/headers'
 import type { Happening } from '@/payload-types'
 
 type HappeningFilters = {
@@ -145,15 +146,24 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
 /**
  * Returns a cached function to fetch happenings
  * Revalidates every 60 seconds or when the happenings tag is invalidated
+ * Bypasses cache in draft mode
  */
 export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) =>
-  unstable_cache(
-    async () => getHappenings(filters, depth, select),
-    ['happenings', JSON.stringify(filters), `depth-${depth}`, select ? JSON.stringify(select) : 'default'],
-    {
-      tags: ['happenings'],
-      revalidate: 60, // Revalidate every 60 seconds
-    },
-  )
+  async () => {
+    const { isEnabled } = await draftMode()
+
+    if (isEnabled) {
+      return getHappenings(filters, depth, select)
+    }
+
+    return unstable_cache(
+      async () => getHappenings(filters, depth, select),
+      ['happenings', JSON.stringify(filters), `depth-${depth}`, select ? JSON.stringify(select) : 'default'],
+      {
+        tags: ['happenings'],
+        revalidate: 60,
+      },
+    )()
+  }
 
 export { getHappenings }

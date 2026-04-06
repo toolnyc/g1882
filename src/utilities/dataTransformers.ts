@@ -1,6 +1,7 @@
 import type { Home, Media, Space } from '@/payload-types'
 
 import { resolveArtist, resolveMediaUrl } from './mediaHelpers'
+import { resolveOptimizedUrl } from './resolveOptimizedUrl'
 import { extractPlainText } from './richTextHelpers'
 
 export interface FeaturedArtistData {
@@ -47,7 +48,7 @@ export const transformVisitSection = (
     return {
       title: homeData.visitTitle,
       description: homeData.visitDescription || '',
-      image: resolveMediaUrl(homeData.visitImage),
+      image: resolveOptimizedUrl(homeData.visitImage as Media, 1920) || resolveMediaUrl(homeData.visitImage),
       ctaText: homeData.visitCtaText || 'Plan Your Visit',
       ctaUrl: homeData.visitCtaUrl || '/visit',
     }

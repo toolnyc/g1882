@@ -1,6 +1,7 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
+import { draftMode } from 'next/headers'
 
 async function getArtists(depth = 1) {
   const payload = await getPayload({ config: configPromise })
@@ -30,12 +31,21 @@ async function getArtists(depth = 1) {
 
 /**
  * Returns a cached function to fetch artists
+ * Bypasses cache in draft mode
  */
 export const getCachedArtists = (depth = 1) =>
-  unstable_cache(async () => getArtists(depth), ['artists'], {
-    tags: ['artists'],
-    revalidate: 60,
-  })
+  async () => {
+    const { isEnabled } = await draftMode()
+
+    if (isEnabled) {
+      return getArtists(depth)
+    }
+
+    return unstable_cache(async () => getArtists(depth), ['artists'], {
+      tags: ['artists'],
+      revalidate: 60,
+    })()
+  }
 
 export { getArtists }
 
