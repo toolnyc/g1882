@@ -2,8 +2,9 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
+import { cache } from 'react'
 
-async function getSpace(depth = 0, draft = false) {
+const getSpace = cache(async (depth = 0, draft = false) => {
   const payload = await getPayload({ config: configPromise })
 
   const space = await payload.findGlobal({
@@ -13,7 +14,7 @@ async function getSpace(depth = 0, draft = false) {
   })
 
   return space
-}
+})
 
 /**
  * Returns a cached function to fetch the space global

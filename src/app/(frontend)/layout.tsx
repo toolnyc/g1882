@@ -27,10 +27,13 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
-  const { isAuthenticated } = await getAuthStatus()
-
-  const payload = await getPayload({ config: configPromise })
-  const homeData = await payload.findGlobal({ slug: 'home', depth: 0 })
+  const [{ isAuthenticated }, homeData] = await Promise.all([
+    getAuthStatus(),
+    (async () => {
+      const payload = await getPayload({ config: configPromise })
+      return payload.findGlobal({ slug: 'home', depth: 0 })
+    })(),
+  ])
 
   return (
     <html

@@ -7,8 +7,10 @@ import VisitPageClient from './VisitPage.client'
 export const dynamic = 'force-dynamic'
 
 export default async function VisitPage() {
-  const visit = (await getCachedGlobal('visit', 1)()) as Visit
-  const space = await getCachedSpace()()
+  const [visit, space] = await Promise.all([
+    getCachedGlobal('visit', 1)() as Promise<Visit>,
+    getCachedSpace()(),
+  ])
 
   const formattedHours = formatStructuredHours(space?.structuredHours)
 

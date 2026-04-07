@@ -4,10 +4,11 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
+import { cache } from 'react'
 
 type Global = keyof Config['globals']
 
-async function getGlobal(slug: Global, depth = 0, draft = false) {
+const getGlobal = cache(async (slug: Global, depth = 0, draft = false) => {
   const payload = await getPayload({ config: configPromise })
 
   const global = await payload.findGlobal({
@@ -17,7 +18,7 @@ async function getGlobal(slug: Global, depth = 0, draft = false) {
   })
 
   return global
-}
+})
 
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug

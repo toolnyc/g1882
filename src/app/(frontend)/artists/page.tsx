@@ -7,12 +7,11 @@ export const dynamic = 'force-dynamic'
 import { CurrentArtistBanner } from '@/components/CurrentArtistBanner'
 import { getCachedArtists } from '@/utilities/getArtists'
 import { getCachedHappenings } from '@/utilities/getHappenings'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
 import { extractPlainText } from '@/utilities/richTextHelpers'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import type { Artist } from '@/payload-types'
+import type { Artist, SiteSetting } from '@/payload-types'
 
 const getLastName = (name: string): string => {
   const parts = name.trim().split(/\s+/)
@@ -20,13 +19,13 @@ const getLastName = (name: string): string => {
 }
 
 export default async function ArtistsPage() {
-  const payload = await getPayload({ config: configPromise })
-  const siteSettings = await payload.findGlobal({ slug: 'site-settings' })
+  const [siteSettings, artists, happenings] = await Promise.all([
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    getCachedArtists(1)(),
+    // Fetch with depth 2 to populate artists array relations
+    getCachedHappenings({ active: true }, 2)(),
+  ])
   const showSearch = siteSettings?.search?.artistsShowSearch !== false
-
-  const artists = await getCachedArtists(1)()
-  // Fetch with depth 2 to populate artists array relations
-  const happenings = await getCachedHappenings({ active: true }, 2)()
 
   // Find active exhibitions (date-range types) that reference artists
   const activeExhibitions = happenings.filter(

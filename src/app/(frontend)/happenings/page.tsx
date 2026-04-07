@@ -5,13 +5,12 @@ import { DirectoryListing } from '@/components/DirectoryListing'
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
 import { getCachedHappenings } from '@/utilities/getHappenings'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatHappeningDate, formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import type { Artist, Happening } from '@/payload-types'
+import type { Artist, Happening, SiteSetting } from '@/payload-types'
 
 const getArtistNames = (happening: Happening): string => {
   if (happening.artists && happening.artists.length > 0) {
@@ -27,13 +26,11 @@ const getArtistNames = (happening: Happening): string => {
 }
 
 export default async function HappeningsPage() {
-  const payload = await getPayload({ config: configPromise })
-  const siteSettings = await payload.findGlobal({ slug: 'site-settings' })
+  const [siteSettings, allHappenings] = await Promise.all([
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    getCachedHappenings({}, 2)(),
+  ])
   const showSearch = siteSettings?.search?.happeningsShowSearch !== false
-
-  // Fetch with depth 2 to populate heroImage, artists, and type relations
-  const getHappenings = getCachedHappenings({}, 2)
-  const allHappenings = await getHappenings()
 
   const now = new Date()
   const oneMonthFromNow = new Date(now)

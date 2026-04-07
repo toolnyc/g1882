@@ -19,14 +19,15 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 }
 
 export default async function HomePage() {
-  // Fetch home global data
-  const homeData = (await getCachedGlobal('home', 2)()) as Home
-  // Fetch all published happenings once at depth 2 (populates artists, images, and type),
-  // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
-  const allHappenings = await getCachedHappenings({}, 2)()
-
-  // Fetch space global for structured hours and visit section
-  const space = await getCachedSpace()()
+  // Fetch all data in parallel — these are independent queries
+  const [homeData, allHappenings, space] = await Promise.all([
+    getCachedGlobal('home', 2)() as Promise<Home>,
+    // Fetch all published happenings once at depth 2 (populates artists, images, and type),
+    // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
+    getCachedHappenings({}, 2)(),
+    // Fetch space global for structured hours and visit section
+    getCachedSpace()(),
+  ])
 
   const now = new Date()
 
