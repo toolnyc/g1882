@@ -28,11 +28,19 @@ interface Happening {
 interface UpcomingHappeningsProps {
   happenings: Happening[]
   sectionTitle?: string | null
+  upcomingCaption?: string | null
+  opensLabel?: string | null
+  closesLabel?: string | null
+  viewHappeningLabel?: string | null
 }
 
 export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
   happenings,
   sectionTitle,
+  upcomingCaption,
+  opensLabel,
+  closesLabel,
+  viewHappeningLabel,
 }) => {
   const getDateParts = (happening: Happening) => {
     if (!happening.startDate) return { date: '', time: null, endDate: null }
@@ -56,7 +64,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
   const getButtonText = (happening: Happening) => {
     const happeningType = resolveHappeningType(happening.type)
     if (happeningType?.name) return `View ${happeningType.name}`
-    return 'View Happening'
+    return viewHappeningLabel || 'View Happening'
   }
 
   const getTypeLabel = (happening: Happening) => {
@@ -88,7 +96,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
           viewport={{ once: true }}
         >
           <div className="mb-20 text-center">
-            <div className="caption text-bright-lake mb-6">Upcoming</div>
+            <div className="caption text-bright-lake mb-6">{upcomingCaption || 'Upcoming'}</div>
             <h2 className="text-4xl font-bold tracking-tight md:text-5xl text-off-white">
               {sectionTitle || "What\u2019s Happening?"}
             </h2>
@@ -116,11 +124,11 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
                         <div className="col-span-12 lg:col-span-3">
                           {dateParts.endDate ? (
                             <>
-                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">Opens</div>
+                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">{opensLabel || 'Opens'}</div>
                               <div className="text-3xl lg:text-4xl font-bold text-off-white mb-4 leading-tight">
                                 {dateParts.date}
                               </div>
-                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">Closes</div>
+                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">{closesLabel || 'Closes'}</div>
                               <div className="text-xl lg:text-2xl font-bold text-off-white/80 mb-2 leading-tight">
                                 {dateParts.endDate}
                               </div>

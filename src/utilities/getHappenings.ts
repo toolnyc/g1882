@@ -27,7 +27,7 @@ const defaultListSelect: Partial<Record<keyof Happening, true>> = {
   isActiveOverride: true,
 }
 
-async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) {
+async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>, draft = false) {
   const payload = await getPayload({ config: configPromise })
   const now = new Date()
 
@@ -88,12 +88,14 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
     Object.assign(where, allConditions[0])
   }
 
-  // Add published status filter since happenings uses drafts
-  const publishedFilter: Where = { _status: { equals: 'published' } }
-  if (Object.keys(where).length > 0) {
-    where.and = [...(where.and || []), publishedFilter]
-  } else {
-    Object.assign(where, publishedFilter)
+  // Add published status filter since happenings uses drafts (skip in draft mode)
+  if (!draft) {
+    const publishedFilter: Where = { _status: { equals: 'published' } }
+    if (Object.keys(where).length > 0) {
+      where.and = [...(where.and || []), publishedFilter]
+    } else {
+      Object.assign(where, publishedFilter)
+    }
   }
 
   // Default to ascending for upcoming, descending otherwise
@@ -103,6 +105,7 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
   const result = await payload.find({
     collection: 'happenings',
     depth,
+    draft,
     where,
     sort,
     limit: 1000,
@@ -153,7 +156,7 @@ export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1, s
     const { isEnabled } = await draftMode()
 
     if (isEnabled) {
-      return getHappenings(filters, depth, select)
+      return getHappenings(filters, depth, select, true)
     }
 
     return unstable_cache(

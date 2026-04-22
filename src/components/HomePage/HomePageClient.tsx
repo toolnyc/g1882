@@ -9,7 +9,7 @@ import { UpcomingHappenings } from '@/components/UpcomingHappenings'
 import { MissionSection } from '@/components/MissionSection'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { useNewsletterGate } from '@/providers/NewsletterGate/context'
-import type { Happening, Home } from '@/payload-types'
+import type { Happening, Home, SiteSetting } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
   heroImage: { url: string; alt?: string } | string | null
@@ -26,6 +26,7 @@ interface HomePageClientProps {
   heroVideoUrl?: string | null
   heroVideoPosterUrl?: string | null
   isUpNext?: boolean
+  siteSettings?: SiteSetting | null
 }
 
 export const HomePageClient: React.FC<HomePageClientProps> = ({
@@ -37,6 +38,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   heroVideoUrl,
   heroVideoPosterUrl,
   isUpNext = false,
+  siteSettings,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const { shouldShowFullSite } = useNewsletterGate()
@@ -75,15 +77,31 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
           />
 
           {currentHappening && (
-            <CurrentExhibition happening={currentHappening} isUpNext={isUpNext} />
+            <CurrentExhibition
+              happening={currentHappening}
+              isUpNext={isUpNext}
+              onNowLabel={siteSettings?.labels?.onNow}
+              upNextLabel={siteSettings?.labels?.upNext}
+              viewHappeningLabel={siteSettings?.labels?.viewHappening}
+            />
           )}
 
-          {featuredArtistData && <ArtistFeature {...featuredArtistData} />}
+          {featuredArtistData && (
+            <ArtistFeature
+              {...featuredArtistData}
+              caption={homeData?.featuredArtistCaption}
+              ctaPrefix={homeData?.featuredArtistCtaPrefix}
+            />
+          )}
 
           {upcomingHappenings.length > 0 && homeData?.whatsHappeningEnabled !== false && (
             <UpcomingHappenings
               happenings={upcomingHappenings}
               sectionTitle={homeData?.whatsHappeningTitle}
+              upcomingCaption={siteSettings?.labels?.upcoming}
+              opensLabel={siteSettings?.labels?.opens}
+              closesLabel={siteSettings?.labels?.closes}
+              viewHappeningLabel={siteSettings?.labels?.viewHappening}
             />
           )}
 

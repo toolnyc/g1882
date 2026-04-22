@@ -218,7 +218,7 @@ export interface Media {
    */
   alt?: string | null;
   /**
-   * Optional caption displayed below the image when shown on the site
+   * Photo credit or caption displayed wherever this image appears on the site
    */
   caption?: {
     root: {
@@ -293,13 +293,15 @@ export interface Artist {
   } | null;
   image?: (string | null) | Media;
   /**
-   * Gallery of artist works with images and captions
+   * Gallery of artist works. Photo captions/credits are managed on each Media document.
    */
   works?:
     | {
         image: string | Media;
+        /**
+         * Artwork title. The photo caption/credit comes from the Media document.
+         */
         title?: string | null;
-        caption?: string | null;
         /**
          * Tag which shows/exhibitions this work appears in
          */
@@ -1029,7 +1031,6 @@ export interface ArtistsSelect<T extends boolean = true> {
     | {
         image?: T;
         title?: T;
-        caption?: T;
         happenings?: T;
         id?: T;
       };
@@ -1443,6 +1444,14 @@ export interface Home {
    */
   featuredArtistImage?: (string | null) | Media;
   /**
+   * Caption above the featured artist name (defaults to "Featured Artist")
+   */
+  featuredArtistCaption?: string | null;
+  /**
+   * Button text prefix before the artist's first name (defaults to "More About")
+   */
+  featuredArtistCtaPrefix?: string | null;
+  /**
    * Optional: custom blurb for the homepage (overrides artist bio)
    */
   featuredArtistDescription?: string | null;
@@ -1540,6 +1549,10 @@ export interface Visit {
     title?: string | null;
     description?: string | null;
     /**
+     * Heading above the address (defaults to "Address")
+     */
+    addressLabel?: string | null;
+    /**
      * Multi-line address
      */
     address?: string | null;
@@ -1547,6 +1560,10 @@ export interface Visit {
      * Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.
      */
     googleMapsUrl?: string | null;
+    /**
+     * Heading above the parking info (defaults to "Parking")
+     */
+    parkingLabel?: string | null;
     parkingDescription?: string | null;
     parkingFeatures?:
       | {
@@ -1696,7 +1713,7 @@ export interface OurStory {
     | {
         image: string | Media;
         /**
-         * Optional caption displayed below the image
+         * Editorial caption for the carousel, shown below the photo on the Our Story page
          */
         caption?: string | null;
         id?: string | null;
@@ -1729,6 +1746,102 @@ export interface OurStory {
  */
 export interface SiteSetting {
   id: string;
+  pageTitles?: {
+    /**
+     * Title shown at the top of the Artists page
+     */
+    artists?: string | null;
+    /**
+     * Title shown at the top of the Happenings page
+     */
+    happenings?: string | null;
+    /**
+     * Title shown at the top of the News page
+     */
+    news?: string | null;
+    /**
+     * Title shown at the top of the Visit page
+     */
+    visit?: string | null;
+    /**
+     * Title shown at the top of the Our Story page
+     */
+    ourStory?: string | null;
+  };
+  labels?: {
+    /**
+     * Caption shown above the featured artist on the homepage
+     */
+    featuredArtist?: string | null;
+    /**
+     * Banner label for artists with active exhibitions
+     */
+    currentlyShowing?: string | null;
+    /**
+     * Banner label on the News page for the latest post
+     */
+    recentlyPosted?: string | null;
+    /**
+     * Banner label on the Happenings page for the next event
+     */
+    comingUp?: string | null;
+    /**
+     * Caption above the "What's Happening" section on the homepage
+     */
+    upcoming?: string | null;
+    /**
+     * Label shown for currently active exhibitions
+     */
+    onNow?: string | null;
+    /**
+     * Label shown for the next upcoming exhibition
+     */
+    upNext?: string | null;
+    /**
+     * Label before the start date of a happening
+     */
+    opens?: string | null;
+    /**
+     * Label before the end date of a happening
+     */
+    closes?: string | null;
+    /**
+     * Fallback button text when a happening type name is not available
+     */
+    viewHappening?: string | null;
+  };
+  galleryInfo?: {
+    /**
+     * Small caption text above the headline
+     */
+    caption?: string | null;
+    /**
+     * Main headline for the Gallery Info section
+     */
+    headline?: string | null;
+    /**
+     * Second paragraph describing the gallery. Leave blank to use the default description.
+     */
+    description?: string | null;
+    /**
+     * Heading for the visit information sidebar
+     */
+    visitUsTitle?: string | null;
+    /**
+     * Text on the primary visit button
+     */
+    visitCtaText?: string | null;
+    /**
+     * Text on the secondary contact button
+     */
+    contactCtaText?: string | null;
+  };
+  footer?: {
+    sitemapTitle?: string | null;
+    hoursTitle?: string | null;
+    infoTitle?: string | null;
+    newsletterTitle?: string | null;
+  };
   search?: {
     artistsShowSearch?: boolean | null;
     happeningsShowSearch?: boolean | null;
@@ -1800,6 +1913,8 @@ export interface HomeSelect<T extends boolean = true> {
   missionCtaUrl?: T;
   featuredArtist?: T;
   featuredArtistImage?: T;
+  featuredArtistCaption?: T;
+  featuredArtistCtaPrefix?: T;
   featuredArtistDescription?: T;
   visitSectionEnabled?: T;
   visitTitle?: T;
@@ -1870,8 +1985,10 @@ export interface VisitSelect<T extends boolean = true> {
         caption?: T;
         title?: T;
         description?: T;
+        addressLabel?: T;
         address?: T;
         googleMapsUrl?: T;
+        parkingLabel?: T;
         parkingDescription?: T;
         parkingFeatures?:
           | T
@@ -1966,6 +2083,47 @@ export interface OurStorySelect<T extends boolean = true> {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  pageTitles?:
+    | T
+    | {
+        artists?: T;
+        happenings?: T;
+        news?: T;
+        visit?: T;
+        ourStory?: T;
+      };
+  labels?:
+    | T
+    | {
+        featuredArtist?: T;
+        currentlyShowing?: T;
+        recentlyPosted?: T;
+        comingUp?: T;
+        upcoming?: T;
+        onNow?: T;
+        upNext?: T;
+        opens?: T;
+        closes?: T;
+        viewHappening?: T;
+      };
+  galleryInfo?:
+    | T
+    | {
+        caption?: T;
+        headline?: T;
+        description?: T;
+        visitUsTitle?: T;
+        visitCtaText?: T;
+        contactCtaText?: T;
+      };
+  footer?:
+    | T
+    | {
+        sitemapTitle?: T;
+        hoursTitle?: T;
+        infoTitle?: T;
+        newsletterTitle?: T;
+      };
   search?:
     | T
     | {

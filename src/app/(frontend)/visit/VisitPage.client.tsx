@@ -13,6 +13,7 @@ interface FormattedHoursLine {
 interface VisitPageClientProps {
   visit: Visit
   formattedHours: FormattedHoursLine[]
+  pageTitle?: string | null
 }
 
 const LocationIcon = () => (
@@ -89,7 +90,7 @@ const getDirectionCardStyle = (style: string | null | undefined) => {
   }
 }
 
-export default function VisitPageClient({ visit, formattedHours }: VisitPageClientProps) {
+export default function VisitPageClient({ visit, formattedHours, pageTitle }: VisitPageClientProps) {
   const heroImage = visit.heroImage as Media | null | undefined
 
   const regularHours = formattedHours.length > 0 ? formattedHours : null
@@ -141,7 +142,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
             transition={{ duration: 0.8 }}
           >
             <div className="mb-8">
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">Visit</h1>
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">{pageTitle || 'Visit'}</h1>
               <AnimatedBorder className="mt-4" />
             </div>
           </motion.div>
@@ -316,7 +317,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                   <div className="space-y-6">
                     {visit.location?.address && (
                       <div>
-                        <h3 className="text-2xl font-bold text-navy mb-4">Address</h3>
+                        <h3 className="text-2xl font-bold text-navy mb-4">{visit.location?.addressLabel || 'Address'}</h3>
                         <p className="text-lg text-navy/80 whitespace-pre-line">
                           {visit.location.address}
                         </p>
@@ -353,7 +354,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                     )}
                     {(visit.location?.parkingDescription || parkingFeatures) && (
                       <div>
-                        <h3 className="text-2xl font-bold text-navy mb-4">Parking</h3>
+                        <h3 className="text-2xl font-bold text-navy mb-4">{visit.location?.parkingLabel || 'Parking'}</h3>
                         {visit.location?.parkingDescription && (
                           <p className="text-navy/80 mb-4">{visit.location.parkingDescription}</p>
                         )}

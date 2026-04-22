@@ -1,10 +1,12 @@
 import { getCachedSpace } from '@/utilities/getSpace'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 import { formatStructuredHours } from '@/utilities/hoursHelpers'
 
 import { NewsletterForm } from './NewsletterForm'
 import { FooterClientWrapper } from './Component.client'
+import type { SiteSetting } from '@/payload-types'
 
 // Static sitemap links
 const SITEMAP_LINKS = [
@@ -17,9 +19,13 @@ const SITEMAP_LINKS = [
 ] as const
 
 export async function Footer() {
-  const space = await getCachedSpace()()
+  const [space, siteSettings] = await Promise.all([
+    getCachedSpace()(),
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+  ])
 
   const regularHours = formatStructuredHours(space?.structuredHours)
+  const footer = siteSettings?.footer
 
   return (
     <FooterClientWrapper>
@@ -30,7 +36,7 @@ export async function Footer() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-off-white/10">
             {/* Sitemap Links */}
             <div className="lg:pr-6">
-              <h4 className="mb-4 font-bold text-off-white">Sitemap</h4>
+              <h4 className="mb-4 font-bold text-off-white">{footer?.sitemapTitle || 'Sitemap'}</h4>
               <nav className="space-y-2">
                 {SITEMAP_LINKS.map((item) => (
                   <Link
@@ -46,7 +52,7 @@ export async function Footer() {
 
             {/* Hours */}
             <div className="lg:px-6">
-              <h4 className="mb-4 font-bold text-off-white">Our Hours</h4>
+              <h4 className="mb-4 font-bold text-off-white">{footer?.hoursTitle || 'Our Hours'}</h4>
               <div className="space-y-2 text-sm">
                 {regularHours.length > 0 ? (
                   regularHours.map((item, i: number) => (
@@ -67,7 +73,7 @@ export async function Footer() {
 
             {/* Gallery Info */}
             <div className="lg:px-6">
-              <h4 className="mb-4 font-bold text-off-white">Gallery Info</h4>
+              <h4 className="mb-4 font-bold text-off-white">{footer?.infoTitle || 'Gallery Info'}</h4>
               <div className="space-y-2 text-sm">
                 {space?.address && (
                   <p className="text-off-white">
@@ -98,7 +104,7 @@ export async function Footer() {
 
             {/* Newsletter */}
             <div className="lg:pl-6">
-              <h4 className="mb-4 font-bold text-off-white">News</h4>
+              <h4 className="mb-4 font-bold text-off-white">{footer?.newsletterTitle || 'News'}</h4>
               <div className="space-y-2 text-sm">
                 <NewsletterForm />
               </div>

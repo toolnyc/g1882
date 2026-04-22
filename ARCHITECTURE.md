@@ -37,8 +37,12 @@ Defined in `src/globals/`:
 
 - **Header** (`src/Header/config.ts`) -- Site navigation
 - **Footer** (`src/Footer/config.ts`) -- Site footer content
-- **Home** (`src/globals/Home/config.ts`) -- Homepage-specific content
-- **Space** (`src/globals/Space/config.ts`) -- Venue/space information
+- **Home** (`src/globals/Home/config.ts`) -- Homepage content: hero, mission, featured artist, visit section, newsletter popup, what's happening
+- **Space** (`src/globals/Space/config.ts`) -- Venue/space information: name, address, structured hours, admission
+- **Visit** (`src/globals/Visit/config.ts`) -- Visit page sections: hours, admission, location, Chesterton, Duneland community, FAQs
+- **OurStory** (`src/globals/OurStory/config.ts`) -- Photo carousel and story rich text
+- **Policies** (`src/globals/Policies/config.ts`) -- Privacy, cookies, terms, land acknowledgement (tabbed rich text)
+- **SiteSettings** (`src/globals/SiteSettings/config.ts`) -- Central hub for editable page titles, display labels, gallery info content, footer headings, and search toggles
 
 ## Blocks (Layout Builder)
 

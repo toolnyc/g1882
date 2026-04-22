@@ -11,6 +11,8 @@ interface ArtistFeatureProps {
   bio: string
   image: string
   artistSlug: string
+  caption?: string | null
+  ctaPrefix?: string | null
 }
 
 export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
@@ -19,6 +21,8 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
   bio,
   image,
   artistSlug,
+  caption,
+  ctaPrefix,
 }) => {
   return (
     <section className="py-32 gallery-section">
@@ -38,7 +42,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <div className="caption text-lake mb-6">Featured Artist</div>
+              <div className="caption text-lake mb-6">{caption || 'Featured Artist'}</div>
               <h2 className="mb-6 text-6xl font-bold tracking-tight md:text-7xl">{name}</h2>
               <p className="mb-8 text-xl font-medium text-lake">{title}</p>
               {bio && <p className="mb-8 text-lg leading-relaxed text-navy/80">{bio}</p>}
@@ -48,7 +52,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                     href={`/artists/${artistSlug}`}
                     className="gallery-button-primary px-8 py-4 text-lg"
                   >
-                    More About {name.split(' ')[0]}
+                    {ctaPrefix || 'More About'} {name.split(' ')[0]}
                   </Link>
                 )}
               </div>

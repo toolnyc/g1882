@@ -3,20 +3,19 @@ import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 
-async function getPosts(depth = 1) {
+async function getPosts(depth = 1, draft = false) {
   const payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
     collection: 'posts',
     depth,
+    draft,
     sort: '-publishedAt',
     limit: 1000,
     pagination: false,
     overrideAccess: true,
     where: {
-      _status: {
-        equals: 'published',
-      },
+      ...(draft ? {} : { _status: { equals: 'published' } }),
     },
     select: {
       title: true,
@@ -38,7 +37,7 @@ export const getCachedPosts = (depth = 1) =>
     const { isEnabled } = await draftMode()
 
     if (isEnabled) {
-      return getPosts(depth)
+      return getPosts(depth, true)
     }
 
     return unstable_cache(async () => getPosts(depth), ['posts'], {

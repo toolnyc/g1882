@@ -89,7 +89,7 @@ export default async function HappeningsPage() {
         title={upcomingBannerHappening.title || 'Upcoming Event'}
         subtitle={personName || undefined}
         description={dateSubtitle || undefined}
-        label="Coming Up"
+        label={siteSettings?.labels?.comingUp || 'Coming Up'}
         href={`/happenings/${upcomingBannerHappening.slug || upcomingBannerHappening.id}`}
         showLiveIndicator={false}
         category={bannerType?.name || undefined}
@@ -125,7 +125,7 @@ export default async function HappeningsPage() {
             category: happeningType?.name || null,
           }
         })}
-        title="Happenings"
+        title={siteSettings?.pageTitles?.happenings || 'Happenings'}
         groupBy="chronological"
         banner={upcomingBanner}
       />

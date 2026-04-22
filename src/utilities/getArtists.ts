@@ -3,20 +3,19 @@ import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 
-async function getArtists(depth = 1) {
+async function getArtists(depth = 1, draft = false) {
   const payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
     collection: 'artists',
     depth,
+    draft,
     pagination: false,
     limit: 1000,
     sort: 'name',
     overrideAccess: true,
     where: {
-      _status: {
-        equals: 'published',
-      },
+      ...(draft ? {} : { _status: { equals: 'published' } }),
     },
     select: {
       name: true,
@@ -38,7 +37,7 @@ export const getCachedArtists = (depth = 1) =>
     const { isEnabled } = await draftMode()
 
     if (isEnabled) {
-      return getArtists(depth)
+      return getArtists(depth, true)
     }
 
     return unstable_cache(async () => getArtists(depth), ['artists'], {

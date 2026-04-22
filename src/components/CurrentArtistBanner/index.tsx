@@ -14,11 +14,13 @@ interface Artist {
 interface CurrentArtistBannerProps {
   artist: Artist
   exhibitionTitle?: string
+  label?: string | null
 }
 
 export const CurrentArtistBanner: React.FC<CurrentArtistBannerProps> = ({
   artist,
   exhibitionTitle,
+  label,
 }) => {
   return (
     <FeatureBanner
@@ -27,7 +29,7 @@ export const CurrentArtistBanner: React.FC<CurrentArtistBannerProps> = ({
       title={artist.name}
       subtitle={exhibitionTitle}
       description={artist.bio}
-      label="Currently Showing"
+      label={label || 'Currently Showing'}
       href={artist.slug ? `/artists/${artist.slug}` : undefined}
       showLiveIndicator={true}
     />

@@ -37,11 +37,17 @@ interface Happening {
 interface CurrentExhibitionProps {
   happening: Happening
   isUpNext?: boolean
+  onNowLabel?: string | null
+  upNextLabel?: string | null
+  viewHappeningLabel?: string | null
 }
 
 export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
   happening,
   isUpNext = false,
+  onNowLabel,
+  upNextLabel,
+  viewHappeningLabel,
 }) => {
   const getArtistNames = (): { name: string; slug?: string | null }[] => {
     if (happening.artists && happening.artists.length > 0) {
@@ -65,7 +71,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
   const getButtonText = () => {
     const typeName = getTypeName()
     if (typeName) return `View ${typeName}`
-    return 'View Happening'
+    return viewHappeningLabel || 'View Happening'
   }
 
   const getImageUrl = () => {
@@ -89,7 +95,7 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
 
   const imageUrl = getImageUrl()
   const artists = getArtistNames()
-  const label = isUpNext ? 'Up Next' : 'On Now'
+  const label = isUpNext ? (upNextLabel || 'Up Next') : (onNowLabel || 'On Now')
 
   return (
     <section className="py-32 gallery-section">
