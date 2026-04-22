@@ -11,7 +11,9 @@ node_modules
 # Claude agentic state (machine-local, ephemeral)
 .claude/state/
 .claude/worktrees/
-# Vendor skills (reinstallable from skills-lock.json)
+# Vendor skills (reinstallable via npx skills add from skills-lock.json)
+# Custom skills already tracked are unaffected by this rule.
+.claude/skills/
 .agents/skills/.anthropics_skills_installed
 .agents/skills/.trailofbits_skills_installed
 
