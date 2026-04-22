@@ -73,8 +73,10 @@ try {
   if (warnings.length > 0) {
     process.stdout.write(
       JSON.stringify({
-        decision: 'allow',
-        reason: `🔍 Observability check:\n${warnings.map((w) => `  - ${w}`).join('\n')}`,
+        hookSpecificOutput: {
+          hookEventName: 'PostToolUse',
+          additionalContext: `🔍 Observability check:\n${warnings.map((w) => `  - ${w}`).join('\n')}`,
+        },
       }),
     )
   }

@@ -69,8 +69,10 @@ try {
   if (warnings.length > 0) {
     process.stdout.write(
       JSON.stringify({
-        decision: 'allow',
-        reason: `🎨 Design system check:\n${warnings.map((w) => `  - ${w}`).join('\n')}`,
+        hookSpecificOutput: {
+          hookEventName: 'PostToolUse',
+          additionalContext: `🎨 Design system check:\n${warnings.map((w) => `  - ${w}`).join('\n')}`,
+        },
       }),
     )
   }

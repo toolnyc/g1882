@@ -20,7 +20,7 @@ try {
   if (srcLines.length >= 3) {
     process.stdout.write(
       JSON.stringify({
-        decision: 'allow',
+        decision: 'approve',
         reason: `📝 ${srcLines.length} source files modified this session. Consider running /session-close to capture learnings and update docs.`,
       }),
     )
