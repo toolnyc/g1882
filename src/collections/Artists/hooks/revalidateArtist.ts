@@ -3,6 +3,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Artist } from '../../../payload-types'
+import { logger } from '@/lib/logger'
 
 export const revalidateArtist: CollectionAfterChangeHook<Artist> = ({
   doc,
@@ -18,6 +19,13 @@ export const revalidateArtist: CollectionAfterChangeHook<Artist> = ({
       revalidatePath(path)
       revalidateTag(`artist_${doc.slug}`)
       revalidateTag('artists')
+
+      logger.info('revalidation_triggered', {
+        collection: 'artists',
+        slug: doc.slug,
+        tags: ['artists', `artist_${doc.slug}`],
+        paths: [path],
+      })
     }
 
     // If the slug changed, we need to revalidate the old path

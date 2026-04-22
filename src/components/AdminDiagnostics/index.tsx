@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import * as Sentry from '@sentry/nextjs'
 
 /**
  * Client-side diagnostics for admin page rendering.
@@ -22,10 +23,16 @@ export default function AdminDiagnostics() {
         document.querySelector('form')
 
       if (!mainContent) {
+        const bodyChildCount = document.body.children.length
+        const documentTitle = document.title
         console.warn(`[g1882-admin-diagnostics] BLANK PAGE DETECTED at ${pathname}`, {
-          bodyChildCount: document.body.children.length,
+          bodyChildCount,
           bodyInnerHTML: document.body.innerHTML.substring(0, 500),
-          documentTitle: document.title,
+          documentTitle,
+        })
+        Sentry.captureMessage('Admin blank page detected', {
+          level: 'warning',
+          extra: { pathname, bodyChildCount, documentTitle },
         })
 
         // Check for React error overlay
@@ -34,6 +41,10 @@ export default function AdminDiagnostics() {
           document.querySelector('[class*="error"]')
         if (errorOverlay) {
           console.warn('[g1882-admin-diagnostics] Error overlay detected:', errorOverlay.textContent?.substring(0, 300))
+          Sentry.captureMessage('Admin error overlay detected', {
+            level: 'error',
+            extra: { pathname, content: errorOverlay.textContent?.substring(0, 300) },
+          })
         }
       } else {
         console.log(`[g1882-admin-diagnostics] Page rendered OK: ${pathname}`)
@@ -49,6 +60,9 @@ export default function AdminDiagnostics() {
         colno: event.colno,
         error: event.error,
       })
+      Sentry.captureException(event.error || new Error(event.message), {
+        extra: { filename: event.filename, lineno: event.lineno, colno: event.colno },
+      })
     }
 
     const rejectionHandler = (event: PromiseRejectionEvent) => {
@@ -57,6 +71,9 @@ export default function AdminDiagnostics() {
         message: event.reason?.message,
         stack: event.reason?.stack,
       })
+      Sentry.captureException(
+        event.reason instanceof Error ? event.reason : new Error(String(event.reason)),
+      )
     }
 
     window.addEventListener('error', errorHandler)
