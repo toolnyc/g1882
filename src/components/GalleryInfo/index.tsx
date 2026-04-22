@@ -3,6 +3,9 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
+const DEFAULT_DESCRIPTION =
+  'Located just minutes from the Indiana Dunes National Park, Gallery 1882 serves as a bridge between contemporary art and the natural beauty of the Great Lakes region. Our exhibitions feature both established and emerging artists whose work engages with themes of landscape, environment, and place.'
+
 interface GalleryInfo {
   name: string
   tagline: string
@@ -14,11 +17,21 @@ interface GalleryInfo {
   admission: string
 }
 
-interface GalleryInfoProps {
-  info: GalleryInfo
+interface GalleryInfoSettings {
+  caption?: string | null
+  headline?: string | null
+  description?: string | null
+  visitUsTitle?: string | null
+  visitCtaText?: string | null
+  contactCtaText?: string | null
 }
 
-export const GalleryInfo: React.FC<GalleryInfoProps> = ({ info }) => {
+interface GalleryInfoProps {
+  info: GalleryInfo
+  settings?: GalleryInfoSettings | null
+}
+
+export const GalleryInfo: React.FC<GalleryInfoProps> = ({ info, settings }) => {
   return (
     <section className="py-32 bg-off-white gallery-section">
       <div className="container">
@@ -31,25 +44,24 @@ export const GalleryInfo: React.FC<GalleryInfoProps> = ({ info }) => {
         >
           {/* Description - Asymmetrical Layout */}
           <div className="lg:col-span-7">
-            <div className="caption text-lake mb-6">About Gallery 1882</div>
+            <div className="caption text-lake mb-6">
+              {settings?.caption || 'About Gallery 1882'}
+            </div>
             <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
-              Contemporary Art in the Heart of the Indiana Dunes
+              {settings?.headline || 'Contemporary Art in the Heart of the Indiana Dunes'}
             </h2>
             <div className="space-y-6 text-lg leading-relaxed text-navy/80">
               <p>{info.description}</p>
-              <p>
-                Located just minutes from the Indiana Dunes National Park, Gallery 1882 serves as a
-                bridge between contemporary art and the natural beauty of the Great Lakes region.
-                Our exhibitions feature both established and emerging artists whose work engages
-                with themes of landscape, environment, and place.
-              </p>
+              <p>{settings?.description || DEFAULT_DESCRIPTION}</p>
             </div>
           </div>
 
           {/* Visit Information - Asymmetrical Layout */}
           <div className="lg:col-span-5 lg:col-start-8 space-y-6">
             <div>
-              <h3 className="mb-8 text-2xl font-bold tracking-tight">Visit Us</h3>
+              <h3 className="mb-8 text-2xl font-bold tracking-tight">
+                {settings?.visitUsTitle || 'Visit Us'}
+              </h3>
               <div className="space-y-6 text-lg">
                 <div>
                   <p className="font-bold text-navy mb-2">Address</p>
@@ -76,10 +88,10 @@ export const GalleryInfo: React.FC<GalleryInfoProps> = ({ info }) => {
 
             <div className="flex flex-col gap-4 sm:flex-row">
               <Link href="/visit" className="gallery-button-primary px-8 py-4 text-lg">
-                Plan Your Visit
+                {settings?.visitCtaText || 'Plan Your Visit'}
               </Link>
               <Link href="/contact" className="gallery-button-secondary px-8 py-4 text-lg">
-                Contact Us
+                {settings?.contactCtaText || 'Contact Us'}
               </Link>
             </div>
           </div>

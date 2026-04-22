@@ -5,18 +5,18 @@ import React, { useCallback, useState } from 'react'
 
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
+import RichText from '@/components/RichText'
 import type { Media } from '@/payload-types'
 
 export type WorkItem = {
   id?: string | null
   image: string | Media
   title?: string | null
-  caption?: string | null
 }
 
 type Props = {
   works: WorkItem[]
-  /** Fallback alt text when a work has no title/caption */
+  /** Fallback alt text when a work has no title */
   fallbackAlt?: string
 }
 
@@ -42,17 +42,19 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
         const height = media?.height || 600
         const workId = work.id || imageUrl
         const isRevealed = tappedId === workId
-        const hasCaption = !!(work.title || work.caption)
+        // Caption comes from the Media document (canonical source for photo credit)
+        const mediaCaption = media?.caption
+        const hasOverlay = !!(work.title || mediaCaption)
 
         return (
           <div
             key={workId}
             className="group mb-6 break-inside-avoid"
-            role={hasCaption ? 'button' : undefined}
-            tabIndex={hasCaption ? 0 : undefined}
-            onClick={hasCaption ? () => handleTap(workId) : undefined}
+            role={hasOverlay ? 'button' : undefined}
+            tabIndex={hasOverlay ? 0 : undefined}
+            onClick={hasOverlay ? () => handleTap(workId) : undefined}
             onKeyDown={
-              hasCaption
+              hasOverlay
                 ? (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -65,7 +67,7 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
             <div className="relative overflow-hidden rounded-lg bg-navy/5">
               <Image
                 src={imageUrl}
-                alt={work.title || work.caption || fallbackAlt}
+                alt={work.title || fallbackAlt}
                 width={width}
                 height={height}
                 className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
@@ -73,7 +75,7 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
                 loading={index < EAGER_LOAD_COUNT ? 'eager' : 'lazy'}
               />
               {/* Hover overlay (desktop) + tap-to-reveal (touch) */}
-              {hasCaption && (
+              {hasOverlay && (
                 <div
                   className={`absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent transition-opacity duration-400 flex items-end p-4 ${
                     isRevealed ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
@@ -89,8 +91,10 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
                     {work.title && (
                       <p className="text-off-white text-sm font-semibold">{work.title}</p>
                     )}
-                    {work.caption && (
-                      <p className="text-off-white/80 text-xs mt-0.5">{work.caption}</p>
+                    {mediaCaption && (
+                      <div className="text-off-white/80 text-xs mt-0.5 [&_p]:my-0">
+                        <RichText data={mediaCaption} enableGutter={false} />
+                      </div>
                     )}
                   </div>
                 </div>

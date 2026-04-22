@@ -2,18 +2,22 @@ import type { Metadata } from 'next/types'
 
 import { DirectoryListing } from '@/components/DirectoryListing'
 import { getCachedPosts } from '@/utilities/getPosts'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { FeatureBanner } from '@/components/FeatureBanner'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { formatDate } from '@/utilities/dateHelpers'
 import React from 'react'
 import PageClient from './page.client'
+import type { SiteSetting } from '@/payload-types'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
 
 export default async function Page() {
-  const getPosts = getCachedPosts(1)
-  const allPosts = await getPosts()
+  const [allPosts, siteSettings] = await Promise.all([
+    getCachedPosts(1)(),
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+  ])
 
   // Sort posts by publishedAt date (newest first)
   const sortedPosts = [...allPosts].sort((a, b) => {
@@ -45,7 +49,7 @@ export default async function Page() {
         imageAlt={recentPost.title || 'Recent Post'}
         title={recentPost.title || 'Recent Post'}
         description={publishedDate}
-        label="Recently Posted"
+        label={siteSettings?.labels?.recentlyPosted || 'Recently Posted'}
         href={recentPost.slug ? `/news/${recentPost.slug}` : null}
         showLiveIndicator={false}
       />
@@ -71,7 +75,7 @@ export default async function Page() {
             publishedAt: post.publishedAt,
           }
         })}
-        title="News"
+        title={siteSettings?.pageTitles?.news || 'News'}
         groupBy="chronological"
         banner={recentBanner}
       />

@@ -110,6 +110,25 @@ export const Home: GlobalConfig = {
               },
             },
             {
+              name: 'featuredArtistCaption',
+              type: 'text',
+              label: 'Featured Artist Caption',
+              required: false,
+              admin: {
+                description: 'Caption above the featured artist name (defaults to "Featured Artist")',
+              },
+            },
+            {
+              name: 'featuredArtistCtaPrefix',
+              type: 'text',
+              label: 'Featured Artist Button Prefix',
+              required: false,
+              admin: {
+                description:
+                  'Button text prefix before the artist\'s first name (defaults to "More About")',
+              },
+            },
+            {
               name: 'featuredArtistDescription',
               type: 'textarea',
               label: 'Featured Artist Description',

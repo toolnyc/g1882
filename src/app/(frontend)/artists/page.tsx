@@ -109,12 +109,16 @@ export default async function ArtistsPage() {
     <main className="bg-off-white">
       <DirectoryListing
         items={artistItems}
-        title="Artists"
+        title={siteSettings?.pageTitles?.artists || 'Artists'}
         groupBy="alphabetical"
         showSearch={showSearch}
         banner={
           bannerArtist && exhibitionTitle ? (
-            <CurrentArtistBanner artist={bannerArtist} exhibitionTitle={exhibitionTitle} />
+            <CurrentArtistBanner
+              artist={bannerArtist}
+              exhibitionTitle={exhibitionTitle}
+              label={siteSettings?.labels?.currentlyShowing}
+            />
           ) : undefined
         }
       />

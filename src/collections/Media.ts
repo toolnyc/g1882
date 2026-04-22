@@ -148,7 +148,7 @@ export const Media: CollectionConfig = {
       name: 'caption',
       type: 'richText',
       admin: {
-        description: 'Optional caption displayed below the image when shown on the site',
+        description: 'Photo credit or caption displayed wherever this image appears on the site',
       },
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {

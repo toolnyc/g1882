@@ -38,7 +38,7 @@ export const OurStory: GlobalConfig = {
           label: 'Caption',
           required: false,
           admin: {
-            description: 'Optional caption displayed below the image',
+            description: 'Editorial caption for the carousel, shown below the photo on the Our Story page',
           },
         },
       ],

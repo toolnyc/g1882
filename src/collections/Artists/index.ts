@@ -84,7 +84,7 @@ export const Artists: CollectionConfig = {
               label: 'Works',
               maxRows: 100,
               admin: {
-                description: 'Gallery of artist works with images and captions',
+                description: 'Gallery of artist works. Photo captions/credits are managed on each Media document.',
               },
               fields: [
                 {
@@ -98,12 +98,9 @@ export const Artists: CollectionConfig = {
                   type: 'text',
                   required: false,
                   maxLength: 255,
-                },
-                {
-                  name: 'caption',
-                  type: 'text',
-                  required: false,
-                  maxLength: 1000,
+                  admin: {
+                    description: 'Artwork title. The photo caption/credit comes from the Media document.',
+                  },
                 },
                 {
                   name: 'happenings',

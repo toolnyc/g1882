@@ -10,7 +10,7 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { transformFeaturedArtist, transformVisitSection } from '@/utilities/dataTransformers'
 import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
-import type { Happening, Home } from '@/payload-types'
+import type { Happening, Home, SiteSetting } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
   heroImage: { url: string; alt?: string } | string | null
@@ -20,13 +20,14 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 
 export default async function HomePage() {
   // Fetch all data in parallel — these are independent queries
-  const [homeData, allHappenings, space] = await Promise.all([
+  const [homeData, allHappenings, space, siteSettings] = await Promise.all([
     getCachedGlobal('home', 2)() as Promise<Home>,
     // Fetch all published happenings once at depth 2 (populates artists, images, and type),
     // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
     getCachedHappenings({}, 2)(),
     // Fetch space global for structured hours and visit section
     getCachedSpace()(),
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
   ])
 
   const now = new Date()
@@ -103,6 +104,7 @@ export default async function HomePage() {
       heroVideoUrl={resolveMediaUrl(homeData?.heroVideo) || null}
       heroVideoPosterUrl={resolveMediaUrl(homeData?.heroVideoPoster) || null}
       isUpNext={isUpNext}
+      siteSettings={siteSettings}
     />
   )
 }

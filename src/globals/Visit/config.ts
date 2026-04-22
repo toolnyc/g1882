@@ -193,6 +193,15 @@ export const Visit: GlobalConfig = {
           label: 'Description',
         },
         {
+          name: 'addressLabel',
+          type: 'text',
+          label: 'Address Section Label',
+          defaultValue: 'Address',
+          admin: {
+            description: 'Heading above the address (defaults to "Address")',
+          },
+        },
+        {
           name: 'address',
           type: 'textarea',
           label: 'Address',
@@ -207,6 +216,15 @@ export const Visit: GlobalConfig = {
           admin: {
             description:
               'Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.',
+          },
+        },
+        {
+          name: 'parkingLabel',
+          type: 'text',
+          label: 'Parking Section Label',
+          defaultValue: 'Parking',
+          admin: {
+            description: 'Heading above the parking info (defaults to "Parking")',
           },
         },
         {
