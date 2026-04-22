@@ -67,6 +67,9 @@ export const Visit: GlobalConfig = {
           name: 'specialHours',
           type: 'array',
           label: 'Special Hours',
+          admin: {
+            description: 'Holiday or temporary hour changes. Shown only on the Visit page, alongside regular hours from Space.',
+          },
           fields: [
             {
               name: 'title',
@@ -100,6 +103,7 @@ export const Visit: GlobalConfig = {
       type: 'group',
       label: 'Admission Section',
       admin: {
+        description: 'Detailed admission info (general & group visits). Shown only on the Visit page when enabled. For the short footer text, edit Space > Admission instead.',
         condition: (data) => Boolean(data?.showAdmissionSection),
       },
       fields: [

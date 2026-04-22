@@ -110,15 +110,6 @@ export const Home: GlobalConfig = {
               },
             },
             {
-              name: 'featuredArtistCaption',
-              type: 'text',
-              label: 'Featured Artist Caption',
-              required: false,
-              admin: {
-                description: 'Caption above the featured artist name (defaults to "Featured Artist")',
-              },
-            },
-            {
               name: 'featuredArtistCtaPrefix',
               type: 'text',
               label: 'Featured Artist Button Prefix',
@@ -148,7 +139,7 @@ export const Home: GlobalConfig = {
               label: 'Show Visit Section',
               defaultValue: true,
               admin: {
-                description: 'Toggle the Visit section on the homepage',
+                description: 'Toggle the "Plan Your Visit" promo card on the homepage',
               },
             },
             {
@@ -156,6 +147,9 @@ export const Home: GlobalConfig = {
               type: 'text',
               label: 'Visit Section Title',
               required: false,
+              admin: {
+                description: 'Custom title for the homepage visit promo card. If empty, defaults to gallery description from Space.',
+              },
             },
             {
               name: 'visitDescription',

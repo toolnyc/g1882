@@ -89,7 +89,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
           {featuredArtistData && (
             <ArtistFeature
               {...featuredArtistData}
-              caption={homeData?.featuredArtistCaption}
+              caption={siteSettings?.labels?.featuredArtist}
               ctaPrefix={homeData?.featuredArtistCtaPrefix}
             />
           )}

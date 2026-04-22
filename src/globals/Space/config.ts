@@ -48,20 +48,12 @@ export const Space: GlobalConfig = {
       required: false,
     },
     {
-      name: 'hours',
-      type: 'text',
-      required: false,
-      admin: {
-        description: 'Comma-separated hours string (legacy). Use structuredHours for new data.',
-      },
-    },
-    {
       name: 'structuredHours',
       type: 'array',
       label: 'Operating Hours',
       admin: {
         description:
-          'Structured operating hours. Day: 0=Sunday, 1=Monday, ... 6=Saturday',
+          'Regular operating hours. Shown in the footer and used as the base for the Visit page. Day: 0=Sunday, 1=Monday, ... 6=Saturday',
       },
       fields: [
         {
@@ -100,6 +92,9 @@ export const Space: GlobalConfig = {
       name: 'admission',
       type: 'text',
       required: false,
+      admin: {
+        description: 'Short admission text shown in the footer (e.g. "Free Admission")',
+      },
     },
   ],
 }
