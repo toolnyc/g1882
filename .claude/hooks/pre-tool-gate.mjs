@@ -36,7 +36,13 @@ function getBranch() {
 }
 
 function warn(reason) {
-  process.stdout.write(JSON.stringify({ decision: 'allow', reason }))
+  process.stdout.write(JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'allow',
+      permissionDecisionReason: reason,
+    },
+  }))
   process.exit(0)
 }
 

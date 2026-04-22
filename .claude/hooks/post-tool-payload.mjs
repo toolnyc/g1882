@@ -30,9 +30,11 @@ if (
   clear('types-current')
   process.stdout.write(
     JSON.stringify({
-      decision: 'allow',
-      reason:
-        '📋 Collection schema modified — types-current sentinel cleared. Run `pnpm generate:types` to regenerate Payload types.',
+      hookSpecificOutput: {
+        hookEventName: 'PostToolUse',
+        additionalContext:
+          '📋 Collection schema modified — types-current sentinel cleared. Run `pnpm generate:types` to regenerate Payload types.',
+      },
     }),
   )
   process.exit(0)
@@ -53,8 +55,10 @@ if (filePath.match(/collections\/\w+\/(index\.ts|.*\.ts)$/)) {
     if (warnings.length > 0) {
       process.stdout.write(
         JSON.stringify({
-          decision: 'allow',
-          reason: `⚠️ Payload collection warnings:\n${warnings.map((w) => `  - ${w}`).join('\n')}`,
+          hookSpecificOutput: {
+            hookEventName: 'PostToolUse',
+            additionalContext: `⚠️ Payload collection warnings:\n${warnings.map((w) => `  - ${w}`).join('\n')}`,
+          },
         }),
       )
     }
