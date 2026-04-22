@@ -1,30 +1,32 @@
-# CLAUDE.md
+@import ../../.agent/conventions.md
+@import AGENTS.md
 
-## Primary instruction source: [AGENTS.md](./AGENTS.md)
+# g1882
 
-Read and follow all instructions in AGENTS.md. It is the single source of truth for project context, conventions, observability patterns, and deployment workflow shared across all AI coding tools.
+Project-specific conventions: All CMS changes must be validated in `preview`. Always regenerate types (`pnpm generate:types`) after schema modifications. Update `ADMIN-GUIDE.md` whenever the UI logic changes. Follow the `preview` -> `prod` deployment path strictly.
 
-## Quick Reference
+## Stack
+- Framework: Next.js 15 (App Router)
+- Hosting: Vercel
+- Cms: Payload CMS 3 (Embedded)
+- Styling: Tailwind CSS
+- MongoDB
+- Vercel Blob
+- Sentry
+- Axiom
 
-| Resource | Location |
-|----------|----------|
-| Full instructions | [AGENTS.md](./AGENTS.md) |
-| Architecture docs | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Skills | `.claude/skills/` |
-| Hooks | `.claude/hooks/` |
-| Sentinels | `.claude/state/` |
-| Knowledge base | `/Users/pete/Dropbox/Notes/Obsidian/Clients/Gallery 1882/` |
+## Risks
+- Regression of existing business logic (e.g., `isActive` hook)
+- Admin UI bloat if not carefully organized
+- Sync issues between `preview` and `prod` databases
 
-## Build Gate System
+## Dependencies
+- Stable `preview` branch for all changes
+- MongoDB write access
+- Vercel Blob storage
 
-Sentinel files in `.claude/state/` track workflow state. Soft warnings only — no hard blocks.
+## Workflow
+- Worktree-only branching
+- Review agent runs on post-commit
+- Verify agent available for pre-push (web projects)
 
-- **verify-passed**: Set by `/verify`. Cleared on source edits. Commit/push warns if unset.
-- **types-current**: Cleared when collection schemas change. Reminds to run `pnpm generate:types`.
-- **design-checked**: Cleared when TSX files change. Reminds to run `/design-check`.
-
-## Session Workflow
-
-1. Work on the task
-2. Run `/verify` before committing (lint + tests + build)
-3. Run `/session-close` at end of significant sessions (captures learnings to Obsidian vault)
