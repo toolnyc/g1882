@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 
-async function getHappeningBySlug(slug: string, depth = 2, draft = false) {
+async function getHappeningBySlug(slug: string, depth = 3, draft = false) {
   const payload = await getPayload({ config: configPromise })
 
   // Decode URI-encoded slugs (e.g., "because%20flowers" -> "because flowers")
@@ -61,7 +61,7 @@ export const getCachedHappeningBySlug = (slug: string) => {
 
     // Don't cache draft mode requests
     if (isDraftMode) {
-      return getHappeningBySlug(decodedSlug, 2, true)
+      return getHappeningBySlug(decodedSlug, 3, true)
     }
 
     return unstable_cache(async () => getHappeningBySlug(decodedSlug), ['happening', decodedSlug], {

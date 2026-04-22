@@ -6,6 +6,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { revalidateTag } from 'next/cache'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -104,6 +105,15 @@ export const Media: CollectionConfig = {
       },
     ],
     afterChange: [
+      ({ doc, req: { context } }) => {
+        // When a Media document changes (e.g., caption edited), invalidate caches
+        // for collections that embed this media via relationship fields.
+        if (!context?.disableRevalidate) {
+          revalidateTag('artists')
+          revalidateTag('happenings')
+        }
+        return doc
+      },
       async ({ doc, req }) => {
         // Only queue for images with a URL
         if (!doc.mimeType?.startsWith('image/')) return doc

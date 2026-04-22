@@ -26,9 +26,8 @@ export const Artists: CollectionConfig = {
   versions: {
     maxPerDoc: 3,
     drafts: {
-      autosave: {
-        interval: 800,
-      },
+      // autosave disabled — causes blank create pages on Vercel with required
+      // relationship fields (same pattern as Happenings, documented Apr 2026)
       schedulePublish: true,
     },
   },
