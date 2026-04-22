@@ -105,16 +105,16 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 <div className="flex flex-wrap gap-y-1">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.id}>
-                      {i > 0 && <span className="text-lg text-bright-lake mr-1.5">,</span>}
+                      {i > 0 && <span className="text-lg text-bright-lake">, </span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors mr-1.5"
+                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-lg text-bright-lake font-semibold mr-1.5">
+                        <span className="text-lg text-bright-lake font-semibold">
                           {artist.name}
                         </span>
                       )}
