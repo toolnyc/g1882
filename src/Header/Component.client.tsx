@@ -66,7 +66,7 @@ export const HeaderClient: React.FC = () => {
         <div className="container relative z-20">
           <div className="py-8 flex justify-between items-center tracking-tight">
             <Link href="/">
-              <img src="/Word-Navy.svg" alt="Gallery 1882" width={160} height={100} className={`max-w-[120px] md:max-w-[160px] h-auto ${isGlassy ? 'mix-blend-difference' : ''}`} />
+              <img src="/Word-Navy.svg" alt="Gallery 1882" width={80} height={50} className={`max-w-[60px] md:max-w-[80px] h-auto ${isGlassy ? 'mix-blend-difference' : ''}`} />
             </Link>
             <GalleryNav />
           </div>
