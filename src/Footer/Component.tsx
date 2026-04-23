@@ -60,12 +60,6 @@ export async function Footer() {
                       {item.day}: {item.hours}
                     </p>
                   ))
-                ) : space?.hours ? (
-                  space.hours.split(',').map((line: string, i: number) => (
-                    <p key={i} className="text-off-white">
-                      {line.trim()}
-                    </p>
-                  ))
                 ) : null}
                 {space?.admission && <p className="mt-4 text-off-white">{space.admission}</p>}
               </div>

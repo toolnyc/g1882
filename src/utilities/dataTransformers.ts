@@ -24,6 +24,10 @@ export interface VisitSectionData {
 const getArtistImage = (image: string | Media | null | undefined, override?: string | Media | null) =>
   resolveMediaUrl(override) || resolveMediaUrl(image)
 
+/**
+ * Resolves featured artist data from the Home global.
+ * Caption label comes from SiteSettings.labels.featuredArtist (passed separately by HomePageClient).
+ */
 export const transformFeaturedArtist = (
   homeData: Home | null,
 ): FeaturedArtistData | null => {
@@ -40,6 +44,15 @@ export const transformFeaturedArtist = (
   }
 }
 
+/**
+ * Builds the homepage "Plan Your Visit" promo card.
+ *
+ * Data flow:
+ * - If Home.visitTitle is set → use all Home visit fields (custom promo)
+ * - Otherwise → fallback to Space.name + Space.description (venue facts)
+ *
+ * Visibility is controlled by Home.visitSectionEnabled in HomePageClient.
+ */
 export const transformVisitSection = (
   homeData: Home | null,
   space: Space | null,
@@ -59,10 +72,8 @@ export const transformVisitSection = (
   }
 
   return {
-    title: 'Escape to the Duneland',
-    description:
-      space.description ||
-      'Located under an hours drive from Chicago, Gallery 1882, in the heart of Chesterton, Indiana is the gateway to the Indiana Dunes National Park. Always open, always free, always inspiring.',
+    title: space.name || 'Gallery 1882',
+    description: space.description || '',
     image: '',
     ctaText: 'Plan Your Visit',
     ctaUrl: '/visit',

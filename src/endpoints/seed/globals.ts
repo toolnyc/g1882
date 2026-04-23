@@ -12,7 +12,6 @@ export async function seedGlobals(payload: Payload): Promise<void> {
       address: mockGalleryInfo.address,
       phone: mockGalleryInfo.phone,
       email: mockGalleryInfo.email,
-      hours: mockGalleryInfo.hours,
       admission: mockGalleryInfo.admission,
     },
     depth: 0,

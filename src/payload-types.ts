@@ -1350,11 +1350,7 @@ export interface Space {
   phone?: string | null;
   email?: string | null;
   /**
-   * Comma-separated hours string (legacy). Use structuredHours for new data.
-   */
-  hours?: string | null;
-  /**
-   * Structured operating hours. Day: 0=Sunday, 1=Monday, ... 6=Saturday
+   * Regular operating hours. Shown in the footer and used as the base for the Visit page. Day: 0=Sunday, 1=Monday, ... 6=Saturday
    */
   structuredHours?:
     | {
@@ -1370,6 +1366,9 @@ export interface Space {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Short admission text shown in the footer (e.g. "Free Admission")
+   */
   admission?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1444,10 +1443,6 @@ export interface Home {
    */
   featuredArtistImage?: (string | null) | Media;
   /**
-   * Caption above the featured artist name (defaults to "Featured Artist")
-   */
-  featuredArtistCaption?: string | null;
-  /**
    * Button text prefix before the artist's first name (defaults to "More About")
    */
   featuredArtistCtaPrefix?: string | null;
@@ -1456,9 +1451,12 @@ export interface Home {
    */
   featuredArtistDescription?: string | null;
   /**
-   * Toggle the Visit section on the homepage
+   * Toggle the "Plan Your Visit" promo card on the homepage
    */
   visitSectionEnabled?: boolean | null;
+  /**
+   * Custom title for the homepage visit promo card. If empty, defaults to gallery description from Space.
+   */
   visitTitle?: string | null;
   visitDescription?: string | null;
   visitImage?: (string | null) | Media;
@@ -1511,6 +1509,9 @@ export interface Visit {
      */
     note?: string | null;
     specialHoursTitle?: string | null;
+    /**
+     * Holiday or temporary hour changes. Shown only on the Visit page, alongside regular hours from Space.
+     */
     specialHours?:
       | {
           title: string;
@@ -1523,6 +1524,9 @@ export interface Visit {
    * Toggle visibility of the Admission section on the Visit page
    */
   showAdmissionSection?: boolean | null;
+  /**
+   * Detailed admission info (general & group visits). Shown only on the Visit page when enabled. For the short footer text, edit Space > Admission instead.
+   */
   admission?: {
     caption?: string | null;
     title?: string | null;
@@ -1810,32 +1814,6 @@ export interface SiteSetting {
      */
     viewHappening?: string | null;
   };
-  galleryInfo?: {
-    /**
-     * Small caption text above the headline
-     */
-    caption?: string | null;
-    /**
-     * Main headline for the Gallery Info section
-     */
-    headline?: string | null;
-    /**
-     * Second paragraph describing the gallery. Leave blank to use the default description.
-     */
-    description?: string | null;
-    /**
-     * Heading for the visit information sidebar
-     */
-    visitUsTitle?: string | null;
-    /**
-     * Text on the primary visit button
-     */
-    visitCtaText?: string | null;
-    /**
-     * Text on the secondary contact button
-     */
-    contactCtaText?: string | null;
-  };
   footer?: {
     sitemapTitle?: string | null;
     hoursTitle?: string | null;
@@ -1860,7 +1838,6 @@ export interface SpaceSelect<T extends boolean = true> {
   address?: T;
   phone?: T;
   email?: T;
-  hours?: T;
   structuredHours?:
     | T
     | {
@@ -1913,7 +1890,6 @@ export interface HomeSelect<T extends boolean = true> {
   missionCtaUrl?: T;
   featuredArtist?: T;
   featuredArtistImage?: T;
-  featuredArtistCaption?: T;
   featuredArtistCtaPrefix?: T;
   featuredArtistDescription?: T;
   visitSectionEnabled?: T;
@@ -2105,16 +2081,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         opens?: T;
         closes?: T;
         viewHappening?: T;
-      };
-  galleryInfo?:
-    | T
-    | {
-        caption?: T;
-        headline?: T;
-        description?: T;
-        visitUsTitle?: T;
-        visitCtaText?: T;
-        contactCtaText?: T;
       };
   footer?:
     | T
