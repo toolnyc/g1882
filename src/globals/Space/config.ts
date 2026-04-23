@@ -53,7 +53,7 @@ export const Space: GlobalConfig = {
       label: 'Operating Hours',
       admin: {
         description:
-          'Regular operating hours. Shown in the footer and used as the base for the Visit page. Day: 0=Sunday, 1=Monday, ... 6=Saturday',
+          'Regular operating hours. Shown in the footer and used as the base for the Visit page.',
       },
       fields: [
         {

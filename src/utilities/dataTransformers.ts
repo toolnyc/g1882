@@ -7,7 +7,6 @@ import { extractPlainText } from './richTextHelpers'
 export interface FeaturedArtistData {
   id: string
   name: string
-  title: string
   bio: string
   image: string
   artistSlug: string
@@ -37,7 +36,6 @@ export const transformFeaturedArtist = (
   return {
     id: homeArtist.id,
     name: homeArtist.name,
-    title: homeArtist.name,
     bio: (homeData?.featuredArtistDescription as string) || extractPlainText(homeArtist.bio) || '',
     image: getArtistImage(homeArtist.image, homeData?.featuredArtistImage),
     artistSlug: homeArtist.slug,
