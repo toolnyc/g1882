@@ -14,6 +14,7 @@ interface VisitPageClientProps {
   visit: Visit
   formattedHours: FormattedHoursLine[]
   pageTitle?: string | null
+  galleryAddress?: string | null
 }
 
 const LocationIcon = () => (
@@ -90,7 +91,7 @@ const getDirectionCardStyle = (style: string | null | undefined) => {
   }
 }
 
-export default function VisitPageClient({ visit, formattedHours, pageTitle }: VisitPageClientProps) {
+export default function VisitPageClient({ visit, formattedHours, pageTitle, galleryAddress }: VisitPageClientProps) {
   const heroImage = visit.heroImage as Media | null | undefined
 
   const regularHours = formattedHours.length > 0 ? formattedHours : null
@@ -295,7 +296,7 @@ export default function VisitPageClient({ visit, formattedHours, pageTitle }: Vi
       )}
 
       {/* Getting Here Section */}
-      {(visit.location?.description || visit.location?.address || directions) && (
+      {(visit.location?.description || galleryAddress || directions) && (
         <section className="py-20 gallery-section">
           <div className="container">
             <motion.div
@@ -315,11 +316,11 @@ export default function VisitPageClient({ visit, formattedHours, pageTitle }: Vi
                 <div className="space-y-6 text-lg leading-relaxed text-navy/80">
                   {visit.location?.description && <p>{visit.location.description}</p>}
                   <div className="space-y-6">
-                    {visit.location?.address && (
+                    {galleryAddress && (
                       <div>
                         <h3 className="text-2xl font-bold text-navy mb-4">{visit.location?.addressLabel || 'Address'}</h3>
                         <p className="text-lg text-navy/80 whitespace-pre-line">
-                          {visit.location.address}
+                          {galleryAddress}
                         </p>
                         {visit.location?.googleMapsUrl && (
                           <a

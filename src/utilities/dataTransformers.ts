@@ -1,4 +1,4 @@
-import type { Home, Media, Space } from '@/payload-types'
+import type { Home, Media, SiteSetting } from '@/payload-types'
 
 import { resolveArtist, resolveMediaUrl } from './mediaHelpers'
 import { resolveOptimizedUrl } from './resolveOptimizedUrl'
@@ -47,13 +47,13 @@ export const transformFeaturedArtist = (
  *
  * Data flow:
  * - If Home.visitTitle is set → use all Home visit fields (custom promo)
- * - Otherwise → fallback to Space.name + Space.description (venue facts)
+ * - Otherwise → fallback to SiteSettings.name + SiteSettings.description (venue facts)
  *
  * Visibility is controlled by Home.visitSectionEnabled in HomePageClient.
  */
 export const transformVisitSection = (
   homeData: Home | null,
-  space: Space | null,
+  space: SiteSetting | null,
 ): VisitSectionData | null => {
   if (homeData?.visitTitle) {
     return {

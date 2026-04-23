@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
-import type { Space } from '@/payload-types'
+import type { SiteSetting } from '@/payload-types'
 
 interface RentalFormData {
   name: string
@@ -22,7 +22,7 @@ interface RentalFormData {
 }
 
 interface SpacePageClientProps {
-  space?: Space
+  space?: SiteSetting
 }
 
 export function SpacePageClient({ space }: SpacePageClientProps) {

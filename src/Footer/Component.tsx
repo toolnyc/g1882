@@ -1,4 +1,3 @@
-import { getCachedSpace } from '@/utilities/getSpace'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
@@ -19,12 +18,9 @@ const SITEMAP_LINKS = [
 ] as const
 
 export async function Footer() {
-  const [space, siteSettings] = await Promise.all([
-    getCachedSpace()(),
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
-  ])
+  const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
 
-  const regularHours = formatStructuredHours(space?.structuredHours)
+  const regularHours = formatStructuredHours(siteSettings?.structuredHours)
   const footer = siteSettings?.footer
 
   return (
@@ -61,7 +57,7 @@ export async function Footer() {
                     </p>
                   ))
                 ) : null}
-                {space?.admission && <p className="mt-4 text-off-white">{space.admission}</p>}
+                {siteSettings?.admission && <p className="mt-4 text-off-white">{siteSettings.admission}</p>}
               </div>
             </div>
 
@@ -69,9 +65,9 @@ export async function Footer() {
             <div className="lg:px-6">
               <h4 className="mb-4 font-bold text-off-white">{footer?.infoTitle || 'Gallery Info'}</h4>
               <div className="space-y-2 text-sm">
-                {space?.address && (
+                {siteSettings?.address && (
                   <p className="text-off-white">
-                    {space.address.split(',').map((line: string, i: number, arr: string[]) => (
+                    {siteSettings.address.split(',').map((line: string, i: number, arr: string[]) => (
                       <React.Fragment key={i}>
                         {line.trim()}
                         {i < arr.length - 1 && <br />}
@@ -79,17 +75,17 @@ export async function Footer() {
                     ))}
                   </p>
                 )}
-                {space?.phone && (
+                {siteSettings?.phone && (
                   <p className="text-off-white">
-                    <a href={`tel:${space.phone}`} className="hover:text-lake transition-colors">
-                      {space.phone}
+                    <a href={`tel:${siteSettings.phone}`} className="hover:text-lake transition-colors">
+                      {siteSettings.phone}
                     </a>
                   </p>
                 )}
-                {space?.email && (
+                {siteSettings?.email && (
                   <p className="text-off-white">
-                    <a href={`mailto:${space.email}`} className="hover:text-lake transition-colors">
-                      {space.email}
+                    <a href={`mailto:${siteSettings.email}`} className="hover:text-lake transition-colors">
+                      {siteSettings.email}
                     </a>
                   </p>
                 )}

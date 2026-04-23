@@ -14,6 +14,7 @@ export const revalidateSiteSettings: GlobalAfterChangeHook = ({
     revalidatePath('/happenings')
     revalidatePath('/news')
     revalidatePath('/visit')
+    revalidatePath('/space')
     revalidateTag('global_site-settings')
   }
 

@@ -7,18 +7,22 @@ import { cache } from 'react'
 const getSpace = cache(async (depth = 0, draft = false) => {
   const payload = await getPayload({ config: configPromise })
 
-  const space = await payload.findGlobal({
-    slug: 'space',
+  const siteSettings = await payload.findGlobal({
+    slug: 'site-settings',
     depth,
     draft,
   })
 
-  return space
+  return siteSettings
 })
 
 /**
- * Returns a cached function to fetch the space global
- * When draft mode is enabled, bypasses cache to always fetch fresh draft content
+ * Returns a cached function to fetch gallery info from the site-settings global.
+ * This is a compatibility wrapper — all callers that previously read the Space global
+ * now read from SiteSettings, which contains the same fields (name, address, phone,
+ * email, structuredHours, admission, etc.) under the Gallery Info tab.
+ *
+ * When draft mode is enabled, bypasses cache to always fetch fresh draft content.
  */
 export const getCachedSpace = (depth = 0) => {
   return async () => {
@@ -31,9 +35,9 @@ export const getCachedSpace = (depth = 0) => {
 
     return unstable_cache(
       async () => getSpace(depth, false),
-      ['space', `space-depth-${depth}`],
+      ['site-settings', `site-settings-depth-${depth}`],
       {
-        tags: ['global_space'],
+        tags: ['global_site-settings'],
         revalidate: 60,
       },
     )()

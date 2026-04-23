@@ -202,15 +202,8 @@ export const Visit: GlobalConfig = {
           label: 'Address Section Label',
           defaultValue: 'Address',
           admin: {
-            description: 'Heading above the address (defaults to "Address")',
-          },
-        },
-        {
-          name: 'address',
-          type: 'textarea',
-          label: 'Address',
-          admin: {
-            description: 'Multi-line address',
+            description:
+              'Heading above the address (defaults to "Address"). The address itself is pulled from SiteSettings > Gallery Info.',
           },
         },
         {
