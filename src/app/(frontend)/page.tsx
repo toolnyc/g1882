@@ -5,7 +5,6 @@ import { getCachedHappenings } from '@/utilities/getHappenings'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
-import { getCachedSpace } from '@/utilities/getSpace'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { transformFeaturedArtist, transformVisitSection } from '@/utilities/dataTransformers'
@@ -20,13 +19,12 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 
 export default async function HomePage() {
   // Fetch all data in parallel — these are independent queries
-  const [homeData, allHappenings, space, siteSettings] = await Promise.all([
+  const [homeData, allHappenings, siteSettings] = await Promise.all([
     getCachedGlobal('home', 2)() as Promise<Home>,
     // Fetch all published happenings once at depth 2 (populates artists, images, and type),
     // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
     getCachedHappenings({}, 2)(),
-    // Fetch space global for structured hours and visit section
-    getCachedSpace()(),
+    // SiteSettings contains gallery info (name, description, hours, etc.) used by the visit section
     getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
   ])
 
@@ -65,7 +63,7 @@ export default async function HomePage() {
     .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
 
   const featuredArtistData = transformFeaturedArtist(homeData)
-  const visitSectionData = transformVisitSection(homeData, space)
+  const visitSectionData = transformVisitSection(homeData, siteSettings)
 
   const formatHeroImage = (
     heroImage: Happening['heroImage'],

@@ -105,7 +105,6 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
-    space: Space;
     home: Home;
     visit: Visit;
     policies: Policy;
@@ -113,7 +112,6 @@ export interface Config {
     'site-settings': SiteSetting;
   };
   globalsSelect: {
-    space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
     policies: PoliciesSelect<false> | PoliciesSelect<true>;
@@ -1339,42 +1337,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "space".
- */
-export interface Space {
-  id: string;
-  name: string;
-  tagline?: string | null;
-  description?: string | null;
-  address?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  /**
-   * Regular operating hours. Shown in the footer and used as the base for the Visit page. Day: 0=Sunday, 1=Monday, ... 6=Saturday
-   */
-  structuredHours?:
-    | {
-        day: '0' | '1' | '2' | '3' | '4' | '5' | '6';
-        /**
-         * Opening time in 24h format, e.g. "10:00"
-         */
-        open: string;
-        /**
-         * Closing time in 24h format, e.g. "18:00"
-         */
-        close: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Short admission text shown in the footer (e.g. "Free Admission")
-   */
-  admission?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home".
  */
 export interface Home {
@@ -1553,13 +1515,9 @@ export interface Visit {
     title?: string | null;
     description?: string | null;
     /**
-     * Heading above the address (defaults to "Address")
+     * Heading above the address (defaults to "Address"). The address itself is pulled from SiteSettings > Gallery Info.
      */
     addressLabel?: string | null;
-    /**
-     * Multi-line address
-     */
-    address?: string | null;
     /**
      * Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.
      */
@@ -1750,6 +1708,34 @@ export interface OurStory {
  */
 export interface SiteSetting {
   id: string;
+  name: string;
+  tagline?: string | null;
+  description?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  /**
+   * Legacy field — no longer displayed. Use Operating Hours below instead.
+   */
+  hours?: string | null;
+  /**
+   * Regular operating hours. Shown in the footer and used as the base for the Visit page.
+   */
+  structuredHours?:
+    | {
+        day: '0' | '1' | '2' | '3' | '4' | '5' | '6';
+        /**
+         * Opening time in 24h format, e.g. "10:00"
+         */
+        open: string;
+        /**
+         * Closing time in 24h format, e.g. "18:00"
+         */
+        close: string;
+        id?: string | null;
+      }[]
+    | null;
+  admission?: string | null;
   pageTitles?: {
     /**
      * Title shown at the top of the Artists page
@@ -1826,30 +1812,6 @@ export interface SiteSetting {
   };
   updatedAt?: string | null;
   createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "space_select".
- */
-export interface SpaceSelect<T extends boolean = true> {
-  name?: T;
-  tagline?: T;
-  description?: T;
-  address?: T;
-  phone?: T;
-  email?: T;
-  structuredHours?:
-    | T
-    | {
-        day?: T;
-        open?: T;
-        close?: T;
-        id?: T;
-      };
-  admission?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1962,7 +1924,6 @@ export interface VisitSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         addressLabel?: T;
-        address?: T;
         googleMapsUrl?: T;
         parkingLabel?: T;
         parkingDescription?: T;
@@ -2059,6 +2020,22 @@ export interface OurStorySelect<T extends boolean = true> {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  name?: T;
+  tagline?: T;
+  description?: T;
+  address?: T;
+  phone?: T;
+  email?: T;
+  hours?: T;
+  structuredHours?:
+    | T
+    | {
+        day?: T;
+        open?: T;
+        close?: T;
+        id?: T;
+      };
+  admission?: T;
   pageTitles?:
     | T
     | {
