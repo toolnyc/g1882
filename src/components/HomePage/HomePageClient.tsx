@@ -68,7 +68,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
           />
 
           <MissionSection
-            missionCaption={homeData?.missionCaption}
+            missionIcon={typeof homeData?.missionIcon === 'object' && homeData.missionIcon ? { url: homeData.missionIcon.url || '', alt: homeData.missionIcon.alt || '' } : null}
             missionStatement={homeData?.missionStatement}
             missionCtaText={homeData?.missionCtaText}
             missionCtaUrl={homeData?.missionCtaUrl}

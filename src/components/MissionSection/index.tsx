@@ -5,14 +5,14 @@ import Link from 'next/link'
 import { fadeUp } from '@/utilities/animations'
 
 interface MissionSectionProps {
-  missionCaption?: string | null
+  missionIcon?: { url: string; alt?: string } | null
   missionStatement?: string | null
   missionCtaText?: string | null
   missionCtaUrl?: string | null
 }
 
 export const MissionSection: React.FC<MissionSectionProps> = ({
-  missionCaption,
+  missionIcon,
   missionStatement,
   missionCtaText,
   missionCtaUrl,
@@ -36,9 +36,15 @@ export const MissionSection: React.FC<MissionSectionProps> = ({
     <section className="py-20 gallery-section">
       <div className="container">
         <motion.div {...fadeUp()} className="text-center max-w-5xl mx-auto">
-          <motion.div {...fadeUp({ delay: 0.2, distance: 20 })} className="caption text-lake mb-6">
-            {missionCaption || 'Our Mission'}
-          </motion.div>
+          {missionIcon?.url && (
+            <motion.div {...fadeUp({ delay: 0.2, distance: 20 })} className="mb-6 flex justify-center">
+              <img
+                src={missionIcon.url}
+                alt={missionIcon.alt || ''}
+                className="h-[50px] w-auto"
+              />
+            </motion.div>
+          )}
 
           <motion.h2 className="mb-10 text-3xl md:text-4xl text-navy leading-tight">
             {words.map((word, index) => (

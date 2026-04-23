@@ -57,12 +57,13 @@ export const Home: GlobalConfig = {
           label: 'Mission',
           fields: [
             {
-              name: 'missionCaption',
-              type: 'text',
-              label: 'Mission Section Caption',
+              name: 'missionIcon',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Mission Section Icon',
               required: false,
               admin: {
-                description: 'Caption above the mission statement (defaults to "Our Mission")',
+                description: 'Small icon/logo displayed above the mission statement',
               },
             },
             {

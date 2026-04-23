@@ -1428,9 +1428,9 @@ export interface Home {
    */
   heroVideoPoster?: (string | null) | Media;
   /**
-   * Caption above the mission statement (defaults to "Our Mission")
+   * Small icon/logo displayed above the mission statement
    */
-  missionCaption?: string | null;
+  missionIcon?: (string | null) | Media;
   missionStatement?: string | null;
   missionCtaText?: string | null;
   missionCtaUrl?: string | null;
@@ -1794,7 +1794,7 @@ export interface HomeSelect<T extends boolean = true> {
       };
   heroVideo?: T;
   heroVideoPoster?: T;
-  missionCaption?: T;
+  missionIcon?: T;
   missionStatement?: T;
   missionCtaText?: T;
   missionCtaUrl?: T;
