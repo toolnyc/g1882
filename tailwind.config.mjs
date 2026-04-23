@@ -53,6 +53,10 @@ const config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.6s ease-out',
         'slide-up': 'slide-up 0.6s ease-out',
+        'skeleton-in': 'skeleton-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'skeleton-in-delayed': 'skeleton-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both',
+        'skeleton-slide-in': 'skeleton-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'skeleton-slide-in-delayed': 'skeleton-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -131,6 +135,14 @@ const config = {
         },
         'slide-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'skeleton-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'skeleton-slide-in': {
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },

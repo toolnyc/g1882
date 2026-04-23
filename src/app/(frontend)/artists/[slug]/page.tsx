@@ -120,16 +120,16 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
             {/* Related Happenings */}
             <Suspense
               fallback={
-                <div className="mt-12 pt-8 border-t border-navy/20">
-                  <div className="h-8 bg-navy/20 animate-pulse rounded w-48 mb-6" />
+                <div className="mt-12 pt-8 border-t border-navy/10 animate-skeleton-in">
+                  <div className="h-8 bg-navy/10 animate-pulse rounded w-48 mb-6" />
                   <div className="space-y-4">
                     {[1, 2].map((i) => (
                       <div
                         key={i}
-                        className="p-4 border border-navy/20 rounded-lg bg-navy/5 animate-pulse"
+                        className="p-4 border border-navy/10 rounded-lg bg-navy/[0.03] animate-pulse"
                       >
-                        <div className="h-6 bg-navy/20 animate-pulse rounded w-3/4 mb-2" />
-                        <div className="h-4 bg-navy/10 animate-pulse rounded w-32" />
+                        <div className="h-6 bg-navy/10 animate-pulse rounded w-3/4 mb-2" />
+                        <div className="h-4 bg-navy/5 animate-pulse rounded w-32" />
                       </div>
                     ))}
                   </div>
