@@ -92,7 +92,7 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
                       <p className="text-white text-sm font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{work.title}</p>
                     )}
                     {mediaCaption && (
-                      <div className="text-white/90 text-xs mt-0.5 [&_p]:my-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                      <div className="text-white/90 text-xs mt-0.5 [&_p]:my-0 [&_p]:text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                         <RichText data={mediaCaption} enableGutter={false} />
                       </div>
                     )}

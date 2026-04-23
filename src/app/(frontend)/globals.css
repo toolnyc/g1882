@@ -287,6 +287,7 @@ html {
   transition: width 0.3s ease;
 }
 
-.nav-link:hover::before {
+.nav-link:hover::before,
+.nav-link-active::before {
   width: 100%;
 }
