@@ -1,46 +1,37 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
 
 export const HappeningDetailSkeleton: React.FC = () => {
   return (
-    <motion.main
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="min-h-screen bg-off-white"
-    >
+    <main className="min-h-screen bg-off-white animate-skeleton-in">
       <article className="pb-24">
         {/* Hero Image Skeleton */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="relative w-full h-[60vh] min-h-[400px] mb-16 bg-navy/5 animate-pulse"
-        />
+        <div className="relative w-full h-[60vh] min-h-[400px] mb-16 bg-navy/5 animate-pulse animate-skeleton-slide-in" />
 
         <div className="container">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="max-w-4xl mx-auto"
-          >
-            {/* Title and Artist Skeleton */}
+          <div className="max-w-4xl mx-auto animate-skeleton-slide-in-delayed">
+            {/* Title and Featured Person Skeleton */}
             <div className="mb-8">
               <div className="h-16 bg-navy/10 animate-pulse rounded w-4/5 mb-4" />
-              <div className="h-8 bg-lake/10 animate-pulse rounded w-2/5" />
+              <div className="h-8 bg-bright-lake/10 animate-pulse rounded w-2/5" />
             </div>
 
-            {/* Date Skeleton */}
+            {/* Date and Time Information Skeleton */}
             <div className="mb-8 pb-8 border-b border-navy/10">
-              <div className="h-5 bg-navy/8 animate-pulse rounded w-48" />
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <div className="h-4 bg-navy/10 animate-pulse rounded w-16" />
+                  <div className="h-5 bg-navy/5 animate-pulse rounded w-48" />
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <div className="h-4 bg-navy/10 animate-pulse rounded w-12" />
+                  <div className="h-5 bg-navy/5 animate-pulse rounded w-48" />
+                </div>
+              </div>
             </div>
 
             {/* Category Skeleton */}
             <div className="mb-8">
-              <div className="h-6 bg-navy/8 animate-pulse rounded-tag w-24" />
+              <div className="h-6 bg-navy/10 animate-pulse rounded-tag w-24" />
             </div>
 
             {/* Description Skeleton */}
@@ -48,16 +39,17 @@ export const HappeningDetailSkeleton: React.FC = () => {
               <div className="h-4 bg-navy/5 animate-pulse rounded w-full" />
               <div className="h-4 bg-navy/5 animate-pulse rounded w-full" />
               <div className="h-4 bg-navy/5 animate-pulse rounded w-5/6" />
+              <div className="h-4 bg-navy/5 animate-pulse rounded w-full" />
               <div className="h-4 bg-navy/5 animate-pulse rounded w-4/5" />
             </div>
 
             {/* Calendar Button Skeleton */}
             <div className="mt-12 pt-8 border-t border-navy/10">
-              <div className="h-12 bg-navy/8 animate-pulse rounded w-48" />
+              <div className="h-12 bg-navy/10 animate-pulse rounded w-48" />
             </div>
-          </motion.div>
+          </div>
         </div>
       </article>
-    </motion.main>
+    </main>
   )
 }
