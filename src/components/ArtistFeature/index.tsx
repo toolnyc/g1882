@@ -7,7 +7,6 @@ import Link from 'next/link'
 interface ArtistFeatureProps {
   id: string
   name: string
-  title: string
   bio: string
   image: string
   artistSlug: string
@@ -15,7 +14,6 @@ interface ArtistFeatureProps {
 
 export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
   name,
-  title,
   bio,
   image,
   artistSlug,
@@ -40,7 +38,6 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
             >
               <div className="caption text-lake mb-6">Featured Artist</div>
               <h2 className="mb-6 text-6xl font-bold tracking-tight md:text-7xl">{name}</h2>
-              <p className="mb-8 text-xl font-medium text-lake">{title}</p>
               {bio && <p className="mb-8 text-lg leading-relaxed text-navy/80">{bio}</p>}
               <div className="flex flex-col gap-4 sm:flex-row">
                 {artistSlug && (
@@ -67,7 +64,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               >
                 <Image
                   src={image}
-                  alt={`${name} - ${title}`}
+                  alt={name}
                   width={800}
                   height={1000}
                   quality={90}
@@ -78,7 +75,6 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                   <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <p className="text-off-white text-sm font-medium tracking-wider">{name}</p>
-                    {title && <p className="text-off-white/80 text-xs mt-1">{title}</p>}
                   </div>
                 </div>
               </motion.div>

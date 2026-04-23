@@ -52,7 +52,7 @@ export const Space: GlobalConfig = {
       type: 'text',
       required: false,
       admin: {
-        description: 'Comma-separated hours string (legacy). Use structuredHours for new data.',
+        description: 'Legacy field — no longer displayed. Use Operating Hours below instead.',
       },
     },
     {
@@ -61,7 +61,7 @@ export const Space: GlobalConfig = {
       label: 'Operating Hours',
       admin: {
         description:
-          'Structured operating hours. Day: 0=Sunday, 1=Monday, ... 6=Saturday',
+          'Regular operating hours. Shown in the footer and used as the base for the Visit page.',
       },
       fields: [
         {
