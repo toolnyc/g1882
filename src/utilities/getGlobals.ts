@@ -2,7 +2,7 @@ import type { Config } from 'src/payload-types'
 
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { cachedFetch } from '@/utilities/cachedFetch'
+import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 import { cache } from 'react'
 
@@ -33,7 +33,7 @@ export const getCachedGlobal = (slug: Global, depth = 0) => {
       return getGlobal(slug, depth, true)
     }
 
-    return cachedFetch(
+    return unstable_cache(
       async () => getGlobal(slug, depth, false),
       [`global-${slug}`, `depth-${depth}`],
       {
