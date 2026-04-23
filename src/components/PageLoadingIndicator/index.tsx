@@ -16,14 +16,14 @@ const PageLoadingIndicatorInner = () => {
       const elapsed = Date.now() - loadingStartTime.current
       const remaining = Math.max(0, 500 - elapsed) // Minimum 500ms display time
 
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsLoading(false)
         loadingStartTime.current = null
       }, remaining)
-    } else {
-      setIsLoading(false)
+
+      return () => clearTimeout(timer)
     }
-  }, [pathname, searchParams, isLoading])
+  }, [pathname, searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // Listen for clicks on links to show loading state

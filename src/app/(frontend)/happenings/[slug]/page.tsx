@@ -102,25 +102,25 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
                 <p className="text-xl text-navy/70 mb-4">{happening.subcaption}</p>
               )}
               {artists.length > 0 && (
-                <div className="flex flex-wrap gap-y-1">
+                <p className="text-lg text-bright-lake leading-relaxed">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.id}>
-                      {i > 0 && <span className="text-lg text-bright-lake">, </span>}
+                      {i > 0 && ', '}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-lg text-bright-lake font-semibold hover:text-lake transition-colors"
+                          className="font-semibold hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-lg text-bright-lake font-semibold">
+                        <span className="font-semibold">
                           {artist.name}
                         </span>
                       )}
                     </React.Fragment>
                   ))}
-                </div>
+                </p>
               )}
             </div>
 
