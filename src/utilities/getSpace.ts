@@ -33,7 +33,7 @@ export const getCachedSpace = (depth = 0) => {
       async () => getSpace(depth, false),
       ['space', `space-depth-${depth}`],
       {
-        tags: ['space'],
+        tags: ['global_space'],
         revalidate: 60,
       },
     )()
