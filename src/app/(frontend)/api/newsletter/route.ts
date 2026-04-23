@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import * as Sentry from '@sentry/nextjs'
 import { logger } from '@/lib/logger'
+import { newsletterWelcomeEmail } from '@/emails/newsletter-welcome'
 
 // Lazily initialize Resend to avoid build-time errors when API key is not set
 let _resend: Resend | null = null
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
         from: fromEmail,
         to: email,
         subject: 'Welcome to the Gallery 1882 Journal',
-        html: '<p>Thank you for subscribing to the Gallery 1882 Journal. We\'ll keep you updated on upcoming exhibitions, events, and more.</p>',
+        html: newsletterWelcomeEmail({ email }),
       })
       return NextResponse.json({ success: true, message: 'Successfully subscribed to newsletter' })
     } catch (emailError) {
