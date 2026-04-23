@@ -76,7 +76,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </div>
             )}
             <LayoutClient>
-              <div id="main-content">
+              <div id="main-content" className="flex flex-1 flex-col">
                 <Header />
                 {children}
                 <Footer />
