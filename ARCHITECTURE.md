@@ -38,11 +38,10 @@ Defined in `src/globals/`:
 - **Header** (`src/Header/config.ts`) -- Site navigation
 - **Footer** (`src/Footer/config.ts`) -- Site footer content
 - **Home** (`src/globals/Home/config.ts`) -- Homepage content: hero, mission, featured artist, visit section, newsletter popup, what's happening
-- **Space** (`src/globals/Space/config.ts`) -- Venue/space information: name, address, structured hours, admission
 - **Visit** (`src/globals/Visit/config.ts`) -- Visit page sections: hours, admission, location, Chesterton, Duneland community, FAQs
 - **OurStory** (`src/globals/OurStory/config.ts`) -- Photo carousel and story rich text
 - **Policies** (`src/globals/Policies/config.ts`) -- Privacy, cookies, terms, land acknowledgement (tabbed rich text)
-- **SiteSettings** (`src/globals/SiteSettings/config.ts`) -- Central hub for editable page titles, display labels, gallery info content, footer headings, and search toggles
+- **SiteSettings** (`src/globals/SiteSettings/config.ts`) -- Central hub: Gallery Info (venue name, address, contact, structured hours, admission), page titles, display labels, footer headings, search toggles
 
 ## Blocks (Layout Builder)
 
@@ -94,6 +93,12 @@ Important utility functions in `src/utilities/`:
 | `dataTransformers.ts` | Transform Payload data for frontend |
 | `dateHelpers.ts` | Date formatting and manipulation |
 | `mediaHelpers.ts` | Image URL and sizing helpers |
+
+## Email Templates
+
+Email templates in `src/emails/`:
+
+- `newsletter-welcome.ts` — Branded HTML welcome email sent to newsletter subscribers via Resend
 
 ## Type System
 

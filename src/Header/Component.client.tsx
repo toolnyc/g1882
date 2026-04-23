@@ -58,15 +58,19 @@ export const HeaderClient: React.FC = () => {
     >
       <div
         className={`border-b ${
-          isGlassy
-            ? 'bg-white/10 backdrop-blur-md border-white/20'
-            : 'bg-off-white border-navy/10'
+          isGlassy ? 'bg-white/10 backdrop-blur-md border-white/20' : 'bg-off-white border-navy/10'
         }`}
       >
-        <div className="container relative z-20">
+        <div className="relative z-20 px-6 md:px-8">
           <div className="py-8 flex justify-between items-center tracking-tight">
             <Link href="/">
-              <img src="/Word-Navy.svg" alt="Gallery 1882" width={80} height={50} className={`max-w-[60px] md:max-w-[80px] h-auto ${isGlassy ? 'mix-blend-difference' : ''}`} />
+              <img
+                src="/Word-Navy.svg"
+                alt="Gallery 1882"
+                width={80}
+                height={50}
+                className={`max-w-[60px] md:max-w-[80px] h-auto ${isGlassy ? 'mix-blend-difference' : ''}`}
+              />
             </Link>
             <GalleryNav />
           </div>
