@@ -77,7 +77,7 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
               {/* Hover overlay (desktop) + tap-to-reveal (touch) */}
               {hasOverlay && (
                 <div
-                  className={`absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/20 to-transparent transition-opacity duration-400 flex items-end p-4 ${
+                  className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-400 flex items-end p-4 ${
                     isRevealed ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                   }`}
                 >
@@ -89,10 +89,10 @@ export function WorksMasonryGrid({ works, fallbackAlt = '' }: Props) {
                     }`}
                   >
                     {work.title && (
-                      <p className="text-off-white text-sm font-semibold">{work.title}</p>
+                      <p className="text-white text-sm font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{work.title}</p>
                     )}
                     {mediaCaption && (
-                      <div className="text-off-white/90 text-xs mt-0.5 [&_p]:my-0">
+                      <div className="text-white/90 text-xs mt-0.5 [&_p]:my-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                         <RichText data={mediaCaption} enableGutter={false} />
                       </div>
                     )}

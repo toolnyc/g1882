@@ -64,7 +64,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   const typeLabel = happeningType?.name || null
   const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
 
-  const heroUrl = resolveOptimizedUrl(heroImage, 1920)
+  const heroUrl = resolveOptimizedUrl(heroImage, 1400)
   const hasHeroImage = heroImage && heroUrl
 
   const dateParts = formatHappeningDateParts(
