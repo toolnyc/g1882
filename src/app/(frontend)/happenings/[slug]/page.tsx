@@ -86,7 +86,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               height={heroImage.height || 1080}
               className="w-full h-auto max-h-[80vh] object-contain"
               priority
-              sizes="100vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1400px"
             />
           </div>
         )}

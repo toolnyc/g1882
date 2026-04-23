@@ -50,13 +50,10 @@ export const GalleryNav: React.FC = () => {
               key={item.url}
               href={item.url}
               className={`nav-link text-lg font-medium transition-all duration-300 relative ${
-                isActive ? 'text-navy font-semibold' : 'text-navy/70 font-medium hover:text-navy'
+                isActive ? 'text-navy nav-link-active' : 'text-navy/70 hover:text-navy'
               }`}
             >
               {item.label}
-              {isActive && (
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-lake rounded-full" />
-              )}
             </Link>
           )
         })}
