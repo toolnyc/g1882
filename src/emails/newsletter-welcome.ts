@@ -60,7 +60,7 @@ export function newsletterWelcomeEmail({ email }: NewsletterWelcomeParams): stri
                 Gallery 1882
               </p>
               <p style="margin: 0 0 20px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 13px; line-height: 1.6; color: #8a8680;">
-                1882 Broadway, New York, NY 10023
+                Chesterton, Indiana
               </p>
               <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; line-height: 1.6; color: #b0aba4;">
                 You received this email because ${email} was subscribed to the Gallery 1882 Journal. If you believe this was a mistake, you may disregard this message.
