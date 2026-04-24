@@ -1,0 +1,12 @@
+name: Adversarial Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    uses: toolnyc/agent-brain/.github/workflows/review-pr.yml@main
+    with:
+      model-provider: 'openrouter'
+    secrets:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
