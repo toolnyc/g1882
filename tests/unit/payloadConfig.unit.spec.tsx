@@ -15,7 +15,7 @@ describe('Payload Config Structure', () => {
   )
 
   describe('globals registration', () => {
-    const expectedGlobals = ['Home', 'Visit', 'Policies', 'OurStory', 'SiteSettings']
+    const expectedGlobals = ['Home', 'Visit', 'Policies', 'OurStory', 'Space', 'SiteSettings']
 
     it('has all expected globals in the globals array', () => {
       const globalsMatch = configSource.match(/globals:\s*\[([^\]]+)\]/)

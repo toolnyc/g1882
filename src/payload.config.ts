@@ -17,6 +17,7 @@ import { Home } from './globals/Home/config'
 import { Visit } from './globals/Visit/config'
 import { Policies } from './globals/Policies/config'
 import { OurStory } from './globals/OurStory/config'
+import { Space } from './globals/Space/config'
 import { SiteSettings } from './globals/SiteSettings/config'
 import { plugins } from './plugins'
 import { robustBlobFetchPlugin } from './plugins/robustBlobFetch'
@@ -81,7 +82,7 @@ export default buildConfig({
   }),
   collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Home, Visit, Policies, OurStory, SiteSettings],
+  globals: [Home, Visit, Policies, OurStory, Space, SiteSettings],
   plugins: [
     ...plugins,
     vercelBlobStorage({

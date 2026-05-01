@@ -109,6 +109,7 @@ export interface Config {
     visit: Visit;
     policies: Policy;
     'our-story': OurStory;
+    space: Space;
     'site-settings': SiteSetting;
   };
   globalsSelect: {
@@ -116,6 +117,7 @@ export interface Config {
     visit: VisitSelect<false> | VisitSelect<true>;
     policies: PoliciesSelect<false> | PoliciesSelect<true>;
     'our-story': OurStorySelect<false> | OurStorySelect<true>;
+    space: SpaceSelect<false> | SpaceSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
@@ -1704,6 +1706,50 @@ export interface OurStory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "space".
+ */
+export interface Space {
+  id: string;
+  heroImage?: (string | null) | Media;
+  pageTitle?: string | null;
+  intro?: {
+    caption?: string | null;
+    title?: string | null;
+    /**
+     * Use separate paragraphs by adding blank lines.
+     */
+    description?: string | null;
+  };
+  capacity?:
+    | {
+        label: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  amenities?: {
+    caption?: string | null;
+    title?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          icon?: ('check' | 'people' | 'calendar') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  inquiry?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+    submitButtonLabel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
@@ -2011,6 +2057,53 @@ export interface OurStorySelect<T extends boolean = true> {
         id?: T;
       };
   story?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "space_select".
+ */
+export interface SpaceSelect<T extends boolean = true> {
+  heroImage?: T;
+  pageTitle?: T;
+  intro?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+      };
+  capacity?:
+    | T
+    | {
+        label?: T;
+        description?: T;
+        id?: T;
+      };
+  amenities?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  inquiry?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+        submitButtonLabel?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

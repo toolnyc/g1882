@@ -1,4 +1,5 @@
 'use client'
+
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -9,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
-import type { SiteSetting } from '@/payload-types'
+import type { Media, SiteSetting, Space } from '@/payload-types'
 
 interface RentalFormData {
   name: string
@@ -22,10 +23,95 @@ interface RentalFormData {
 }
 
 interface SpacePageClientProps {
-  space?: SiteSetting
+  space?: Space | null
+  siteSettings?: SiteSetting | null
 }
 
-export function SpacePageClient({ space }: SpacePageClientProps) {
+type CapacityItem = NonNullable<Space['capacity']>[number]
+type AmenityItem = NonNullable<NonNullable<Space['amenities']>['items']>[number]
+
+const getDefaultDescription = (galleryName: string) => [
+  `${galleryName} offers a contemporary, versatile space perfect for private events, corporate gatherings, weddings, and art-centric celebrations. Our gallery combines modern aesthetics with the natural beauty of the Indiana Dunes region.`,
+  "Whether you're planning an intimate gathering or a larger celebration, our space can accommodate a variety of events while providing a sophisticated backdrop of contemporary art.",
+]
+
+const defaultCapacity: CapacityItem[] = [
+  { label: 'Standing Reception', description: 'Up to 150 guests' },
+  { label: 'Seated Dinner', description: 'Up to 80 guests' },
+  { label: 'Meeting / Presentation', description: 'Up to 60 guests' },
+]
+
+const defaultAmenities: AmenityItem[] = [
+  {
+    title: 'Modern Facilities',
+    description:
+      'Climate-controlled space with professional lighting, AV equipment, and high-speed WiFi throughout.',
+    icon: 'check',
+  },
+  {
+    title: 'Catering Options',
+    description: 'Full catering kitchen available. Work with our preferred caterers or bring your own.',
+    icon: 'people',
+  },
+  {
+    title: 'Flexible Scheduling',
+    description: 'Available for day and evening events, with flexible scheduling to accommodate your needs.',
+    icon: 'calendar',
+  },
+]
+
+const CheckIcon = () => (
+  <svg className="w-8 h-8 text-lake" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  </svg>
+)
+
+const PeopleIcon = () => (
+  <svg className="w-8 h-8 text-lake" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+    />
+  </svg>
+)
+
+const CalendarIcon = () => (
+  <svg className="w-8 h-8 text-lake" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+)
+
+const getIcon = (icon: string | null | undefined) => {
+  switch (icon) {
+    case 'people':
+      return <PeopleIcon />
+    case 'calendar':
+      return <CalendarIcon />
+    case 'check':
+    default:
+      return <CheckIcon />
+  }
+}
+
+const splitParagraphs = (content: string | null | undefined) =>
+  content
+    ?.split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+
+export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
   const {
     register,
     handleSubmit,
@@ -37,9 +123,19 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [error, setError] = useState<string | undefined>()
 
-  const galleryName = space?.name || 'Gallery 1882'
-  const galleryEmail = space?.email || null
-  const galleryPhone = space?.phone || null
+  const galleryName = siteSettings?.name || 'Gallery 1882'
+  const galleryEmail = siteSettings?.email || null
+  const galleryPhone = siteSettings?.phone || null
+  const heroImage = typeof space?.heroImage === 'object' ? (space.heroImage as Media) : null
+  const introParagraphs = splitParagraphs(space?.intro?.description)
+  const descriptionParagraphs = introParagraphs?.length
+    ? introParagraphs
+    : getDefaultDescription(galleryName)
+  const capacity = space?.capacity?.length ? space.capacity : defaultCapacity
+  const amenities = space?.amenities?.items?.length ? space.amenities.items : defaultAmenities
+  const inquiryDescription =
+    space?.inquiry?.description ||
+    `Interested in renting ${galleryName} for your event? Fill out the form below and we'll get back to you within 48 hours.`
 
   const onSubmit = async (data: RentalFormData) => {
     setIsLoading(true)
@@ -70,19 +166,18 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
         throw new Error(errorData.message || 'Failed to submit form')
       }
 
-      setIsLoading(false)
       setHasSubmitted(true)
       reset()
     } catch (err) {
       import('@sentry/nextjs').then((Sentry) => Sentry.captureException(err))
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    } finally {
       setIsLoading(false)
     }
   }
 
   return (
     <main className="min-h-screen bg-off-white">
-      {/* Header */}
       <section className="pt-32 mt-12 gallery-section">
         <div className="container">
           <motion.div
@@ -92,7 +187,7 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
           >
             <div className="mb-8">
               <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">
-                Gallery Space
+                {space?.pageTitle || 'Gallery Space'}
               </h1>
               <AnimatedBorder className="mt-4" />
             </div>
@@ -100,7 +195,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
         </div>
       </section>
 
-      {/* Hero Image */}
       <section className="py-0">
         <div className="container">
           <motion.div
@@ -111,10 +205,10 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
           >
             <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
               <Image
-                src="/media/placeholder.svg"
-                alt={`${galleryName} gallery space`}
-                width={1920}
-                height={1080}
+                src={heroImage?.url || '/media/placeholder.svg'}
+                alt={heroImage?.alt || `${galleryName} gallery space`}
+                width={heroImage?.width || 1920}
+                height={heroImage?.height || 1080}
                 className="h-full w-full object-cover object-center"
               />
             </div>
@@ -122,7 +216,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
         </div>
       </section>
 
-      {/* Intro / Description Section */}
       <section className="py-10 gallery-section">
         <div className="container">
           <motion.div
@@ -133,46 +226,26 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
             className="grid gap-20 lg:grid-cols-12"
           >
             <div className="lg:col-span-7">
-              <div className="caption text-lake mb-6">Our Venue</div>
+              <div className="caption text-lake mb-6">{space?.intro?.caption || 'Our Venue'}</div>
               <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl">
-                A Unique Space for Your Event
+                {space?.intro?.title || 'A Unique Space for Your Event'}
               </h2>
               <div className="space-y-6 text-lg leading-relaxed text-navy/80">
-                {space?.description ? (
-                  <p>{space.description}</p>
-                ) : (
-                  <>
-                    <p>
-                      {galleryName} offers a contemporary, versatile space perfect for private
-                      events, corporate gatherings, weddings, and art-centric celebrations. Our
-                      gallery combines modern aesthetics with the natural beauty of the Indiana Dunes
-                      region.
-                    </p>
-                    <p>
-                      Whether you&apos;re planning an intimate gathering or a larger celebration, our
-                      space can accommodate a variety of events while providing a sophisticated
-                      backdrop of contemporary art.
-                    </p>
-                  </>
-                )}
+                {descriptionParagraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
               </div>
             </div>
             <div className="lg:col-span-5 lg:col-start-8">
               <div className="bg-lake/5 p-8 rounded-lg">
                 <h3 className="text-2xl font-bold text-navy mb-6">Space Capacity</h3>
                 <div className="space-y-4">
-                  <div>
-                    <p className="font-semibold text-navy mb-2">Standing Reception</p>
-                    <p className="text-navy/80">Up to 150 guests</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-navy mb-2">Seated Dinner</p>
-                    <p className="text-navy/80">Up to 80 guests</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-navy mb-2">Meeting / Presentation</p>
-                    <p className="text-navy/80">Up to 60 guests</p>
-                  </div>
+                  {capacity.map((item) => (
+                    <div key={item.id || item.label}>
+                      <p className="font-semibold text-navy mb-2">{item.label}</p>
+                      <p className="text-navy/80">{item.description}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -180,7 +253,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
         </div>
       </section>
 
-      {/* Space Features / Amenities Section */}
       <section className="py-20 gallery-section">
         <div className="container">
           <motion.div
@@ -190,83 +262,25 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
             viewport={{ once: true }}
             className="text-center max-w-5xl mx-auto"
           >
-            <div className="caption text-lake mb-6">Amenities</div>
+            <div className="caption text-lake mb-6">{space?.amenities?.caption || 'Amenities'}</div>
             <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
-              What We Offer
+              {space?.amenities?.title || 'What We Offer'}
             </h2>
             <div className="grid md:grid-cols-3 gap-8 mt-12">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-lake"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+              {amenities.map((amenity) => (
+                <div key={amenity.id || amenity.title} className="text-center">
+                  <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    {getIcon(amenity.icon)}
+                  </div>
+                  <h3 className="text-xl font-bold text-navy mb-3">{amenity.title}</h3>
+                  <p className="text-navy/80 text-sm">{amenity.description}</p>
                 </div>
-                <h3 className="text-xl font-bold text-navy mb-3">Modern Facilities</h3>
-                <p className="text-navy/80 text-sm">
-                  Climate-controlled space with professional lighting, AV equipment, and high-speed
-                  WiFi throughout.
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-lake"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-navy mb-3">Catering Options</h3>
-                <p className="text-navy/80 text-sm">
-                  Full catering kitchen available. Work with our preferred caterers or bring your
-                  own.
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-lake"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-navy mb-3">Flexible Scheduling</h3>
-                <p className="text-navy/80 text-sm">
-                  Available for day and evening events, with flexible scheduling to accommodate your
-                  needs.
-                </p>
-              </div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Rental Info / Inquiry CTA Section */}
       <section className="py-20 gallery-section bg-navy/5">
         <div className="container">
           <motion.div
@@ -277,14 +291,11 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
             className="max-w-4xl mx-auto"
           >
             <div className="text-center mb-12">
-              <div className="caption text-lake mb-6">Inquire</div>
+              <div className="caption text-lake mb-6">{space?.inquiry?.caption || 'Inquire'}</div>
               <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl text-navy">
-                Request Information
+                {space?.inquiry?.title || 'Request Information'}
               </h2>
-              <p className="text-lg text-navy/80">
-                Interested in renting {galleryName} for your event? Fill out the form below and
-                we&apos;ll get back to you within 48 hours.
-              </p>
+              <p className="text-lg text-navy/80">{inquiryDescription}</p>
               {(galleryEmail || galleryPhone) && (
                 <p className="mt-4 text-navy/60 text-sm">
                   You can also reach us directly
@@ -327,7 +338,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Name */}
                     <div>
                       <Label htmlFor="name" className="text-navy">
                         Full Name <span className="text-red-600">*</span>
@@ -343,7 +353,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                       )}
                     </div>
 
-                    {/* Email */}
                     <div>
                       <Label htmlFor="email" className="text-navy">
                         Email <span className="text-red-600">*</span>
@@ -367,7 +376,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Phone */}
                     <div>
                       <Label htmlFor="phone" className="text-navy">
                         Phone
@@ -375,7 +383,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                       <Input id="phone" type="tel" className="mt-2" {...register('phone')} />
                     </div>
 
-                    {/* Event Date */}
                     <div>
                       <Label htmlFor="eventDate" className="text-navy">
                         Event Date
@@ -390,7 +397,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Number of Guests */}
                     <div>
                       <Label htmlFor="numberOfGuests" className="text-navy">
                         Number of Guests
@@ -404,7 +410,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                       />
                     </div>
 
-                    {/* Event Type */}
                     <div>
                       <Label htmlFor="eventType" className="text-navy">
                         Event Type
@@ -419,7 +424,6 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                     </div>
                   </div>
 
-                  {/* Message */}
                   <div>
                     <Label htmlFor="message" className="text-navy">
                       Message / Event Details <span className="text-red-600">*</span>
@@ -435,14 +439,13 @@ export function SpacePageClient({ space }: SpacePageClientProps) {
                     )}
                   </div>
 
-                  {/* Submit Button */}
                   <div className="pt-4">
                     <Button
                       type="submit"
                       disabled={isLoading}
                       className="w-full md:w-auto px-8 py-6 text-lg bg-navy text-off-white hover:bg-navy/90"
                     >
-                      {isLoading ? 'Submitting...' : 'Submit Inquiry'}
+                      {isLoading ? 'Submitting...' : space?.inquiry?.submitButtonLabel || 'Submit Inquiry'}
                     </Button>
                   </div>
                 </form>
