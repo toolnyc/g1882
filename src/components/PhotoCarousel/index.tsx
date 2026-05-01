@@ -108,12 +108,13 @@ export const PhotoCarousel: React.FC<Props> = ({ photos }) => {
               aria-roledescription="slide"
               aria-label={`Photo ${index + 1} of ${photoCount}${photo.caption ? `: ${photo.caption}` : ''}`}
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-navy/5">
+              <div className="relative max-h-[70vh] overflow-hidden rounded-sm flex items-center justify-center">
                 <NextImage
                   src={src}
                   alt={media.alt || photo.caption || `Gallery photo ${index + 1}`}
-                  fill
-                  className="object-cover"
+                  width={media.width || 1200}
+                  height={media.height || 800}
+                  className="w-full h-auto max-h-[70vh] object-contain"
                   sizes="(max-width: 768px) 85vw, (max-width: 1024px) 60vw, 50vw"
                   priority={index === 0}
                   quality={85}

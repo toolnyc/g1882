@@ -7,6 +7,7 @@ import { LiveIndicator } from '../LiveIndicator'
 import { fadeUp, scaleIn, slideIn } from '@/utilities/animations'
 import RichText from '@/components/RichText'
 
+
 interface Artist {
   id?: string
   name?: string | null
@@ -29,7 +30,7 @@ interface Happening {
   startDate?: string | Date | null
   endDate?: string | Date | null
   description?: Record<string, unknown> | null
-  heroImage?: { url?: string; alt?: string } | string | null
+  heroImage?: { url?: string; alt?: string; caption?: Record<string, unknown> | null } | string | null
   featured?: boolean
   isActive?: boolean
 }
@@ -93,7 +94,15 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
     return `${happening.title || 'Happening'}${artistStr}`
   }
 
+  const getImageCaption = (): Record<string, unknown> | null => {
+    if (typeof happening.heroImage === 'object' && happening.heroImage?.caption) {
+      return happening.heroImage.caption
+    }
+    return null
+  }
+
   const imageUrl = getImageUrl()
+  const imageCaption = getImageCaption()
   const artists = getArtistNames()
   const label = isUpNext ? (upNextLabel || 'Up Next') : (onNowLabel || 'On Now')
 
@@ -120,17 +129,14 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
                   sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 50vw, (max-width: 1376px) 50vw, 656px"
                   className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
-                {/* Hover overlay with gradient and exhibition info */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-off-white text-sm font-medium tracking-wider">{happening.title}</p>
-                    {artists.length > 0 && (
-                      <p className="text-off-white/80 text-xs mt-1">
-                        {artists.map((a) => a.name).join(', ')}
-                      </p>
-                    )}
+                {/* Hover overlay with media caption */}
+                {imageCaption && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-off-white text-sm [&_p]:my-0 [&_p]:text-off-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                      <RichText data={imageCaption as never} enableGutter={false} />
+                    </div>
                   </div>
-                </div>
+                )}
               </motion.div>
             </div>
           )}

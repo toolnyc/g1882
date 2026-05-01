@@ -56,6 +56,7 @@ vi.mock('@/utilities/generateMeta', () => ({
 
 vi.mock('@/utilities/getURL', () => ({
   getServerSideURL: vi.fn(() => 'http://localhost:3000'),
+  getClientSideURL: vi.fn(() => 'http://localhost:3000'),
 }))
 
 describe('HappeningPage', () => {

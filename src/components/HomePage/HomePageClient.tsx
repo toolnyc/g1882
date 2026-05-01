@@ -12,7 +12,7 @@ import { useNewsletterGate } from '@/providers/NewsletterGate/context'
 import type { Happening, Home, SiteSetting } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
-  heroImage: { url: string; alt?: string } | string | null
+  heroImage: { url: string; alt?: string; caption?: Record<string, unknown> | null } | string | null
   featured: boolean
   isActive: boolean
 }

@@ -78,16 +78,25 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
       <article className={`pb-24${hasHeroImage ? ' pt-40' : ' pt-48'}`}>
         {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
-          <div className="w-full max-h-[80vh] overflow-hidden flex items-center justify-center mb-16">
-            <Image
-              src={heroUrl}
-              alt={heroImage.alt || happening.title || ''}
-              width={heroImage.width || 1920}
-              height={heroImage.height || 1080}
-              className="w-full h-auto max-h-[80vh] object-contain"
-              priority
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1400px"
-            />
+          <div className="mb-16">
+            <div className="w-full max-h-[80vh] overflow-hidden flex items-center justify-center">
+              <Image
+                src={heroUrl}
+                alt={heroImage.alt || happening.title || ''}
+                width={heroImage.width || 1920}
+                height={heroImage.height || 1080}
+                className="w-full h-auto max-h-[80vh] object-contain"
+                priority
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1400px"
+              />
+            </div>
+            {heroImage.caption && (
+              <div className="container mt-3">
+                <div className="max-w-4xl mx-auto text-sm text-navy/60 italic [&_p]:my-0">
+                  <RichText data={heroImage.caption} enableGutter={false} />
+                </div>
+              </div>
+            )}
           </div>
         )}
 

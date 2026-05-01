@@ -12,7 +12,7 @@ import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
 import type { Happening, Home, SiteSetting } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
-  heroImage: { url: string; alt?: string } | string | null
+  heroImage: { url: string; alt?: string; caption?: Record<string, unknown> | null } | string | null
   featured: boolean
   isActive: boolean
 }
@@ -67,13 +67,14 @@ export default async function HomePage() {
 
   const formatHeroImage = (
     heroImage: Happening['heroImage'],
-  ): { url: string; alt?: string } | string | null => {
+  ): { url: string; alt?: string; caption?: Record<string, unknown> | null } | string | null => {
     if (typeof heroImage === 'object' && heroImage) {
       const url = resolveMediaUrl(heroImage)
       if (!url) return null
       return {
         url,
         alt: heroImage.alt || undefined,
+        caption: (heroImage.caption as Record<string, unknown> | null) || null,
       }
     }
 
