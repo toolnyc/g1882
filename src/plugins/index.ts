@@ -36,7 +36,7 @@ const sentryPlugin: Plugin = (config) => {
 }
 
 const generateTitle: GenerateTitle<Post> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Gallery 1882` : 'Gallery 1882'
+  return doc?.title || 'Gallery 1882'
 }
 
 const generateURL: GenerateURL<Post> = ({ doc }) => {
