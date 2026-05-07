@@ -1,9 +1,19 @@
+import type { Metadata } from 'next'
 import React from 'react'
 
 import { DirectoryListing } from '@/components/DirectoryListing'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Artists',
+    description:
+      'Meet the artists exhibited at Gallery 1882 in Chesterton, Indiana.',
+  }
+}
+
 import { CurrentArtistBanner } from '@/components/CurrentArtistBanner'
 import { getCachedArtists } from '@/utilities/getArtists'
 import { getCachedHappenings } from '@/utilities/getHappenings'

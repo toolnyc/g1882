@@ -83,9 +83,11 @@ export default async function Page() {
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: `News`,
+    title: 'News',
+    description:
+      'Latest news, journal entries, and updates from Gallery 1882.',
   }
 }
 

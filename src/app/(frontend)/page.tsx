@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import React from 'react'
 
 import { HomePageClient } from '@/components/HomePage/HomePageClient'
@@ -5,6 +6,17 @@ import { getCachedHappenings } from '@/utilities/getHappenings'
 
 // Force dynamic rendering since layout reads headers (draftMode, auth)
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: {
+      absolute: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
+    },
+    description:
+      'Gallery 1882 is a contemporary art gallery in Chesterton, Indiana featuring rotating exhibitions, artist residencies, and community events.',
+  }
+}
+
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { transformFeaturedArtist, transformVisitSection } from '@/utilities/dataTransformers'

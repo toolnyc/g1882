@@ -1,9 +1,18 @@
+import type { Metadata } from 'next'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { formatStructuredHours } from '@/utilities/hoursHelpers'
 import type { SiteSetting, Visit } from '@/payload-types'
 import VisitPageClient from './VisitPage.client'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Visit',
+    description:
+      'Plan your visit to Gallery 1882 in Chesterton, Indiana. Hours, directions, and admission information.',
+  }
+}
 
 export default async function VisitPage() {
   const [visit, siteSettings] = await Promise.all([
