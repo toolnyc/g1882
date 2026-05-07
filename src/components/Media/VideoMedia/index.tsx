@@ -26,6 +26,8 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
   if (resource && typeof resource === 'object') {
     const { filename } = resource
 
+     
+    /* eslint-disable jsx-a11y/no-interactive-element-to-noninteractive-role */
     return (
       <video
         autoPlay
@@ -36,6 +38,8 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
         onClick={onClick}
         playsInline
         ref={videoRef}
+        aria-hidden="true"
+        role="presentation"
       >
         <source src={getMediaUrl(`/media/${filename}`)} />
       </video>

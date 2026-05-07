@@ -40,6 +40,7 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
       {/* Hero Video */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="relative h-full w-full overflow-hidden">
+          {/* eslint-disable jsx-a11y/no-interactive-element-to-noninteractive-role */}
           {heroVideoUrl ? (
             <video
               autoPlay
@@ -49,6 +50,8 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
               preload="metadata"
               poster={heroVideoPosterUrl || undefined}
               className="hero-video-iframe"
+              aria-hidden="true"
+              role="presentation"
             >
               <source src={heroVideoUrl} />
             </video>
