@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/privacy',
+    },
     title: 'Privacy Policy | Gallery 1882',
     description: 'Privacy policy for Gallery 1882 website.',
   }

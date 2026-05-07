@@ -61,6 +61,9 @@ export default async function OurStoryPage() {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/our-story',
+    },
     title: 'Our Story | Gallery 1882',
     description:
       'Learn about Gallery 1882, a contemporary art space in Chesterton, Indiana, dedicated to showcasing emerging and established artists.',

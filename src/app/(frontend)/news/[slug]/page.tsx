@@ -93,6 +93,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 
   return generateMeta({
+    collection: 'news',
     doc: {
       ...post,
       meta: {

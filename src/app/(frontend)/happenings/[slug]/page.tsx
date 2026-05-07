@@ -211,6 +211,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 
   return generateMeta({
+    collection: 'happenings',
     doc: {
       ...happening,
       meta: {

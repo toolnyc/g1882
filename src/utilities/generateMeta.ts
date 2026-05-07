@@ -29,9 +29,10 @@ const getImageURL = (image?: MediaWithSizes | Config['db']['defaultIDType'] | nu
 }
 
 export const generateMeta = async (args: {
+  collection?: string
   doc: Partial<Post> | { meta?: { title?: string | null; description?: string | null; image?: MediaWithSizes | string | null } } | null
 }): Promise<Metadata> => {
-  const { doc } = args
+  const { collection, doc } = args
 
   const ogImage = getImageURL(doc?.meta?.image)
 
@@ -43,6 +44,13 @@ export const generateMeta = async (args: {
   const docSlug = doc && 'slug' in doc ? doc.slug : undefined
   
   return {
+    ...(collection
+      ? {
+          alternates: {
+            canonical: `/${collection}/${docSlug || ''}`,
+          },
+        }
+      : {}),
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',

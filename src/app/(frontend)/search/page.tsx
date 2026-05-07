@@ -86,6 +86,9 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
 export function generateMetadata(): Metadata {
   return {
+    alternates: {
+      canonical: '/search',
+    },
     title: `Search`,
   }
 }

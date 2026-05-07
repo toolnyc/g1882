@@ -7,6 +7,9 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/terms',
+    },
     title: 'Terms & Conditions | Gallery 1882',
     description: 'Terms and conditions for Gallery 1882 website.',
   }

@@ -161,6 +161,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 
   return generateMeta({
+    collection: 'artists',
     doc: {
       ...artist,
       meta: {

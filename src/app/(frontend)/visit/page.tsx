@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/visit',
+    },
     title: 'Visit',
     description:
       'Plan your visit to Gallery 1882 in Chesterton, Indiana. Hours, directions, and admission information.',

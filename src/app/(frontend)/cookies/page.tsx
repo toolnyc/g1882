@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/cookies',
+    },
     title: 'Cookie Policy | Gallery 1882',
     description: 'Cookie policy for Gallery 1882 website.',
   }

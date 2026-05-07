@@ -85,6 +85,9 @@ export default async function Page() {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/news',
+    },
     title: 'News',
     description:
       'Latest news, journal entries, and updates from Gallery 1882.',

@@ -34,12 +34,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
   if (!space) {
     return {
+      alternates: {
+        canonical: '/space',
+      },
       title,
       description,
     }
   }
 
-  return generateMeta({
+  const meta = await generateMeta({
     doc: {
       ...space,
       meta: {
@@ -48,4 +51,11 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
   })
+
+  return {
+    ...meta,
+    alternates: {
+      canonical: '/space',
+    },
+  }
 }

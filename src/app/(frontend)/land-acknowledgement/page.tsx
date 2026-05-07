@@ -7,6 +7,9 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/land-acknowledgement',
+    },
     title: 'Land Acknowledgement | Gallery 1882',
     description: 'Land acknowledgement statement for Gallery 1882.',
   }

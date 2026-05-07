@@ -9,6 +9,9 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
+    alternates: {
+      canonical: '/',
+    },
     title: {
       absolute: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
     },
