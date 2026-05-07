@@ -144,6 +144,7 @@ export function middleware(request: NextRequest) {
         "frame-ancestors 'self'",
         "base-uri 'self'",
         "form-action 'self'",
+        "upgrade-insecure-requests",
       ].join('; '),
     )
   }
