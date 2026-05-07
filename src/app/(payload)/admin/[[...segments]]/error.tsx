@@ -22,6 +22,7 @@ export default function AdminError({
       stack: error.stack,
       digest: error.digest,
     })
+    import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
   }, [error])
 
   return (

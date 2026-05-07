@@ -20,6 +20,7 @@ export default function PayloadError({
       stack: error.stack,
       digest: error.digest,
     })
+    import('@sentry/nextjs').then(Sentry => Sentry.captureException(error))
   }, [error])
 
   return (
