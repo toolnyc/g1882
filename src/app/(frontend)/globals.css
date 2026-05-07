@@ -147,6 +147,11 @@
     width: 100%;
   }
 
+  .gallery-button-primary:focus-visible {
+    outline: 2px solid var(--gallery-lake);
+    outline-offset: 2px;
+  }
+
   .gallery-button-secondary {
     @apply border text-navy px-6 py-3 font-medium transition-all duration-300;
     border-color: var(--gallery-navy);
@@ -177,6 +182,11 @@
     height: 100%;
   }
 
+  .gallery-button-secondary:focus-visible {
+    outline: 2px solid var(--gallery-lake);
+    outline-offset: 2px;
+  }
+
   .gallery-button-cta {
     @apply text-navy px-6 py-3 font-medium transition-all duration-300;
     border-radius: 1px;
@@ -192,6 +202,11 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(31, 159, 204, 0.3);
     filter: brightness(1.08);
+  }
+
+  .gallery-button-cta:focus-visible {
+    outline: 2px solid var(--gallery-navy);
+    outline-offset: 2px;
   }
 
   /* Subtle grain effect for sections */
