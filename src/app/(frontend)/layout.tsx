@@ -96,6 +96,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   openGraph: mergeOpenGraph(),
+  title: {
+    template: '%s | Gallery 1882',
+    default: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
+  },
   twitter: {
     card: 'summary_large_image',
     creator: '@gallery1882',

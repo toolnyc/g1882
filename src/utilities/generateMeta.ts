@@ -9,7 +9,7 @@ import { getServerSideURL } from './getURL'
 const getImageURL = (image?: MediaWithSizes | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  let url = serverUrl + '/website-template-OG.webp'
+  let url = serverUrl + '/og-default.png'
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = (image as MediaWithSizes).sizes?.og?.url
@@ -28,8 +28,8 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+    ? doc?.meta?.title + ' | Gallery 1882'
+    : 'Gallery 1882'
 
   // Type guard to check if doc has slug property
   const docSlug = doc && 'slug' in doc ? doc.slug : undefined
