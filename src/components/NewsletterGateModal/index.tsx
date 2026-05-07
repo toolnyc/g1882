@@ -131,6 +131,7 @@ export function NewsletterGateModal({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                aria-label="Email address"
                 required
                 disabled={isLoading}
                 className="px-4 py-3 rounded-[3px] border border-navy/20 focus:outline-none focus:ring-2 focus:ring-lake disabled:opacity-50 text-navy"

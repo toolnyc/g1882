@@ -232,6 +232,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
               <Input
                 type="text"
                 placeholder={`Search ${title.toLowerCase()}...`}
+                aria-label={`Search ${title.toLowerCase()}`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full opacity-60 focus:opacity-100 transition-opacity"
