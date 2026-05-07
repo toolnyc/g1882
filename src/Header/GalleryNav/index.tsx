@@ -89,13 +89,15 @@ export const GalleryNav: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             className="absolute top-full left-0 right-0 bg-white/20 backdrop-blur-md border-t border-white/30 md:hidden"
           >
-            <nav className="container py-4 space-y-4">
+            <div className="container py-4 space-y-4" role="menu">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.url
                 return (
-                  <div key={item.url} role="menuitem" tabIndex={0} onClick={closeMenu} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') closeMenu() }}>
+                  <div key={item.url}>
                     <Link
                       href={item.url}
+                      role="menuitem"
+                      onClick={closeMenu}
                       className={`nav-link block text-lg font-medium transition-all duration-300 py-1 hover:bg-white/20 hover:px-3 hover:rounded ${
                         isActive ? 'text-lake font-semibold border-l-2 border-lake pl-3' : 'text-navy/70 hover:text-navy'
                       }`}
@@ -105,7 +107,7 @@ export const GalleryNav: React.FC = () => {
                   </div>
                 )
               })}
-            </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
