@@ -216,7 +216,7 @@ export interface Media {
   /**
    * Describe the image for screen readers and SEO (e.g. "Artist painting in gallery studio")
    */
-  alt?: string | null;
+  alt: string;
   /**
    * Photo credit or caption displayed wherever this image appears on the site
    */

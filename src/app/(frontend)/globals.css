@@ -64,13 +64,11 @@
 @layer base {
   * {
     @apply border-border;
-    cursor: none !important;
   }
   
   body {
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
     font-family: 'Aktiv Grotesk', var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-    cursor: none !important; /* Hide default cursor — custom cursor replaces it */
     /* Disable scroll bounce */
     overscroll-behavior: none;
     /* Ensure locomotive scroll works properly */
@@ -251,6 +249,21 @@ html {
   position: fixed !important;
   transform: none !important;
   will-change: auto;
+}
+
+/* Hide system cursor on fine-pointer devices (mouse/trackpad) for custom cursor effect.
+   Only applies to interactive elements — keyboard focus indicators remain visible.
+   Touch/coarse-pointer devices keep their native cursor. */
+@media (pointer: fine) {
+  a,
+  button,
+  [role='button'],
+  input,
+  textarea,
+  select,
+  [data-clickable] {
+    cursor: none;
+  }
 }
 
 /* Respect reduced motion preferences */
