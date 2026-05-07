@@ -11,6 +11,7 @@ import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
 import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+import { getEventSchema } from '@/utilities/jsonLd'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
 import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
@@ -195,6 +196,12 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
           </div>
         </div>
       </article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getEventSchema(happening)),
+          }}
+        />
     </main>
   )
 }

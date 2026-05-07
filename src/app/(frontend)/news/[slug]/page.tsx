@@ -3,6 +3,7 @@ import Image from 'next/image'
 import React from 'react'
 import { getCachedPostBySlug } from '@/utilities/getPostBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getArticleSchema } from '@/utilities/jsonLd'
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import RichText from '@/components/RichText'
 
@@ -77,6 +78,12 @@ export default async function PostPage({ params: paramsPromise }: Args) {
           </div>
         </div>
       </article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getArticleSchema(post)),
+          }}
+        />
     </main>
   )
 }

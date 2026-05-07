@@ -3,6 +3,7 @@ import Image from 'next/image'
 import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getPersonSchema } from '@/utilities/jsonLd'
 import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import { RelatedHappenings } from './RelatedHappenings'
 import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
@@ -145,6 +146,12 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
           </div>
         </div>
       </article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getPersonSchema(artist)),
+          }}
+        />
     </main>
   )
 }

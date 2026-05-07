@@ -24,6 +24,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getOrganizationSchema } from '@/utilities/jsonLd'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
@@ -88,7 +89,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Providers>
         <Analytics />
         <SpeedInsights />
-      </body>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getOrganizationSchema()) }} />
+</body>
     </html>
   )
 }
