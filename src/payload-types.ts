@@ -1711,6 +1711,19 @@ export interface OurStory {
 export interface Space {
   id: string;
   heroImage?: (string | null) | Media;
+  /**
+   * Add multiple images to display a full-width carousel. If only one is provided, it displays statically.
+   */
+  heroImages?:
+    | {
+        image: string | Media;
+        /**
+         * Optional caption to display with the image
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   pageTitle?: string | null;
   intro?: {
     caption?: string | null;
@@ -1728,6 +1741,7 @@ export interface Space {
       }[]
     | null;
   amenities?: {
+    enabled?: boolean | null;
     caption?: string | null;
     title?: string | null;
     items?:
@@ -2067,6 +2081,13 @@ export interface OurStorySelect<T extends boolean = true> {
  */
 export interface SpaceSelect<T extends boolean = true> {
   heroImage?: T;
+  heroImages?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
   pageTitle?: T;
   intro?:
     | T
@@ -2085,6 +2106,7 @@ export interface SpaceSelect<T extends boolean = true> {
   amenities?:
     | T
     | {
+        enabled?: T;
         caption?: T;
         title?: T;
         items?:

@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
+import { PhotoCarousel } from '@/components/PhotoCarousel'
 import type { Media, SiteSetting, Space } from '@/payload-types'
 
 interface RentalFormData {
@@ -196,24 +197,28 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
       </section>
 
       <section className="py-0">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative overflow-hidden rounded-lg"
-          >
-            <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative w-full"
+        >
+          {space?.heroImages && space.heroImages.length > 1 ? (
+            <PhotoCarousel photos={space.heroImages as any} fullWidth />
+          ) : (
+            <div className="w-full flex items-center justify-center max-h-[90vh] overflow-hidden">
               <Image
-                src={heroImage?.url || '/media/placeholder.svg'}
-                alt={heroImage?.alt || `${galleryName} gallery space`}
-                width={heroImage?.width || 1920}
-                height={heroImage?.height || 1080}
-                className="h-full w-full object-cover object-center"
+                src={heroImage?.url || ((space?.heroImages?.[0]?.image as Media)?.url) || '/media/placeholder.svg'}
+                alt={heroImage?.alt || ((space?.heroImages?.[0]?.image as Media)?.alt) || `${galleryName} gallery space`}
+                width={heroImage?.width || ((space?.heroImages?.[0]?.image as Media)?.width) || 1920}
+                height={heroImage?.height || ((space?.heroImages?.[0]?.image as Media)?.height) || 1080}
+                sizes="100vw"
+                className="w-full h-auto max-h-[90vh] object-contain"
+                priority
               />
             </div>
-          </motion.div>
-        </div>
+          )}
+        </motion.div>
       </section>
 
       <section className="py-10 gallery-section">
@@ -253,33 +258,35 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
         </div>
       </section>
 
-      <section className="py-20 gallery-section">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center max-w-5xl mx-auto"
-          >
-            <div className="caption text-lake mb-6">{space?.amenities?.caption || 'Amenities'}</div>
-            <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
-              {space?.amenities?.title || 'What We Offer'}
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8 mt-12">
-              {amenities.map((amenity) => (
-                <div key={amenity.id || amenity.title} className="text-center">
-                  <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    {getIcon(amenity.icon)}
+      {space?.amenities?.enabled !== false && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center max-w-5xl mx-auto"
+            >
+              <div className="caption text-lake mb-6">{space?.amenities?.caption || 'Amenities'}</div>
+              <h2 className="mb-10 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                {space?.amenities?.title || 'What We Offer'}
+              </h2>
+              <div className="grid md:grid-cols-3 gap-8 mt-12">
+                {amenities.map((amenity) => (
+                  <div key={amenity.id || amenity.title} className="text-center">
+                    <div className="w-16 h-16 bg-lake/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      {getIcon(amenity.icon)}
+                    </div>
+                    <h3 className="text-xl font-bold text-navy mb-3">{amenity.title}</h3>
+                    <p className="text-navy/80 text-sm">{amenity.description}</p>
                   </div>
-                  <h3 className="text-xl font-bold text-navy mb-3">{amenity.title}</h3>
-                  <p className="text-navy/80 text-sm">{amenity.description}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       <section className="py-20 gallery-section bg-navy/5">
         <div className="container">

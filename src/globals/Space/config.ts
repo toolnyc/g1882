@@ -22,8 +22,31 @@ export const Space: GlobalConfig = {
       name: 'heroImage',
       type: 'upload',
       relationTo: 'media',
-      label: 'Hero Image',
+      label: 'Hero Image (Fallback)',
       required: false,
+    },
+    {
+      name: 'heroImages',
+      type: 'array',
+      label: 'Hero Images',
+      admin: {
+        description: 'Add multiple images to display a full-width carousel. If only one is provided, it displays statically.',
+      },
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'caption',
+          type: 'text',
+          admin: {
+            description: 'Optional caption to display with the image',
+          },
+        },
+      ],
     },
     {
       name: 'pageTitle',
@@ -98,6 +121,12 @@ export const Space: GlobalConfig = {
       type: 'group',
       label: 'Amenities Section',
       fields: [
+        {
+          name: 'enabled',
+          type: 'checkbox',
+          label: 'Enable Amenities Section',
+          defaultValue: true,
+        },
         {
           name: 'caption',
           type: 'text',
