@@ -25,6 +25,47 @@ setInterval(() => {
   }
 }, FORM_RATE_LIMIT_WINDOW_MS)
 
+// Mutable HTTP methods that require CSRF origin validation
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
+
+/**
+ * Check if an Origin header matches our allowed origins.
+ * In dev (NODE_ENV=development), any localhost origin is allowed.
+ * Always allows the request's own host (same-origin).
+ * Also checks NEXT_PUBLIC_SERVER_URL and VERCEL_PROJECT_PRODUCTION_URL env vars.
+ */
+function isOriginAllowed(origin: string, host: string | null): boolean {
+  // Allow if origin matches the request's own host
+  if (host) {
+    if (origin === `http://${host}` || origin === `https://${host}`) {
+      return true
+    }
+  }
+
+  // Allow localhost in development (any port)
+  if (process.env.NODE_ENV === 'development') {
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+      return true
+    }
+  }
+
+  // Allow NEXT_PUBLIC_SERVER_URL
+  if (process.env.NEXT_PUBLIC_SERVER_URL) {
+    if (origin === process.env.NEXT_PUBLIC_SERVER_URL) {
+      return true
+    }
+  }
+
+  // Allow VERCEL_PROJECT_PRODUCTION_URL
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    if (origin === `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export function middleware(request: NextRequest) {
   if (request.method === 'POST' && request.nextUrl.pathname === '/api/form-submissions') {
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
@@ -36,9 +77,28 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.next()
-
+  // CSRF Origin validation for mutating requests to /api/* endpoints
   const pathname = request.nextUrl.pathname
+  if (
+    MUTATING_METHODS.has(request.method) &&
+    pathname.startsWith('/api/')
+  ) {
+    const origin = request.headers.get('Origin')
+
+    if (origin) {
+      const host = request.headers.get('host')
+
+      if (!isOriginAllowed(origin, host)) {
+        return NextResponse.json(
+          { error: 'Origin not allowed' },
+          { status: 403 },
+        )
+      }
+    }
+    // No Origin header → allow (server-to-server, same-origin navigations omit Origin)
+  }
+
+  const response = NextResponse.next()
 
   // Cache-Control for font files and static assets served through middleware
   if (pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
