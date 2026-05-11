@@ -68,7 +68,7 @@
   
   body {
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
-    font-family: 'Aktiv Grotesk', var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
     /* Disable scroll bounce */
     overscroll-behavior: none;
     /* Ensure locomotive scroll works properly */
