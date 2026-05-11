@@ -23,12 +23,16 @@ const Page = async ({ params, searchParams }: Args) => {
   const segments = resolvedParams?.segments || []
   const route = `/admin/${segments.join('/')}`
 
-  // Diagnostic: log which admin route is being rendered server-side
-  console.log(`[g1882-admin-diagnostics] Rendering admin route: ${route}`)
+  // Diagnostic: log which admin route is being rendered server-side (dev only)
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[g1882-admin-diagnostics] Rendering admin route: ${route}`)
+  }
 
   try {
     const result = RootPage({ config, params, searchParams, importMap })
-    console.log(`[g1882-admin-diagnostics] RootPage returned successfully for: ${route}`)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[g1882-admin-diagnostics] RootPage returned successfully for: ${route}`)
+    }
     return result
   } catch (err) {
     console.error(`[g1882-admin-diagnostics] RootPage threw during server render:`, {
