@@ -2,9 +2,16 @@
 
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { NewsletterGateContext } from './context'
-import { NewsletterGateModal, type NewsletterGateModalProps } from '@/components/NewsletterGateModal'
+import type { NewsletterGateModalProps } from '@/components/NewsletterGateModal'
 import { checkNewsletterSignupStatus, setNewsletterSignupStatus } from '@/utilities/newsletterGate'
+
+const NewsletterGateModal = dynamic(
+  () =>
+    import('@/components/NewsletterGateModal').then((mod) => mod.NewsletterGateModal),
+  { ssr: false },
+)
 
 interface NewsletterGateProviderProps extends NewsletterGateModalProps {
   children: React.ReactNode

@@ -1,8 +1,13 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
-import { WeatherWidget } from '@/components/GalleryHero/WeatherWidget'
+import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
+
+const WeatherWidget = dynamic(
+  () => import('@/components/GalleryHero/WeatherWidget').then((mod) => mod.WeatherWidget),
+  { ssr: false },
+)
 
 interface GalleryHeroProps {
   heroVideoUrl?: string | null

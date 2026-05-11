@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -10,8 +11,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
-import { PhotoCarousel } from '@/components/PhotoCarousel'
 import type { Media, SiteSetting, Space } from '@/payload-types'
+
+const PhotoCarousel = dynamic(
+  () => import('@/components/PhotoCarousel').then((mod) => mod.PhotoCarousel),
+  {
+    loading: () => (
+      <div className="w-full aspect-[16/9] bg-navy/5 animate-pulse rounded-lg" />
+    ),
+  },
+)
 
 interface RentalFormData {
   name: string
