@@ -42,3 +42,12 @@ pnpm test:pre-deploy      # Lint + unit + integration tests
 `feature/*` or `fix/*` → `preview` (staging) → `prod` (production)
 
 See [AGENTS.md](./AGENTS.md) for full branching and deployment workflow.
+
+## Production Hardening
+
+Recent hardening work on the `fix/production-readiness` branch:
+
+- **Security**: Login attempt limits (5 attempts, 10-min lockout), CSRF Origin validation on `/api/*` mutating requests, `upgrade-insecure-requests` CSP directive
+- **Accessibility**: aria-labels on form inputs, `:focus-visible` indicators on buttons, decorative video `aria-hidden`, mobile nav single-tab-stop fix
+- **Observability**: Sentry reporting in admin error boundaries, diagnostic console.log calls gated to development
+- **Performance**: Dynamic imports for WeatherWidget, NewsletterGateModal, PhotoCarousel; orphaned Aktiv Grotesk font reference removed
