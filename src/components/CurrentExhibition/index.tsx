@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
 import { fadeUp, scaleIn, slideIn } from '@/utilities/animations'
 import RichText from '@/components/RichText'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
+import type { Media } from '@/payload-types'
 
 
 interface Artist {
@@ -30,7 +32,7 @@ interface Happening {
   startDate?: string | Date | null
   endDate?: string | Date | null
   description?: Record<string, unknown> | null
-  heroImage?: { url?: string; alt?: string; caption?: Record<string, unknown> | null } | string | null
+  heroImage?: { url?: string; alt?: string; caption?: Record<string, unknown> | null; sizes?: Record<string, { url?: string | null } | null> } | string | null
   featured?: boolean
   isActive?: boolean
 }
@@ -77,6 +79,8 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
 
   const getImageUrl = () => {
     if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
+      const optimized = resolveOptimizedUrl(happening.heroImage as Media, 1400)
+      if (optimized) return optimized
       return happening.heroImage.url
     }
     if (typeof happening.heroImage === 'string' && happening.heroImage) {

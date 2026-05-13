@@ -1,8 +1,10 @@
 import type { TaskConfig } from 'payload'
 import { put } from '@vercel/blob'
 
-// The 6 sizes deferred from synchronous generation
+// The 7 sizes deferred from synchronous generation
+// Includes thumbnail for admin dashboard and to self-heal missing relative URLs
 const DEFERRED_SIZES = [
+  { name: 'thumbnail', width: 300, height: 300, fit: 'cover' as const },
   { name: 'square', width: 500, height: 500, fit: 'cover' as const },
   { name: 'small', width: 600, height: undefined, fit: 'inside' as const },
   { name: 'medium', width: 900, height: undefined, fit: 'inside' as const },
@@ -76,10 +78,19 @@ export const generateImageSizesTask: TaskConfig<'generateImageSizes'> = {
       return { output: { sizesGenerated: 0 } }
     }
 
-    // Guard: idempotent — skip if already complete with all sizes
-    if (doc.processingStatus === 'complete') {
+    // Guard: idempotent — skip if already complete with valid thumbnail
+    // Re-process if thumbnail is missing or has a relative URL (broken local disk fallback)
+    const thumbnailUrl = (doc.sizes as { thumbnail?: { url?: string } } | undefined)?.thumbnail?.url
+    const thumbnailNeedsRepair = !thumbnailUrl || !thumbnailUrl.startsWith('http')
+    if (doc.processingStatus === 'complete' && !thumbnailNeedsRepair) {
       req.payload.logger.info(`[generateImageSizes] Media ${mediaId} already complete, skipping`)
       return { output: { sizesGenerated: 0 } }
+    }
+
+    if (doc.processingStatus === 'complete' && thumbnailNeedsRepair) {
+      req.payload.logger.info(
+        `[generateImageSizes] Media ${mediaId} has broken thumbnail URL (relative or missing), reprocessing to repair`,
+      )
     }
 
     // 2. Mark as processing

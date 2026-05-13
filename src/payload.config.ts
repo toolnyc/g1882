@@ -34,6 +34,10 @@ if (!process.env.PREVIEW_SECRET) {
   console.warn('[g1882] PREVIEW_SECRET environment variable is not set — live preview will be disabled')
 }
 
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.warn('[g1882] BLOB_READ_WRITE_TOKEN is not set — media uploads will use local disk storage instead of Vercel Blob. URLs stored in the DB will be relative paths, which break in production.')
+}
+
 export default buildConfig({
   admin: {
     meta: {

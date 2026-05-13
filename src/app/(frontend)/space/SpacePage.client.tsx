@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import type { Media, SiteSetting, Space } from '@/payload-types'
 
 const PhotoCarousel = dynamic(
@@ -207,7 +208,7 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
           ) : (
             <div className="w-full flex items-center justify-center max-h-[75vh] overflow-hidden">
               <Image
-                src={heroImage?.url || ((space?.heroImages?.[0]?.image as Media)?.url) || '/media/placeholder.svg'}
+                src={resolveOptimizedUrl(heroImage, 1920) || resolveOptimizedUrl((space?.heroImages?.[0]?.image as Media), 1920) || (heroImage?.url) || ((space?.heroImages?.[0]?.image as Media)?.url) || '/media/placeholder.svg'}
                 alt={heroImage?.alt || ((space?.heroImages?.[0]?.image as Media)?.alt) || `${galleryName} gallery space`}
                 width={heroImage?.width || ((space?.heroImages?.[0]?.image as Media)?.width) || 1920}
                 height={heroImage?.height || ((space?.heroImages?.[0]?.image as Media)?.height) || 1080}

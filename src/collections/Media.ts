@@ -207,9 +207,19 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: ({ doc }) => {
       const sizes = doc?.sizes as Record<string, { url?: string }> | undefined
-      if (sizes?.thumbnail?.url) {
-        return sizes.thumbnail.url
+      // Validate thumbnail URL is absolute (not a broken relative path)
+      const thumbnailUrl = sizes?.thumbnail?.url
+      if (thumbnailUrl?.startsWith('http')) {
+        return thumbnailUrl
       }
+      // Fall back through other background-generated sizes (all have absolute Blob URLs)
+      for (const name of ['square', 'small'] as const) {
+        const url = sizes?.[name]?.url
+        if (url?.startsWith('http')) {
+          return url
+        }
+      }
+      // Final fallback to original URL
       return (doc?.url as string) || null
     },
     focalPoint: true,
