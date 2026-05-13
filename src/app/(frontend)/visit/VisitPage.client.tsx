@@ -3,6 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import type { Visit, Media } from '@/payload-types'
 
 interface FormattedHoursLine {
@@ -160,13 +161,15 @@ export default function VisitPageClient({ visit, formattedHours, pageTitle, gall
               transition={{ duration: 0.8 }}
               className="relative overflow-hidden rounded-lg"
             >
-              <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
+              <div className="w-full flex items-center justify-center overflow-hidden max-h-[65vh]">
                 <Image
-                  src={heroImage.url}
+                  src={resolveOptimizedUrl(heroImage, 1920) || heroImage.url}
                   alt={heroImage.alt || 'Gallery 1882'}
-                  width={1920}
-                  height={1080}
-                  className="h-full w-full object-cover object-center"
+                  width={heroImage.width || 1920}
+                  height={heroImage.height || 1080}
+                  sizes="100vw"
+                  className="w-full h-auto object-contain max-h-[65vh]"
+                  priority
                 />
               </div>
             </motion.div>

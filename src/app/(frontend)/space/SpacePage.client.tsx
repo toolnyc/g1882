@@ -205,14 +205,14 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
           {space?.heroImages && space.heroImages.length > 1 ? (
             <PhotoCarousel photos={space.heroImages} fullWidth />
           ) : (
-            <div className="w-full flex items-center justify-center max-h-[90vh] overflow-hidden">
+            <div className="w-full flex items-center justify-center max-h-[75vh] overflow-hidden">
               <Image
                 src={heroImage?.url || ((space?.heroImages?.[0]?.image as Media)?.url) || '/media/placeholder.svg'}
                 alt={heroImage?.alt || ((space?.heroImages?.[0]?.image as Media)?.alt) || `${galleryName} gallery space`}
                 width={heroImage?.width || ((space?.heroImages?.[0]?.image as Media)?.width) || 1920}
                 height={heroImage?.height || ((space?.heroImages?.[0]?.image as Media)?.height) || 1080}
                 sizes="100vw"
-                className="w-full h-auto max-h-[90vh] object-contain"
+                className="w-full h-auto max-h-[75vh] object-contain"
                 priority
               />
             </div>

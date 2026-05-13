@@ -88,9 +88,7 @@ export const PhotoCarousel: React.FC<Props> = ({ photos, fullWidth = false }) =>
       {/* Scroll container */}
       <div
         ref={scrollRef}
-        className={`flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 ${
-          fullWidth ? 'gap-0' : 'gap-4'
-        }`}
+        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
         tabIndex={0}
         role="toolbar"
@@ -100,37 +98,44 @@ export const PhotoCarousel: React.FC<Props> = ({ photos, fullWidth = false }) =>
           const media = typeof photo.image === 'object' ? photo.image : null
           if (!media) return null
 
-          const src = fullWidth 
-            ? getMediaUrl(media.url, media.updatedAt) 
-            : (resolveOptimizedUrl(media, 900) || getMediaUrl(media.url, media.updatedAt))
+          const src = resolveOptimizedUrl(media, fullWidth ? 1920 : 900) || getMediaUrl(media.url, media.updatedAt)
           if (!src) return null
 
           return (
             <div
               key={photo.id || index}
-              className={`flex-shrink-0 snap-center ${
-                fullWidth ? 'w-full' : 'w-[85vw] md:w-[60vw] lg:w-[50vw] max-w-3xl'
-              }`}
+              className="flex-shrink-0 snap-center w-full"
               role="group"
               aria-roledescription="slide"
               aria-label={`Photo ${index + 1} of ${photoCount}${photo.caption ? `: ${photo.caption}` : ''}`}
             >
-              <div className={`relative overflow-hidden flex items-center justify-center ${
-                fullWidth ? 'max-h-[90vh]' : 'max-h-[70vh] rounded-sm'
-              }`}>
-                <NextImage
-                  src={src}
-                  alt={media.alt || photo.caption || `Gallery photo ${index + 1}`}
-                  width={media.width || 1920}
-                  height={media.height || 1080}
-                  className={`w-full h-auto object-contain ${
-                    fullWidth ? 'max-h-[90vh]' : 'max-h-[70vh]'
-                  }`}
-                  sizes={fullWidth ? '100vw' : '(max-width: 768px) 85vw, (max-width: 1024px) 60vw, 50vw'}
-                  priority={index === 0}
-                  quality={85}
-                />
-              </div>
+              {fullWidth ? (
+                <div className="relative w-full aspect-[16/9] overflow-hidden">
+                  <NextImage
+                    src={src}
+                    alt={media.alt || photo.caption || `Gallery photo ${index + 1}`}
+                    width={media.width || 1920}
+                    height={media.height || 1080}
+                    className="absolute inset-0 w-full h-full object-contain"
+                    sizes="100vw"
+                    priority={index === 0}
+                    quality={85}
+                  />
+                </div>
+              ) : (
+                <div className="w-full flex items-center justify-center overflow-hidden max-h-[70vh]">
+                  <NextImage
+                    src={src}
+                    alt={media.alt || photo.caption || `Gallery photo ${index + 1}`}
+                    width={media.width || 1920}
+                    height={media.height || 1080}
+                    className="w-full h-auto object-contain max-h-[70vh]"
+                    sizes="100vw"
+                    priority={index === 0}
+                    quality={85}
+                  />
+                </div>
+              )}
               {photo.caption && !fullWidth && (
                 <p className="mt-2 text-sm text-navy/60 italic">{photo.caption}</p>
               )}
