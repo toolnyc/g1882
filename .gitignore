@@ -17,6 +17,9 @@ node_modules
 .agents/skills/.anthropics_skills_installed
 .agents/skills/.trailofbits_skills_installed
 
+# Factory droid metadata (machine-local)
+.factory/
+
 # Build artifacts
 tsconfig.tsbuildinfo
 

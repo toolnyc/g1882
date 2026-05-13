@@ -12,6 +12,7 @@ import { Happenings } from './collections/Happenings'
 import { HappeningTypes } from './collections/HappeningTypes'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
+import { RentalInquiries } from './collections/RentalInquiries'
 import { Users } from './collections/Users'
 import { Home } from './globals/Home/config'
 import { Visit } from './globals/Visit/config'
@@ -80,7 +81,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes],
+  collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes, RentalInquiries],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Home, Visit, Policies, OurStory, Space, SiteSettings],
   plugins: [

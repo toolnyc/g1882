@@ -74,6 +74,7 @@ export interface Config {
     artists: Artist;
     happenings: Happening;
     'happening-types': HappeningType;
+    'rental-inquiries': RentalInquiry;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -92,6 +93,7 @@ export interface Config {
     artists: ArtistsSelect<false> | ArtistsSelect<true>;
     happenings: HappeningsSelect<false> | HappeningsSelect<true>;
     'happening-types': HappeningTypesSelect<false> | HappeningTypesSelect<true>;
+    'rental-inquiries': RentalInquiriesSelect<false> | RentalInquiriesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -477,6 +479,22 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rental-inquiries".
+ */
+export interface RentalInquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  eventDate?: string | null;
+  numberOfGuests?: string | null;
+  eventType?: string | null;
+  message: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -846,6 +864,10 @@ export interface PayloadLockedDocument {
         value: string | HappeningType;
       } | null)
     | ({
+        relationTo: 'rental-inquiries';
+        value: string | RentalInquiry;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1079,6 +1101,21 @@ export interface HappeningTypesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   dateDisplayMode?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rental-inquiries_select".
+ */
+export interface RentalInquiriesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  eventDate?: T;
+  numberOfGuests?: T;
+  eventType?: T;
+  message?: T;
   updatedAt?: T;
   createdAt?: T;
 }

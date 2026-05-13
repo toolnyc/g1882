@@ -4,10 +4,8 @@ import Link from 'next/link'
 import React from 'react'
 import { getCachedHappeningBySlug } from '@/utilities/getHappeningBySlug'
 import RichText from '@/components/RichText'
-import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
 import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
-import { CalendarButton } from './CalendarButton'
 import { CategoryTag } from '@/components/CategoryTag'
 import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
@@ -179,20 +177,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               </div>
             )}
 
-            {/* Calendar Button */}
-            {happening.startDate && (
-              <div className="mt-12 pt-8 border-t border-navy/20">
-                <CalendarButton
-                  happening={{
-                    title: happening.title || '',
-                    description: extractPlainText(happening.description),
-                    startDate: new Date(happening.startDate as string),
-                    endDate: happening.endDate ? new Date(happening.endDate as string) : undefined,
-                    url: `${getServerSideURL()}/happenings/${slug}`,
-                  }}
-                />
-              </div>
-            )}
+
           </div>
         </div>
       </article>

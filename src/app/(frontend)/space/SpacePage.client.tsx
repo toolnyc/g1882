@@ -152,28 +152,18 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
     setError(undefined)
 
     try {
-      const response = await fetch(`${getClientSideURL()}/api/form-submissions`, {
+      const response = await fetch(`${getClientSideURL()}/api/rental-inquiry`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          form: 'rental-inquiry',
-          submissionData: [
-            { field: 'name', value: data.name },
-            { field: 'email', value: data.email },
-            { field: 'phone', value: data.phone || '' },
-            { field: 'eventDate', value: data.eventDate || '' },
-            { field: 'numberOfGuests', value: data.numberOfGuests || '' },
-            { field: 'eventType', value: data.eventType || '' },
-            { field: 'message', value: data.message },
-          ],
-        }),
+        body: JSON.stringify(data),
       })
 
+      const responseData = await response.json()
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.message || 'Failed to submit form')
+        throw new Error(responseData.message || 'Failed to submit form')
       }
 
       setHasSubmitted(true)
@@ -213,7 +203,7 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
           className="relative w-full"
         >
           {space?.heroImages && space.heroImages.length > 1 ? (
-            <PhotoCarousel photos={space.heroImages as any} fullWidth />
+            <PhotoCarousel photos={space.heroImages} fullWidth />
           ) : (
             <div className="w-full flex items-center justify-center max-h-[90vh] overflow-hidden">
               <Image
