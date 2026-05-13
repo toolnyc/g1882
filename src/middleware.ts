@@ -5,23 +5,37 @@ const formRateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const FORM_RATE_LIMIT_MAX = 5
 const FORM_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000
 
-function isFormRateLimited(ip: string): boolean {
+function isRateLimited(ip: string, limits: Map<string, { count: number; resetAt: number }>, maxRequests: number): boolean {
   const now = Date.now()
-  const entry = formRateLimitMap.get(ip)
+  const entry = limits.get(ip)
 
   if (!entry || now > entry.resetAt) {
-    formRateLimitMap.set(ip, { count: 1, resetAt: now + FORM_RATE_LIMIT_WINDOW_MS })
+    limits.set(ip, { count: 1, resetAt: now + FORM_RATE_LIMIT_WINDOW_MS })
     return false
   }
 
   entry.count++
-  return entry.count > FORM_RATE_LIMIT_MAX
+  return entry.count > maxRequests
+}
+
+function isFormRateLimited(ip: string): boolean {
+  return isRateLimited(ip, formRateLimitMap, FORM_RATE_LIMIT_MAX)
+}
+
+const rentalInquiryRateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RENTAL_INQUIRY_RATE_LIMIT_MAX = 5
+
+function isRentalInquiryRateLimited(ip: string): boolean {
+  return isRateLimited(ip, rentalInquiryRateLimitMap, RENTAL_INQUIRY_RATE_LIMIT_MAX)
 }
 
 setInterval(() => {
   const now = Date.now()
   for (const [ip, entry] of formRateLimitMap) {
     if (now > entry.resetAt) formRateLimitMap.delete(ip)
+  }
+  for (const [ip, entry] of rentalInquiryRateLimitMap) {
+    if (now > entry.resetAt) rentalInquiryRateLimitMap.delete(ip)
   }
 }, FORM_RATE_LIMIT_WINDOW_MS)
 
@@ -67,9 +81,19 @@ function isOriginAllowed(origin: string, host: string | null): boolean {
 }
 
 export function middleware(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+
   if (request.method === 'POST' && request.nextUrl.pathname === '/api/form-submissions') {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
     if (isFormRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      )
+    }
+  }
+
+  if (request.method === 'POST' && request.nextUrl.pathname === '/api/rental-inquiry') {
+    if (isRentalInquiryRateLimited(ip)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 },
