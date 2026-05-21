@@ -172,12 +172,13 @@ export const generateImageSizesTask: TaskConfig<'generateImageSizes'> = {
             `[generateImageSizes] Uploading ${sizeSpec.name}: ${sizedFilename} (${resizedBuffer.length} bytes)`,
           )
 
-          // Upload to Vercel Blob
+          // Upload to Vercel Blob (allowOverwrite handles re-runs after a failed save)
           const blobResult = await put(sizedFilename, resizedBuffer, {
             access: 'public',
             contentType: 'image/webp',
             token,
             addRandomSuffix: false,
+            allowOverwrite: true,
           })
 
           sizesData[sizeSpec.name] = {
