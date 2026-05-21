@@ -7,14 +7,9 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import { revalidateTag } from 'next/cache'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
-
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024
 const MAX_DIMENSION = 2560
@@ -211,8 +206,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
+    // Files are stored in Vercel Blob via storage plugin; don't use local disk storage
     adminThumbnail: ({ doc }) => {
       const sizes = doc?.sizes as Record<string, { url?: string }> | undefined
       // Validate thumbnail URL is absolute (not a broken relative path)
