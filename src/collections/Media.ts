@@ -36,7 +36,7 @@ export const Media: CollectionConfig = {
   },
   hooks: {
     beforeValidate: [
-      ({ req }) => {
+      ({ req, data }) => {
         const file = req.file
         if (!file) return
 
@@ -63,6 +63,14 @@ export const Media: CollectionConfig = {
         // and replace remaining spaces with hyphens for URL safety.
         if (file.name) {
           file.name = file.name.trim().replace(/\s+/g, '-')
+        }
+
+        // Auto-generate alt text from filename if missing (supports bulk uploads)
+        if (!data.alt || !data.alt.trim()) {
+          // Remove file extension and use filename as fallback alt text
+          const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
+          // Replace hyphens and underscores with spaces for readability
+          data.alt = nameWithoutExt.replace(/[-_]/g, ' ')
         }
 
         if (errors.length > 0) {
@@ -151,7 +159,7 @@ export const Media: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
-        description: 'Describe the image for screen readers and SEO (e.g. "Artist painting in gallery studio")',
+        description: 'Auto-generated from filename if left blank. Customize for better screen reader experience and SEO.',
       },
     },
     {
