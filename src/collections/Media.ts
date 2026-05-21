@@ -66,7 +66,7 @@ export const Media: CollectionConfig = {
         }
 
         // Auto-generate alt text from filename if missing (supports bulk uploads)
-        if (!data.alt || !data.alt.trim()) {
+        if (data && (!data.alt || !data.alt.trim())) {
           // Remove file extension and use filename as fallback alt text
           const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
           // Replace hyphens and underscores with spaces for readability
