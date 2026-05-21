@@ -11,11 +11,11 @@ import type { Plugin, PayloadRequest, TypeWithID } from 'payload'
  * the error page body is returned as if it were the file — causing sharp to
  * crash with "There was a problem while uploading the file."
  *
- * This plugin runs AFTER vercelBlobStorage and replaces the last handler
- * (the Blob plugin's handler) with a robust version that:
- *  1. Uses the Blob API `head()` to get canonical metadata
- *  2. Fetches from the canonical `downloadUrl` (not a hand-crafted CDN URL)
- *  3. Checks `response.ok` before returning
+ * Additionally, Vercel Blob has eventual consistency: a blob uploaded via
+ * the client may not be queryable via head() immediately. This handler now:
+ *  1. Retries head() with exponential backoff (up to 3 attempts)
+ *  2. Falls back to direct CDN fetch if head() fails
+ *  3. Returns proper error Responses instead of undefined
  *
  * See: SENTRY-CITRINE-CANVAS-8
  */
@@ -27,6 +27,8 @@ export const robustBlobFetchPlugin: Plugin = (incomingConfig) => {
   if (!storeId) return incomingConfig
 
   const baseUrl = `https://${storeId}.public.blob.vercel-storage.com`
+
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
   const robustHandler = async (
     req: PayloadRequest,
@@ -46,13 +48,48 @@ export const robustBlobFetchPlugin: Plugin = (incomingConfig) => {
 
     const fileKey = path.posix.join('', encodeURIComponent(filename))
     const fileUrl = `${baseUrl}/${fileKey}`
+    const logger = req.payload?.logger
 
     try {
-      // Step 1: Get canonical metadata from Blob API
-      const blobMeta = await head(fileUrl, { token })
+      let blobMeta
+      let headAttempt = 0
+      const maxHeadAttempts = 3
 
-      // Step 2: Fetch using the downloadUrl from the API (canonical, works reliably)
-      const fetchTarget = blobMeta.downloadUrl || blobMeta.url
+      // Step 1: Retry head() with exponential backoff (handles eventual consistency)
+      while (headAttempt < maxHeadAttempts) {
+        try {
+          blobMeta = await head(fileUrl, { token })
+          logger?.info(`[media] Blob head() succeeded for "${filename}" on attempt ${headAttempt + 1}`)
+          break
+        } catch (headErr) {
+          headAttempt++
+          const headErrMsg = headErr instanceof Error ? headErr.message : 'Unknown error'
+
+          if (headAttempt < maxHeadAttempts) {
+            const delayMs = Math.min(500 * Math.pow(2, headAttempt - 1), 2000)
+            logger?.warn(
+              `[media] Blob head() failed for "${filename}" (attempt ${headAttempt}/${maxHeadAttempts}): ${headErrMsg} — retrying in ${delayMs}ms`,
+            )
+            await sleep(delayMs)
+          } else {
+            logger?.warn(
+              `[media] Blob head() exhausted retries for "${filename}": ${headErrMsg} — falling back to direct CDN fetch`,
+            )
+            // Fall back to direct CDN fetch without metadata
+            blobMeta = undefined
+          }
+        }
+      }
+
+      // Step 2: Fetch the blob (either from metadata or direct CDN)
+      let fetchTarget: string
+      if (blobMeta) {
+        fetchTarget = blobMeta.downloadUrl || blobMeta.url
+      } else {
+        // Direct CDN fetch: construct canonical URL from storeId + filename
+        fetchTarget = fileUrl
+      }
+
       const response = await fetch(fetchTarget, {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate',
@@ -62,51 +99,88 @@ export const robustBlobFetchPlugin: Plugin = (incomingConfig) => {
 
       // Step 3: Validate the response
       if (!response.ok) {
-        req.payload?.logger?.warn(
-          `[media] Blob fetch returned ${response.status} for "${filename}" — retrying with cache-bust`,
-        )
+        const statusMsg = `${response.status} ${response.statusText}`
+        logger?.warn(`[media] Blob fetch returned ${statusMsg} for "${filename}" at ${fetchTarget}`)
 
-        // Retry with timestamp cache-bust (mirrors original staticHandler behavior)
-        const retryUrl = `${blobMeta.url}?${blobMeta.uploadedAt.toISOString()}`
-        const retryResponse = await fetch(retryUrl)
-        if (!retryResponse.ok) {
-          req.payload?.logger?.error(
-            `[media] Blob fetch retry also failed (${retryResponse.status}) for "${filename}"`,
-          )
-          return undefined
+        // If we have metadata, retry with cache-bust timestamp
+        if (blobMeta) {
+          const retryUrl = `${blobMeta.url}?${blobMeta.uploadedAt.toISOString()}`
+          logger?.info(`[media] Retrying with cache-bust: ${retryUrl}`)
+          const retryResponse = await fetch(retryUrl)
+
+          if (retryResponse.ok) {
+            const retryBuffer = await retryResponse.arrayBuffer()
+            return new Response(retryBuffer, {
+              status: 200,
+              headers: {
+                'Content-Type': blobMeta.contentType,
+                'Content-Disposition': blobMeta.contentDisposition,
+                'Content-Length': String(blobMeta.size),
+              },
+            })
+          } else {
+            logger?.error(
+              `[media] Cache-bust retry also failed (${retryResponse.status}) for "${filename}"`,
+            )
+          }
         }
-        const retryBuffer = await retryResponse.arrayBuffer()
-        return new Response(retryBuffer, {
-          status: 200,
-          headers: {
-            'Content-Type': blobMeta.contentType,
-            'Content-Disposition': blobMeta.contentDisposition,
-            'Content-Length': String(blobMeta.size),
+
+        // Return a 503 error response instead of undefined
+        return new Response(
+          JSON.stringify({
+            error: `Failed to fetch blob: ${statusMsg}`,
+            filename,
+          }),
+          {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
           },
-        })
+        )
       }
 
       const bodyBuffer = await response.arrayBuffer()
 
-      // Sanity check: body size should roughly match expected size
+      // Sanity check: body size should be non-zero
       if (bodyBuffer.byteLength === 0) {
-        req.payload?.logger?.warn(`[media] Blob returned empty body for "${filename}"`)
-        return undefined
+        logger?.warn(`[media] Blob returned empty body for "${filename}"`)
+        return new Response(
+          JSON.stringify({
+            error: 'Blob returned empty body',
+            filename,
+          }),
+          {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        )
       }
+
+      const contentType = blobMeta?.contentType || response.headers.get('content-type') || 'application/octet-stream'
+      const contentDisposition = blobMeta?.contentDisposition || response.headers.get('content-disposition') || ''
 
       return new Response(bodyBuffer, {
         status: 200,
         headers: {
-          'Content-Type': blobMeta.contentType,
-          'Content-Disposition': blobMeta.contentDisposition,
-          'Content-Length': String(blobMeta.size),
+          'Content-Type': contentType,
+          'Content-Disposition': contentDisposition,
+          'Content-Length': String(bodyBuffer.byteLength),
         },
       })
     } catch (err) {
-      req.payload?.logger?.error(
-        `[media] Robust blob handler failed for "${filename}": ${err instanceof Error ? err.message : 'Unknown error'}`,
+      const errMsg = err instanceof Error ? err.message : 'Unknown error'
+      logger?.error(`[media] Robust blob handler crashed for "${filename}": ${errMsg}`)
+
+      // Return a 500 error response instead of undefined
+      return new Response(
+        JSON.stringify({
+          error: `Handler error: ${errMsg}`,
+          filename,
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        },
       )
-      return undefined
     }
   }
 

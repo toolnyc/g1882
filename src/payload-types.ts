@@ -216,7 +216,7 @@ export interface Post {
 export interface Media {
   id: string;
   /**
-   * Describe the image for screen readers and SEO (e.g. "Artist painting in gallery studio")
+   * Auto-generated from filename if left blank. Customize for better screen reader experience and SEO.
    */
   alt: string;
   /**
