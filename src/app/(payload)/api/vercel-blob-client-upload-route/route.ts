@@ -93,15 +93,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
     })
 
-    if (!jsonResponse || typeof jsonResponse !== 'object' || !('blob' in jsonResponse)) {
-      logger.error('[media] handleUpload returned invalid response structure')
+    if (!jsonResponse) {
+      logger.error('[media] handleUpload returned null/undefined')
       return NextResponse.json(
         { error: 'Invalid upload response from Vercel Blob' },
         { status: 500 },
       )
     }
 
-    logger.info(`[media] Client upload completed: ${JSON.stringify(jsonResponse.blob)}`)
+    logger.info(`[media] Client upload completed: ${JSON.stringify(jsonResponse)}`)
     return NextResponse.json(jsonResponse)
   } catch (error) {
     Sentry.captureException(error)
