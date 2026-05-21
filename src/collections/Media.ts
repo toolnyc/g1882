@@ -266,13 +266,6 @@ export const Media: CollectionConfig = {
     resizeOptions: {
       withoutEnlargement: true,
     },
-    // WebP quality 90: higher fidelity for art gallery imagery at the cost of larger file sizes
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 300,
-        formatOptions: { format: 'webp', options: { quality: 90 } },
-      },
-    ],
+    imageSizes: [],
   },
 }
