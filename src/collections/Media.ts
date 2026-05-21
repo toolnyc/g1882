@@ -15,6 +15,23 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024
 const MAX_DIMENSION = 2560
 const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm']
 
+type MediaProcessingDoc = {
+  mimeType?: string | null
+  processingStatus?: string | null
+  url?: string | null
+}
+
+export function shouldQueueImageSizeGeneration(
+  doc: MediaProcessingDoc,
+  previousDoc?: MediaProcessingDoc | null,
+): boolean {
+  if (!doc.mimeType?.startsWith('image/')) return false
+  if (!doc.url) return false
+  if (doc.processingStatus !== 'pending') return false
+
+  return previousDoc?.processingStatus !== 'pending'
+}
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
@@ -134,13 +151,8 @@ export const Media: CollectionConfig = {
         }
         return doc
       },
-      async ({ doc, req }) => {
-        // Only queue for images with a URL
-        if (!doc.mimeType?.startsWith('image/')) return doc
-        if (!doc.url) return doc
-
-        // Only queue if processing is needed
-        if (doc.processingStatus === 'complete') return doc
+      async ({ doc, previousDoc, req }) => {
+        if (!shouldQueueImageSizeGeneration(doc, previousDoc)) return doc
 
         try {
           await req.payload.jobs.queue({

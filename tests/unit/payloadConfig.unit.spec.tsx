@@ -63,6 +63,10 @@ describe('Payload Config Structure', () => {
       expect(configSource).toContain('clientUploads: true')
     })
 
+    it('uses random Blob suffixes to make retry and reupload flows collision-safe', () => {
+      expect(configSource).toContain('addRandomSuffix: true')
+    })
+
     it('spreads plugins from plugins/index', () => {
       expect(configSource).toContain('...plugins')
     })

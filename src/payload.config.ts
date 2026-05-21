@@ -25,6 +25,7 @@ import { blobFetchRetryPlugin } from './plugins/blobFetchRetry'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { generateImageSizesTask } from './jobs/generateImageSizes'
+import { canRunPayloadJobs } from './jobs/access'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,6 +37,10 @@ if (!process.env.PREVIEW_SECRET) {
 
 if (!process.env.BLOB_READ_WRITE_TOKEN) {
   console.warn('[g1882] BLOB_READ_WRITE_TOKEN is not set — media uploads will use local disk storage instead of Vercel Blob. URLs stored in the DB will be relative paths, which break in production.')
+}
+
+if (!process.env.CRON_SECRET) {
+  console.warn('[g1882] CRON_SECRET is not set — Vercel cron invocations of /api/payload-jobs/run will be rejected, leaving image processing jobs queued.')
 }
 
 export default buildConfig({
@@ -96,6 +101,7 @@ export default buildConfig({
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
       clientUploads: true,
+      addRandomSuffix: true,
     }),
     blobFetchRetryPlugin,
   ],
@@ -117,14 +123,7 @@ export default buildConfig({
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Allow logged in users to execute this endpoint (default)
-        if (req.user) return true
-
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
-        const authHeader = req.headers.get('authorization')
-        return authHeader === `Bearer ${process.env.CRON_SECRET}`
+        return canRunPayloadJobs(req)
       },
     },
     tasks: [generateImageSizesTask],
