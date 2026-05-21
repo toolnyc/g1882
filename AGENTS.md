@@ -202,6 +202,20 @@ When spawning parallel agents (e.g., worktree-isolated epic implementations):
 - Hooks in `.claude/hooks/` reference sentinels via import, so they work in worktrees automatically
 - If hooks aren't firing in a worktree, ensure `.claude/` is accessible from the worktree root
 
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues (`toolnyc/g1882`). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Standard triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout with `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
 ## Knowledge Base
 
 Session reports and architecture decisions are stored in the Obsidian vault:
