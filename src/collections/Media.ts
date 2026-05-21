@@ -55,11 +55,10 @@ export const Media: CollectionConfig = {
       ({ req, data }) => {
         const file = req.file
         if (!file) return
-        const originalFilename = file.name
 
         if (file.name) {
           file.name = sanitizeUploadFilename(file.name)
-          if (data?.filename === originalFilename) {
+          if (data?.filename) {
             data.filename = file.name
           }
         }
