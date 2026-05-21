@@ -35,6 +35,18 @@ export const Media: CollectionConfig = {
         const file = req.file
         if (!file) return
 
+        // Skip server-side validation for client uploads — the file was
+        // already uploaded to Vercel Blob successfully. The req.file is
+        // reconstructed from the blob and its mimetype may differ from
+        // the original (e.g., Content-Type header variations).
+        if (file.clientUploadContext) {
+          if (data && (!data.alt || !data.alt.trim())) {
+            const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
+            data.alt = nameWithoutExt.replace(/[-_]/g, ' ')
+          }
+          return
+        }
+
         const errors: { message: string; path: string }[] = []
 
         if (file.size > MAX_FILE_SIZE) {
@@ -46,25 +58,20 @@ export const Media: CollectionConfig = {
           })
         }
 
-        if (file.mimetype && !ALLOWED_MIMES.includes(file.mimetype)) {
+        const baseMime = file.mimetype?.split(';')[0]?.trim()
+        if (baseMime && !ALLOWED_MIMES.includes(baseMime)) {
           errors.push({
-            message: `"${file.mimetype}" is not supported. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM.`,
+            message: `"${baseMime}" is not supported. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM.`,
             path: 'file',
           })
         }
 
-        // Normalize filenames that would cause Vercel Blob CDN 404s
-        // (SENTRY-CITRINE-CANVAS-8): collapse consecutive whitespace, trim,
-        // and replace remaining spaces with hyphens for URL safety.
         if (file.name) {
           file.name = file.name.trim().replace(/\s+/g, '-')
         }
 
-        // Auto-generate alt text from filename if missing (supports bulk uploads)
         if (data && (!data.alt || !data.alt.trim())) {
-          // Remove file extension and use filename as fallback alt text
           const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
-          // Replace hyphens and underscores with spaces for readability
           data.alt = nameWithoutExt.replace(/[-_]/g, ' ')
         }
 
@@ -78,6 +85,16 @@ export const Media: CollectionConfig = {
     ],
     beforeChange: [
       async ({ data, req }) => {
+        // For client uploads, the file buffer was re-fetched from Blob.
+        // Skip resize — the plugin will re-upload the original anyway.
+        if (req.file?.clientUploadContext) {
+          if (req.file.mimetype?.startsWith('image/')) {
+            data.processingStatus = 'pending'
+            data.processingError = null
+          }
+          return data
+        }
+
         if (!req.file?.data || !req.file.mimetype?.startsWith('image/')) return data
 
         const sharp = (await import('sharp')).default
