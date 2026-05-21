@@ -32,6 +32,10 @@ export function shouldQueueImageSizeGeneration(
   return previousDoc?.processingStatus !== 'pending'
 }
 
+export function sanitizeUploadFilename(filename: string): string {
+  return filename.trim().replace(/\s+/g, '-')
+}
+
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
@@ -51,6 +55,14 @@ export const Media: CollectionConfig = {
       ({ req, data }) => {
         const file = req.file
         if (!file) return
+        const originalFilename = file.name
+
+        if (file.name) {
+          file.name = sanitizeUploadFilename(file.name)
+          if (data?.filename === originalFilename) {
+            data.filename = file.name
+          }
+        }
 
         // Skip server-side validation for client uploads — the file was
         // already uploaded to Vercel Blob successfully. The req.file is
@@ -81,10 +93,6 @@ export const Media: CollectionConfig = {
             message: `"${baseMime}" is not supported. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM.`,
             path: 'file',
           })
-        }
-
-        if (file.name) {
-          file.name = file.name.trim().replace(/\s+/g, '-')
         }
 
         if (data && (!data.alt || !data.alt.trim())) {
