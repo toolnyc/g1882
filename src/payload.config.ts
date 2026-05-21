@@ -21,6 +21,7 @@ import { OurStory } from './globals/OurStory/config'
 import { Space } from './globals/Space/config'
 import { SiteSettings } from './globals/SiteSettings/config'
 import { plugins } from './plugins'
+import { blobFetchRetryPlugin } from './plugins/blobFetchRetry'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { generateImageSizesTask } from './jobs/generateImageSizes'
@@ -96,7 +97,7 @@ export default buildConfig({
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
       clientUploads: true,
     }),
-
+    blobFetchRetryPlugin,
   ],
   onInit: async (payload) => {
     const { totalDocs } = await payload.count({
