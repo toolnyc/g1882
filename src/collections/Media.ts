@@ -51,14 +51,6 @@ export const Media: CollectionConfig = {
       'Max file size: 50MB. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM. Images larger than 2560px are auto-resized. Images are automatically converted to WebP for optimal performance.',
   },
   hooks: {
-    beforeOperation: [
-      ({ args, operation }) => {
-        // Sanitize filename before Payload's generateFileData processes it.
-        if (operation === 'create' && args.data?.filename) {
-          args.data.filename = sanitizeUploadFilename(args.data.filename)
-        }
-      },
-    ],
     beforeValidate: [
       ({ req, data }) => {
         const file = req.file
@@ -68,10 +60,6 @@ export const Media: CollectionConfig = {
         // the Blob-assigned name (including addRandomSuffix). Sanitize it
         // directly to preserve the suffix.
         if (file.clientUploadContext) {
-          if (data?.filename) {
-            data.filename = sanitizeUploadFilename(data.filename)
-          }
-
           if (data && (!data.alt || !data.alt.trim())) {
             const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
             data.alt = nameWithoutExt.replace(/[-_]/g, ' ')
