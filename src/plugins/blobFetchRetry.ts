@@ -73,10 +73,16 @@ export const blobFetchRetryPlugin: Plugin = (incomingConfig) => {
 
     try {
       const prefix = await resolvePrefix(req, params.collection, filename, params.clientUploadContext)
-      const fileKey = path.posix.join(prefix, encodeURIComponent(filename))
+      const encodedFilename = encodeURIComponent(filename)
+      const fileKey = path.posix.join(prefix, encodedFilename)
       const fileUrl = `${baseUrl}/${fileKey}`
 
+      req.payload?.logger?.info(`[media-debug] RetryHandler started for filename: "${filename}"`)
+      req.payload?.logger?.info(`[media-debug] prefix: "${prefix}", encodedFilename: "${encodedFilename}"`)
+      req.payload?.logger?.info(`[media-debug] Attempting head() on fileUrl: "${fileUrl}"`)
+
       const blobMeta = await head(fileUrl, { token })
+      req.payload?.logger?.info(`[media-debug] head() successful for "${filename}"`)
       const { contentDisposition, contentType, size, uploadedAt } = blobMeta
       const uploadedAtString = uploadedAt.toISOString()
       const ETag = `"${fileKey}-${uploadedAtString}"`
@@ -145,6 +151,7 @@ export const blobFetchRetryPlugin: Plugin = (incomingConfig) => {
       return new Response(bodyBuffer, { headers, status: 200 })
     } catch (err) {
       if (err instanceof BlobNotFoundError) {
+        req.payload?.logger?.error(`[media-debug] BlobNotFoundError for filename: "${filename}". fileKey was likely incorrect or file is missing.`)
         return new Response(null, { status: 404, statusText: 'Not Found' })
       }
       req.payload?.logger?.error({

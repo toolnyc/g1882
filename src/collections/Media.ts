@@ -54,6 +54,8 @@ export const Media: CollectionConfig = {
     beforeValidate: [
       ({ req, data }) => {
         const file = req.file
+        req.payload.logger.info(`[media-debug] beforeValidate hook. file.name: "${file?.name}", data.filename: "${data?.filename}", isClientUpload: ${!!file?.clientUploadContext}`)
+
         if (!file) return
 
         // Client uploads go to Blob first, so data.filename already has
@@ -108,6 +110,7 @@ export const Media: CollectionConfig = {
     ],
     beforeChange: [
       async ({ data, req }) => {
+        req.payload.logger.info(`[media-debug] beforeChange hook. file.name: "${req.file?.name}", data.filename: "${data?.filename}"`)
         // For client uploads, the file buffer was re-fetched from Blob.
         // Skip resize — the plugin will re-upload the original anyway.
         if (req.file?.clientUploadContext) {
