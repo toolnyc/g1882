@@ -73,7 +73,17 @@ export const blobFetchRetryPlugin: Plugin = (incomingConfig) => {
 
     try {
       const prefix = await resolvePrefix(req, params.collection, filename, params.clientUploadContext)
-      const encodedFilename = encodeURIComponent(filename)
+      
+      // Filename might already be URL-encoded (e.g. client uploads store the encoded URL from Vercel Blob)
+      // We decode it first to prevent double-encoding (e.g. %20 becoming %2520)
+      let decodedFilename = filename
+      try {
+        decodedFilename = decodeURIComponent(filename)
+      } catch (e) {
+        // Fallback to raw filename if malformed
+      }
+      const encodedFilename = encodeURIComponent(decodedFilename)
+      
       const fileKey = path.posix.join(prefix, encodedFilename)
       const fileUrl = `${baseUrl}/${fileKey}`
 
