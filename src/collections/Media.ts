@@ -51,28 +51,39 @@ export const Media: CollectionConfig = {
       'Max file size: 50MB. Accepted formats: JPEG, PNG, WebP, GIF, MP4, WebM. Images larger than 2560px are auto-resized. Images are automatically converted to WebP for optimal performance.',
   },
   hooks: {
+    beforeOperation: [
+      ({ args, operation }) => {
+        // Sanitize filename before Payload's generateFileData processes it.
+        if (operation === 'create' && args.data?.filename) {
+          args.data.filename = sanitizeUploadFilename(args.data.filename)
+        }
+      },
+    ],
     beforeValidate: [
       ({ req, data }) => {
         const file = req.file
         if (!file) return
+
+        // Client uploads go to Blob first, so data.filename already has
+        // the Blob-assigned name (including addRandomSuffix). Sanitize it
+        // directly to preserve the suffix.
+        if (file.clientUploadContext) {
+          if (data?.filename) {
+            data.filename = sanitizeUploadFilename(data.filename)
+          }
+
+          if (data && (!data.alt || !data.alt.trim())) {
+            const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
+            data.alt = nameWithoutExt.replace(/[-_]/g, ' ')
+          }
+          return
+        }
 
         if (file.name) {
           file.name = sanitizeUploadFilename(file.name)
           if (data?.filename) {
             data.filename = file.name
           }
-        }
-
-        // Skip server-side validation for client uploads — the file was
-        // already uploaded to Vercel Blob successfully. The req.file is
-        // reconstructed from the blob and its mimetype may differ from
-        // the original (e.g., Content-Type header variations).
-        if (file.clientUploadContext) {
-          if (data && (!data.alt || !data.alt.trim())) {
-            const nameWithoutExt = file.name?.replace(/\.[^/.]+$/, '') || 'Uploaded image'
-            data.alt = nameWithoutExt.replace(/[-_]/g, ' ')
-          }
-          return
         }
 
         const errors: { message: string; path: string }[] = []
