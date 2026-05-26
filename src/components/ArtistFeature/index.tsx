@@ -3,6 +3,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import RichText from '@/components/RichText'
 
 interface ArtistFeatureProps {
   id: string
@@ -12,6 +13,7 @@ interface ArtistFeatureProps {
   artistSlug: string
   caption?: string | null
   ctaPrefix?: string | null
+  imageCaption?: Record<string, unknown> | null
 }
 
 export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
@@ -21,6 +23,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
   artistSlug,
   caption,
   ctaPrefix,
+  imageCaption,
 }) => {
   return (
     <section className="py-32 gallery-section">
@@ -75,10 +78,14 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                   sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 33vw, (max-width: 1376px) 33vw, 430px"
                   className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
-                {/* Hover overlay with gradient and caption */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-off-white text-sm font-medium tracking-wider">{name}</p>
+                {/* Hover overlay with media caption */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-off-white text-sm [&_p]:my-0 [&_p]:text-off-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    {imageCaption ? (
+                      <RichText data={imageCaption as never} enableGutter={false} />
+                    ) : (
+                      <p className="font-medium tracking-wider">{name}</p>
+                    )}
                   </div>
                 </div>
               </motion.div>

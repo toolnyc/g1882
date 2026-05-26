@@ -19,9 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import { FeatureBanner } from '@/components/FeatureBanner'
-import { resolveMediaUrl } from '@/utilities/mediaHelpers'
-import { formatHappeningDate, formatHappeningDateParts } from '@/utilities/dateHelpers'
+import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
 import type { Artist, Happening, SiteSetting } from '@/payload-types'
 
@@ -46,29 +44,6 @@ export default async function HappeningsPage() {
   const showSearch = siteSettings?.search?.happeningsShowSearch !== false
 
   const now = new Date()
-  const oneMonthFromNow = new Date(now)
-  oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1)
-
-  // Featured happenings: featured: true AND startDate within current month
-  const featuredHappenings = allHappenings.filter((happening) => {
-    if (!happening.featured || !happening.startDate) return false
-    const startDate = new Date(happening.startDate as string)
-    return startDate >= now && startDate <= oneMonthFromNow
-  })
-
-  // Upcoming events: startDate in future, not in featured section — sorted ascending
-  const upcomingHappenings = allHappenings
-    .filter((happening) => {
-      if (!happening.startDate) return false
-      const startDate = new Date(happening.startDate as string)
-      if (startDate <= now) return false
-      return !featuredHappenings.some((f) => f.id === happening.id)
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.startDate as string).getTime()
-      const dateB = new Date(b.startDate as string).getTime()
-      return dateA - dateB
-    })
 
   // All happenings for timeline (upcoming ascending first, then past descending)
   const futureHappenings = allHappenings
@@ -80,35 +55,6 @@ export default async function HappeningsPage() {
     .sort((a, b) => new Date(b.startDate as string).getTime() - new Date(a.startDate as string).getTime())
 
   const timelineHappenings = [...futureHappenings, ...pastHappenings]
-
-  // Get the most upcoming happening for the banner
-  const upcomingBannerHappening = upcomingHappenings.length > 0 ? upcomingHappenings[0] : null
-  let upcomingBanner = null
-
-  if (upcomingBannerHappening) {
-    const imageUrl = resolveMediaUrl(upcomingBannerHappening.heroImage)
-    const personName = getArtistNames(upcomingBannerHappening)
-    const bannerType = resolveHappeningType(upcomingBannerHappening.type)
-    const dateSubtitle = formatHappeningDate(
-      upcomingBannerHappening.startDate,
-      upcomingBannerHappening.endDate,
-      bannerType?.dateDisplayMode || 'datetime',
-    )
-
-    upcomingBanner = (
-      <FeatureBanner
-        image={imageUrl}
-        imageAlt={upcomingBannerHappening.title || 'Upcoming Event'}
-        title={upcomingBannerHappening.title || 'Upcoming Event'}
-        subtitle={personName || undefined}
-        description={dateSubtitle || undefined}
-        label={siteSettings?.labels?.comingUp || 'Coming Up'}
-        href={`/happenings/${upcomingBannerHappening.slug || upcomingBannerHappening.id}`}
-        showLiveIndicator={false}
-        category={bannerType?.name || undefined}
-      />
-    )
-  }
 
   return (
     <main className="bg-off-white">
@@ -140,7 +86,6 @@ export default async function HappeningsPage() {
         })}
         title={siteSettings?.pageTitles?.happenings || 'Happenings'}
         groupBy="chronological"
-        banner={upcomingBanner}
       />
     </main>
   )

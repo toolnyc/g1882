@@ -89,7 +89,7 @@
 
   /* Caption styles */
   .caption {
-    @apply font-medium text-sm;
+    @apply font-medium text-xl;
   }
 }
 

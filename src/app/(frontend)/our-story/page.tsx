@@ -4,6 +4,7 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { OurStory as OurStoryType } from '@/payload-types'
 import { PhotoCarousel } from './CarouselLoader'
 import RichText from '@/components/RichText'
+import { AnimatedBorder } from '@/components/AnimatedBorder'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { Media } from '@/payload-types'
 
@@ -38,6 +39,7 @@ export default async function OurStoryPage() {
       {/* Header */}
       <section className="container pt-40 pb-8 md:pt-48 md:pb-12">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-navy">Our Story</h1>
+        <AnimatedBorder className="mt-4" />
       </section>
 
       {/* Photo carousel */}
@@ -50,7 +52,7 @@ export default async function OurStoryPage() {
       {/* Rich text story */}
       {hasStory && (
         <section className="container pb-24 md:pb-32">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mx-auto">
             <RichText data={ourStory.story as DefaultTypedEditorState} enableGutter={false} />
           </div>
         </section>

@@ -123,6 +123,12 @@ export default function VisitPageClient({ visit, formattedHours, pageTitle, gall
       ? visit.location.directions
       : null
 
+  // Normalise address: collapse newlines/extra whitespace into a single line
+  const cleanAddress = galleryAddress?.replace(/\s*\n\s*/g, ', ').trim() || null
+  const mapsUrl =
+    visit.location?.googleMapsUrl?.trim() ||
+    (cleanAddress ? `https://maps.google.com/maps?q=${encodeURIComponent(cleanAddress)}` : null)
+
   const chestertonFeatures =
     visit.chesterton?.features && visit.chesterton.features.length > 0
       ? visit.chesterton.features
@@ -161,14 +167,13 @@ export default function VisitPageClient({ visit, formattedHours, pageTitle, gall
               transition={{ duration: 0.8 }}
               className="relative overflow-hidden rounded-lg"
             >
-              <div className="w-full flex items-center justify-center overflow-hidden max-h-[65vh]">
+              <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden">
                 <Image
                   src={resolveOptimizedUrl(heroImage, 1920) || heroImage.url}
                   alt={heroImage.alt || 'Gallery 1882'}
-                  width={heroImage.width || 1920}
-                  height={heroImage.height || 1080}
-                  sizes="100vw"
-                  className="w-full h-auto object-contain max-h-[65vh]"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 1200px"
                   priority
                 />
               </div>
@@ -325,9 +330,9 @@ export default function VisitPageClient({ visit, formattedHours, pageTitle, gall
                         <p className="text-lg text-navy/80 whitespace-pre-line">
                           {galleryAddress}
                         </p>
-                        {visit.location?.googleMapsUrl && (
+                        {mapsUrl && (
                           <a
-                            href={visit.location.googleMapsUrl}
+                            href={mapsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-navy text-off-white text-sm font-semibold tracking-wide uppercase rounded-lg hover:bg-navy/90 transition-colors"

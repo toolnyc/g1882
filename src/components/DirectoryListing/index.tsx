@@ -84,22 +84,17 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
       }
     })
 
-    // Sort items within each group
-    groups.forEach((groupKey) => {
-      groupedItems[groupKey].sort((a, b) => {
-        if (groupBy === 'alphabetical') {
-          return (a.displayName || a.name || '').localeCompare(b.displayName || b.name || '')
-        } else {
-          // For chronological, sort by date (soonest first within each group)
+    // For alphabetical groupBy, preserve input order (caller pre-sorts by last name).
+    // For chronological, sort within each group by date ascending.
+    if (groupBy !== 'alphabetical') {
+      groups.forEach((groupKey) => {
+        groupedItems[groupKey].sort((a, b) => {
           const aDate = String(a.startDate || a.date || a.publishedAt || '')
           const bDate = String(b.startDate || b.date || b.publishedAt || '')
-          return (
-            new Date(aDate).getTime() -
-            new Date(bDate).getTime()
-          )
-        }
+          return new Date(aDate).getTime() - new Date(bDate).getTime()
+        })
       })
-    })
+    }
 
     return groups
   }, [groupedItems, groupBy])

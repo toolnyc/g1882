@@ -20,7 +20,22 @@ type Props = {
 export const PhotoCarousel: React.FC<Props> = ({ photos, fullWidth = false }) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [peekIndex, setPeekIndex] = useState<number | null>(0)
+  const peekTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const photoCount = photos.length
+
+  const triggerPeek = useCallback((index: number) => {
+    if (peekTimerRef.current) clearTimeout(peekTimerRef.current)
+    setPeekIndex(index)
+    peekTimerRef.current = setTimeout(() => setPeekIndex(null), 2000)
+  }, [])
+
+  useEffect(() => {
+    triggerPeek(0)
+    return () => {
+      if (peekTimerRef.current) clearTimeout(peekTimerRef.current)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const scrollToIndex = useCallback(
     (index: number) => {
@@ -38,13 +53,15 @@ export const PhotoCarousel: React.FC<Props> = ({ photos, fullWidth = false }) =>
     const next = activeIndex > 0 ? activeIndex - 1 : photoCount - 1
     setActiveIndex(next)
     scrollToIndex(next)
-  }, [activeIndex, photoCount, scrollToIndex])
+    triggerPeek(next)
+  }, [activeIndex, photoCount, scrollToIndex, triggerPeek])
 
   const handleNext = useCallback(() => {
     const next = activeIndex < photoCount - 1 ? activeIndex + 1 : 0
     setActiveIndex(next)
     scrollToIndex(next)
-  }, [activeIndex, photoCount, scrollToIndex])
+    triggerPeek(next)
+  }, [activeIndex, photoCount, scrollToIndex, triggerPeek])
 
   // Keyboard navigation
   useEffect(() => {
@@ -123,21 +140,33 @@ export const PhotoCarousel: React.FC<Props> = ({ photos, fullWidth = false }) =>
                   />
                 </div>
               ) : (
-                <div className="w-full flex items-center justify-center overflow-hidden max-h-[70vh]">
-                  <NextImage
-                    src={src}
-                    alt={media.alt || photo.caption || `Gallery photo ${index + 1}`}
-                    width={media.width || 1920}
-                    height={media.height || 1080}
-                    className="w-full h-auto object-contain max-h-[70vh]"
-                    sizes="100vw"
-                    priority={index === 0}
-                    quality={85}
-                  />
+                <div className="w-full flex justify-center">
+                  <div className="relative overflow-hidden group">
+                    <NextImage
+                      src={src}
+                      alt={media.alt || photo.caption || `Gallery photo ${index + 1}`}
+                      width={media.width || 1920}
+                      height={media.height || 1080}
+                      className="h-[70vh] w-auto transition-transform duration-700 group-hover:scale-105"
+                      sizes="100vw"
+                      priority={index === 0}
+                      quality={85}
+                    />
+                    {photo.caption && (
+                      <div
+                        className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6"
+                        style={peekIndex === index ? { opacity: 1 } : undefined}
+                      >
+                        <div
+                          className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-off-white text-sm [&_p]:my-0 [&_p]:text-off-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                          style={peekIndex === index ? { transform: 'translateY(0)' } : undefined}
+                        >
+                          <p>{photo.caption}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-              {photo.caption && !fullWidth && (
-                <p className="mt-2 text-sm text-navy/60 italic">{photo.caption}</p>
               )}
             </div>
           )
@@ -177,6 +206,7 @@ export const PhotoCarousel: React.FC<Props> = ({ photos, fullWidth = false }) =>
               onClick={() => {
                 setActiveIndex(index)
                 scrollToIndex(index)
+                triggerPeek(index)
               }}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === activeIndex ? 'bg-navy w-6' : 'bg-navy/20 hover:bg-navy/40'

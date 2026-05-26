@@ -204,7 +204,7 @@ export function SpacePageClient({ space, siteSettings }: SpacePageClientProps) {
           className="relative w-full"
         >
           {space?.heroImages && space.heroImages.length > 1 ? (
-            <PhotoCarousel photos={space.heroImages} fullWidth />
+            <PhotoCarousel photos={space.heroImages} />
           ) : (
             <div className="w-full flex items-center justify-center max-h-[75vh] overflow-hidden">
               <Image

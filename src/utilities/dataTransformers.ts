@@ -10,6 +10,7 @@ export interface FeaturedArtistData {
   bio: string
   image: string
   artistSlug: string
+  imageCaption: Record<string, unknown> | null
 }
 
 export interface VisitSectionData {
@@ -33,12 +34,21 @@ export const transformFeaturedArtist = (
   const homeArtist = resolveArtist(homeData?.featuredArtist)
   if (!homeArtist) return null
 
+  // Resolve the Media object that is actually displayed (override takes precedence)
+  const resolvedMedia =
+    (typeof homeData?.featuredArtistImage === 'object' && homeData.featuredArtistImage
+      ? homeData.featuredArtistImage
+      : typeof homeArtist.image === 'object' && homeArtist.image
+        ? homeArtist.image
+        : null) as Media | null
+
   return {
     id: homeArtist.id,
     name: homeArtist.name,
     bio: (homeData?.featuredArtistDescription as string) || extractPlainText(homeArtist.bio) || '',
     image: getArtistImage(homeArtist.image, homeData?.featuredArtistImage),
     artistSlug: homeArtist.slug,
+    imageCaption: (resolvedMedia?.caption as Record<string, unknown> | null | undefined) ?? null,
   }
 }
 
