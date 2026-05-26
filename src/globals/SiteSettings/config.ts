@@ -1,5 +1,11 @@
 import type { GlobalConfig } from 'payload'
-import { revalidateSiteSettings } from './hooks/revalidateSiteSettings'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateSiteSettings } = createRevalidateHook({
+  collection: 'site-settings',
+  getPaths: () => ['/', '/artists', '/happenings', '/news', '/visit', '/space'],
+  getTags: () => ['global_site-settings'],
+})
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',

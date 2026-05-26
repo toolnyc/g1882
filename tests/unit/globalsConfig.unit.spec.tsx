@@ -11,14 +11,14 @@ const srcDir = resolve(__dirname, '../../src')
 
 describe('Policies global', () => {
   const configPath = resolve(srcDir, 'globals/Policies/config.ts')
-  const hookPath = resolve(srcDir, 'globals/Policies/hooks/revalidatePolicies.ts')
 
   it('config file exists', () => {
     expect(existsSync(configPath)).toBe(true)
   })
 
-  it('revalidation hook exists', () => {
-    expect(existsSync(hookPath)).toBe(true)
+  it('revalidation hook is configured', () => {
+    const source = readFileSync(configPath, 'utf-8')
+    expect(source).toContain('createRevalidateHook')
   })
 
   it('exports Policies with correct slug', () => {
@@ -36,14 +36,14 @@ describe('Policies global', () => {
 
 describe('OurStory global', () => {
   const configPath = resolve(srcDir, 'globals/OurStory/config.ts')
-  const hookPath = resolve(srcDir, 'globals/OurStory/hooks/revalidateOurStory.ts')
 
   it('config file exists', () => {
     expect(existsSync(configPath)).toBe(true)
   })
 
-  it('revalidation hook exists', () => {
-    expect(existsSync(hookPath)).toBe(true)
+  it('revalidation hook is configured', () => {
+    const source = readFileSync(configPath, 'utf-8')
+    expect(source).toContain('createRevalidateHook')
   })
 
   it('exports OurStory with correct slug', () => {

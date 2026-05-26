@@ -1,7 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
 import { getServerSideURL } from '../../utilities/getURL'
-import { revalidateSpace } from './hooks/revalidateSpace'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateSpace } = createRevalidateHook({
+  collection: 'space',
+  getTags: () => ['global_space'],
+})
 
 export const Space: GlobalConfig = {
   slug: 'space',

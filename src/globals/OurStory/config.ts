@@ -1,6 +1,11 @@
 import type { GlobalConfig } from 'payload'
-import { revalidateOurStory } from './hooks/revalidateOurStory'
 import { getServerSideURL } from '../../utilities/getURL'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateOurStory } = createRevalidateHook({
+  collection: 'our-story',
+  getTags: () => ['global_our-story'],
+})
 
 export const OurStory: GlobalConfig = {
   slug: 'our-story',
