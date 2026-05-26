@@ -72,9 +72,15 @@ export default async function HomePage() {
     }
   }
 
-  // Get upcoming happenings from the same dataset (future start dates, sorted ascending)
+  // Get upcoming happenings: include active ones and those that haven't ended yet
   const upcomingHappenings = allHappenings
-    .filter((h) => h.startDate && new Date(h.startDate as string) > now)
+    .filter((h) => {
+      if (!h.startDate) return false
+      if (h.isActive) return true
+      const endDate = h.endDate ? new Date(h.endDate as string) : null
+      if (endDate) return endDate > now
+      return new Date(h.startDate as string) > now
+    })
     .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
 
   const featuredArtistData = transformFeaturedArtist(homeData)
