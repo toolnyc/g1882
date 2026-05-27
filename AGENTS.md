@@ -153,7 +153,8 @@ The `main` branch exists for backwards compatibility but should not be used for 
 - Vercel serverless functions have a 10s default / 60s max execution time
 - MongoDB connections are pooled; avoid opening new connections in hooks
 - Vercel Blob has a 500MB free tier; monitor media storage usage
-- ISR/caching is currently disabled (`force-dynamic`); Cloudflare handles caching
+- ISR/caching is disabled (`force-dynamic`); data is cached via Next.js `unstable_cache` (60s TTL), invalidated on admin saves via `revalidateTag`
+- DNS is GoDaddy → Vercel directly (no Cloudflare proxy)
 - Payload admin bundle size affects cold start; avoid heavy imports in collection configs
 - ESLint blocks importing from `@/endpoints/seed/*` in runtime code
 - **Vercel Blob Client Uploads:** When files (e.g., with spaces) are uploaded client-side, the Blob SDK returns a URL-encoded filename. **Do not** sanitize or double-encode filenames in Payload hooks or fetch retry logic after the upload, as this will result in 404s when `head()` attempts to verify the blob using a malformed URL (like `%2520`).

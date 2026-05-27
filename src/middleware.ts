@@ -162,8 +162,8 @@ export function middleware(request: NextRequest) {
         "connect-src 'self' https://api.open-meteo.com https://*.ingest.sentry.io https://vitals.vercel-insights.com",
         // Media: self + Vercel Blob
         "media-src 'self' https://*.public.blob.vercel-storage.com",
-        // Frames: Cloudflare Stream for hero video
-        "frame-src 'self' https://*.cloudflarestream.com https://iframe.cloudflarestream.com",
+        // Frames: self only (hero video uses <video> tag with Vercel Blob, not iframe embeds)
+        "frame-src 'self'",
         // Frame ancestors: only self (prevents clickjacking)
         "frame-ancestors 'self'",
         "base-uri 'self'",
