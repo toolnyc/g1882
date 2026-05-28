@@ -5,7 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
-import { AdminBar } from '@/components/AdminBar'
+import { AdminBarIsland } from '@/components/AdminBarIsland'
 import { CustomCursor } from '@/components/CustomCursor'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
@@ -15,10 +15,7 @@ import { AccessibilityWidget } from '@/components/AccessibilityWidget'
 import { LayoutClient } from '@/components/LayoutClient'
 import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { getAuthStatus } from '@/utilities/getAuthStatus'
-import { draftMode } from 'next/headers'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -27,14 +24,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { getOrganizationSchema } from '@/utilities/jsonLd'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-  const [{ isAuthenticated }, homeData] = await Promise.all([
-    getAuthStatus(),
-    (async () => {
-      const payload = await getPayload({ config: configPromise })
-      return payload.findGlobal({ slug: 'home', depth: 0 })
-    })(),
-  ])
+  const homeData = await getCachedGlobal('home', 0)()
 
   return (
     <html
@@ -59,7 +49,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           Skip to main content
         </a>
         <Providers
-          isAdmin={isAuthenticated}
           popupHeadline={homeData?.popupHeadline}
           popupDescription={homeData?.popupDescription}
           popupButtonText={homeData?.popupButtonText}
@@ -67,15 +56,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           <LanderModeGuard>
             <CustomCursor />
-            {(isEnabled || isAuthenticated) && (
-              <div className="fixed top-0 left-0 right-0 z-[100]">
-                <AdminBar
-                  adminBarProps={{
-                    preview: isEnabled,
-                  }}
-                />
-              </div>
-            )}
+            <React.Suspense fallback={null}>
+              <AdminBarIsland />
+            </React.Suspense>
             <LayoutClient>
               <div id="main-content" className="flex flex-1 flex-col">
                 <Header />

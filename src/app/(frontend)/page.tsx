@@ -3,9 +3,9 @@ import React from 'react'
 
 import { HomePageClient } from '@/components/HomePage/HomePageClient'
 import { getCachedHappenings } from '@/utilities/getHappenings'
+import { draftMode } from 'next/headers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -33,14 +33,15 @@ type FormattedHappening = Omit<Happening, 'heroImage'> & {
 }
 
 export default async function HomePage() {
+  const { isEnabled: draft } = await draftMode()
   // Fetch all data in parallel — these are independent queries
   const [homeData, allHappenings, siteSettings] = await Promise.all([
-    getCachedGlobal('home', 2)() as Promise<Home>,
+    getCachedGlobal('home', 2, draft)() as Promise<Home>,
     // Fetch all published happenings once at depth 2 (populates artists, images, and type),
     // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
-    getCachedHappenings({}, 2)(),
+    getCachedHappenings({}, 2, undefined, draft)(),
     // SiteSettings contains gallery info (name, description, hours, etc.) used by the visit section
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
   ])
 
   const now = new Date()

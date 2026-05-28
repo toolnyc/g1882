@@ -3,11 +3,7 @@ import { unstable_cache } from 'next/cache'
 
 const getPagesSitemap = unstable_cache(
   async () => {
-    const SITE_URL =
-      process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
-
+    const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
     const dateFallback = new Date().toISOString()
 
     // Static routes only (no dynamic pages collection)

@@ -10,8 +10,9 @@ import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
 import RichText from '@/components/RichText'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type Args = {
   params: Promise<{
@@ -29,8 +30,8 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 export default async function ArtistPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const getArtist = getCachedArtistBySlug(slug)
-  const artist = await getArtist()
+  const { isEnabled: draft } = await draftMode()
+  const artist = await getCachedArtistBySlug(slug, draft)()
 
   if (!artist) {
     return (
@@ -141,7 +142,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
                 </div>
               }
             >
-              <RelatedHappenings artistId={artist.id} />
+              <RelatedHappenings artistId={artist.id} draft={draft} />
             </Suspense>
           </div>
         </div>
@@ -158,8 +159,7 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const getArtist = getCachedArtistBySlug(slug)
-  const artist = await getArtist()
+  const artist = await getCachedArtistBySlug(slug)()
 
   if (!artist) {
     return {

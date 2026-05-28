@@ -7,8 +7,9 @@ import { getArticleSchema } from '@/utilities/jsonLd'
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import RichText from '@/components/RichText'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type Args = {
   params: Promise<{
@@ -18,8 +19,8 @@ type Args = {
 
 export default async function PostPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const getPost = getCachedPostBySlug(slug)
-  const post = await getPost()
+  const { isEnabled: draft } = await draftMode()
+  const post = await getCachedPostBySlug(slug, draft)()
 
   if (!post) {
     return (
@@ -90,8 +91,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const getPost = getCachedPostBySlug(slug)
-  const post = await getPost()
+  const post = await getCachedPostBySlug(slug)()
 
   if (!post) {
     return {

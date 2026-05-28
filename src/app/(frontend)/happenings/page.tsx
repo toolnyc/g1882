@@ -3,8 +3,9 @@ import React from 'react'
 
 import { DirectoryListing } from '@/components/DirectoryListing'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -39,9 +40,10 @@ const getArtistNames = (happening: Happening): string => {
 }
 
 export default async function HappeningsPage() {
+  const { isEnabled: draft } = await draftMode()
   const [siteSettings, allHappenings] = await Promise.all([
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
-    getCachedHappenings({}, 2)(),
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
+    getCachedHappenings({}, 2, undefined, draft)(),
   ])
   const showSearch = siteSettings?.search?.happeningsShowSearch !== false
 

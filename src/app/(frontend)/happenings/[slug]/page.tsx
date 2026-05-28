@@ -15,8 +15,9 @@ import type { Artist } from '@/payload-types'
 import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
 import type { WorkItem } from '@/components/WorksMasonryGrid'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type Args = {
   params: Promise<{
@@ -26,8 +27,8 @@ type Args = {
 
 export default async function HappeningPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const getHappening = getCachedHappeningBySlug(slug)
-  const happening = await getHappening()
+  const { isEnabled: draft } = await draftMode()
+  const happening = await getCachedHappeningBySlug(slug, draft)()
 
   if (!happening) {
     return (
@@ -193,8 +194,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const getHappening = getCachedHappeningBySlug(slug)
-  const happening = await getHappening()
+  const happening = await getCachedHappeningBySlug(slug)()
 
   if (!happening) {
     return {

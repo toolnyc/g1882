@@ -3,7 +3,9 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { Policy } from '@/payload-types'
 import RichText from '@/components/RichText'
 
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -16,7 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LandAcknowledgementPage() {
-  const policies = (await getCachedGlobal('policies', 1)()) as Policy
+  const { isEnabled: draft } = await draftMode()
+  const policies = (await getCachedGlobal('policies', 1, draft)()) as Policy
 
   const hasContent = policies?.landAcknowledgementContent?.root?.children?.length
 

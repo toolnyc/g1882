@@ -20,6 +20,18 @@ _Avoid_: Purging, cache busting
 The CDN caching layer (Cloudflare or Vercel Edge) controlled by middleware `Cache-Control` headers. We disable this for frontend routes to rely on Next.js data caching instead.
 _Avoid_: CDN cache, Cloudflare cache
 
+**Full-Route Cache**:
+The Next.js server-side cache for rendered page output. When a route is in the full-route cache, visitors receive pre-rendered output without triggering a Node.js render. Invalidated on demand by `revalidatePath` from a Payload hook.
+_Avoid_: page cache, server cache, Next.js cache
+
+**Draft Mode**:
+A Next.js feature activated by a secure cookie set when an authenticated editor clicks "Preview" in the Payload admin panel. Bypasses the full-route cache and data cache to serve unpublished content. Applies exclusively to authenticated editors; never affects public visitors.
+_Avoid_: preview mode, draft preview
+
+**Dynamic Island**:
+An async server component wrapped in `<Suspense>` that calls dynamic functions (e.g. `draftMode()`, `cookies()`) without propagating dynamic rendering to its parent route. Used to isolate admin-only or per-request behavior from otherwise-static pages.
+_Avoid_: dynamic component, async island
+
 ## Example Dialogue
 
 **Developer**: "When an editor updates an artist's bio, we need to clear the edge cache."
