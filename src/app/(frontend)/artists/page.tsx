@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { DirectoryListing } from '@/components/DirectoryListing'
+import { draftMode } from 'next/headers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -28,9 +28,10 @@ const getLastName = (name: string): string => {
 }
 
 export default async function ArtistsPage() {
+  const { isEnabled: draft } = await draftMode()
   const [siteSettings, artists] = await Promise.all([
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
-    getCachedArtists(1)(),
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
+    getCachedArtists(1, draft)(),
   ])
   const showSearch = siteSettings?.search?.artistsShowSearch !== false
 

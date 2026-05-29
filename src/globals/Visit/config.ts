@@ -1,6 +1,11 @@
 import type { GlobalConfig } from 'payload'
-import { revalidateVisit } from './hooks/revalidateVisit'
 import { getServerSideURL } from '../../utilities/getURL'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateVisit } = createRevalidateHook({
+  collection: 'visit',
+  getTags: () => ['global_visit'],
+})
 
 export const Visit: GlobalConfig = {
   slug: 'visit',

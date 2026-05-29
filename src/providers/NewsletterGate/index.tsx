@@ -15,12 +15,10 @@ const NewsletterGateModal = dynamic(
 
 interface NewsletterGateProviderProps extends NewsletterGateModalProps {
   children: React.ReactNode
-  isAdmin?: boolean
 }
 
 export function NewsletterGateProvider({
   children,
-  isAdmin = false,
   popupHeadline,
   popupDescription,
   popupButtonText,
@@ -29,6 +27,7 @@ export function NewsletterGateProvider({
   const pathname = usePathname()
   const [hasSignedUp, setHasSignedUp] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   // Check if on admin route
   const isAdminRoute = pathname?.startsWith('/admin') || pathname?.startsWith('/api')
@@ -40,13 +39,23 @@ export function NewsletterGateProvider({
     setIsReady(true)
   }, [])
 
+  const adminPreviewEnabled = process.env.NEXT_PUBLIC_ENABLE_ADMIN_PREVIEW === 'true'
+
+  // Resolve admin status client-side when admin preview is active
+  useEffect(() => {
+    if (!adminPreviewEnabled) return
+    fetch('/api/users/me', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data?.user?.id) setIsAdmin(true) })
+      .catch(() => {})
+  }, [adminPreviewEnabled])
+
   const markAsSignedUp = () => {
     setNewsletterSignupStatus()
     setHasSignedUp(true)
   }
 
   const gateEnabled = process.env.NEXT_PUBLIC_ENABLE_NEWSLETTER_GATE === 'true'
-  const adminPreviewEnabled = process.env.NEXT_PUBLIC_ENABLE_ADMIN_PREVIEW === 'true'
 
   // Don't show gate features on admin routes, before hydration, or for authenticated admins
   const shouldBypassGate = isAdminRoute || !isReady || (adminPreviewEnabled && isAdmin)

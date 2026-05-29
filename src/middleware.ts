@@ -130,7 +130,7 @@ export function middleware(request: NextRequest) {
   } else if (pathname.startsWith('/api/')) {
     response.headers.set('Cache-Control', 'no-store')
   } else if (!pathname.startsWith('/admin')) {
-    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300')
+    response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate')
   }
 
   // Security headers (applied to all routes)

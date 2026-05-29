@@ -1,5 +1,10 @@
 import type { GlobalConfig } from 'payload'
-import { revalidatePolicies } from './hooks/revalidatePolicies'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidatePolicies } = createRevalidateHook({
+  collection: 'policies',
+  getTags: () => ['global_policies'],
+})
 import {
   BoldFeature,
   ItalicFeature,

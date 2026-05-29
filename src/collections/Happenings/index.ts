@@ -13,7 +13,20 @@ import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { formatSlug } from './hooks/formatSlug'
-import { revalidateHappening, revalidateDeleteHappening } from './hooks/revalidateHappening'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateHappening, afterDelete: revalidateDeleteHappening } = createRevalidateHook({
+  collection: 'happenings',
+  getPaths: (doc) => [
+    ...(doc.slug ? [`/happenings/${doc.slug}`] : []),
+    ...(doc.id != null ? [`/happenings/${doc.id}`] : []),
+  ],
+  getTags: (doc) => [
+    'happenings',
+    ...(doc.slug ? [`happening_${doc.slug}`] : []),
+    ...(doc.id != null ? [`happening_${doc.id}`] : []),
+  ],
+})
 
 export const Happenings: CollectionConfig = {
   slug: 'happenings',
