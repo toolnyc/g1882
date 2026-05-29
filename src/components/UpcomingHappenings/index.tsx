@@ -16,6 +16,7 @@ interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
+  subcaption?: string | null
   type?: { name?: string | null; slug?: string | null; dateDisplayMode?: string | null } | string | null
   artists?: (Artist | string)[] | null
   startDate?: string | Date | null
@@ -26,9 +27,21 @@ interface Happening {
 
 interface UpcomingHappeningsProps {
   happenings: Happening[]
+  sectionTitle?: string | null
+  upcomingCaption?: string | null
+  opensLabel?: string | null
+  closesLabel?: string | null
+  viewHappeningLabel?: string | null
 }
 
-export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenings }) => {
+export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({
+  happenings,
+  sectionTitle,
+  upcomingCaption,
+  opensLabel,
+  closesLabel,
+  viewHappeningLabel,
+}) => {
   const getDateParts = (happening: Happening) => {
     if (!happening.startDate) return { date: '', time: null, endDate: null }
     const happeningType = resolveHappeningType(happening.type)
@@ -51,7 +64,7 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
   const getButtonText = (happening: Happening) => {
     const happeningType = resolveHappeningType(happening.type)
     if (happeningType?.name) return `View ${happeningType.name}`
-    return 'View Happening'
+    return viewHappeningLabel || 'View Happening'
   }
 
   const getTypeLabel = (happening: Happening) => {
@@ -83,9 +96,9 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
           viewport={{ once: true }}
         >
           <div className="mb-20 text-center">
-            <div className="caption text-bright-lake mb-6">Upcoming</div>
+            <div className="caption text-bright-lake mb-6">{upcomingCaption || 'Upcoming'}</div>
             <h2 className="text-4xl font-bold tracking-tight md:text-5xl text-off-white">
-              What&apos;s Happening?
+              {sectionTitle || "What\u2019s Happening?"}
             </h2>
           </div>
 
@@ -111,11 +124,11 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                         <div className="col-span-12 lg:col-span-3">
                           {dateParts.endDate ? (
                             <>
-                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">Opens</div>
+                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">{opensLabel || 'Opens'}</div>
                               <div className="text-3xl lg:text-4xl font-bold text-off-white mb-4 leading-tight">
                                 {dateParts.date}
                               </div>
-                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">Closes</div>
+                              <div className="text-sm font-semibold text-off-white/60 uppercase tracking-wider mb-1">{closesLabel || 'Closes'}</div>
                               <div className="text-xl lg:text-2xl font-bold text-off-white/80 mb-2 leading-tight">
                                 {dateParts.endDate}
                               </div>
@@ -145,22 +158,25 @@ export const UpcomingHappenings: React.FC<UpcomingHappeningsProps> = ({ happenin
                             <h3 className="text-2xl lg:text-3xl font-bold tracking-tight text-off-white mb-3 leading-tight">
                               {happening.title}
                             </h3>
+                            {happening.subcaption && (
+                              <p className="text-base text-off-white/60 mb-3">{happening.subcaption}</p>
+                            )}
                             {artists.length > 0 && (
                               <div className="mb-4">
                                 {artists.map((artist, i) => (
                                   <React.Fragment key={artist.slug || i}>
                                     {i > 0 && (
-                                      <span className="text-xl text-bright-lake">, </span>
+                                      <span className="text-base text-bright-lake">, </span>
                                     )}
                                     {artist.slug ? (
                                       <Link
                                         href={`/artists/${artist.slug}`}
-                                        className="text-xl font-semibold text-bright-lake hover:text-lake transition-colors"
+                                        className="text-base font-semibold text-bright-lake hover:text-lake transition-colors"
                                       >
                                         {artist.name}
                                       </Link>
                                     ) : (
-                                      <span className="text-xl font-semibold text-bright-lake">
+                                      <span className="text-base font-semibold text-bright-lake">
                                         {artist.name}
                                       </span>
                                     )}

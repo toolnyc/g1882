@@ -1,15 +1,16 @@
-import type { Home, Media, Space } from '@/payload-types'
+import type { Home, Media, SiteSetting } from '@/payload-types'
 
 import { resolveArtist, resolveMediaUrl } from './mediaHelpers'
+import { resolveOptimizedUrl } from './resolveOptimizedUrl'
 import { extractPlainText } from './richTextHelpers'
 
 export interface FeaturedArtistData {
   id: string
   name: string
-  title: string
   bio: string
   image: string
   artistSlug: string
+  imageCaption: Record<string, unknown> | null
 }
 
 export interface VisitSectionData {
@@ -23,31 +24,52 @@ export interface VisitSectionData {
 const getArtistImage = (image: string | Media | null | undefined, override?: string | Media | null) =>
   resolveMediaUrl(override) || resolveMediaUrl(image)
 
+/**
+ * Resolves featured artist data from the Home global.
+ * Caption label comes from SiteSettings.labels.featuredArtist (passed separately by HomePageClient).
+ */
 export const transformFeaturedArtist = (
   homeData: Home | null,
 ): FeaturedArtistData | null => {
   const homeArtist = resolveArtist(homeData?.featuredArtist)
   if (!homeArtist) return null
 
+  // Resolve the Media object that is actually displayed (override takes precedence)
+  const resolvedMedia =
+    (typeof homeData?.featuredArtistImage === 'object' && homeData.featuredArtistImage
+      ? homeData.featuredArtistImage
+      : typeof homeArtist.image === 'object' && homeArtist.image
+        ? homeArtist.image
+        : null) as Media | null
+
   return {
     id: homeArtist.id,
     name: homeArtist.name,
-    title: homeArtist.name,
     bio: (homeData?.featuredArtistDescription as string) || extractPlainText(homeArtist.bio) || '',
     image: getArtistImage(homeArtist.image, homeData?.featuredArtistImage),
     artistSlug: homeArtist.slug,
+    imageCaption: (resolvedMedia?.caption as Record<string, unknown> | null | undefined) ?? null,
   }
 }
 
+/**
+ * Builds the homepage "Plan Your Visit" promo card.
+ *
+ * Data flow:
+ * - If Home.visitTitle is set → use all Home visit fields (custom promo)
+ * - Otherwise → fallback to SiteSettings.name + SiteSettings.description (venue facts)
+ *
+ * Visibility is controlled by Home.visitSectionEnabled in HomePageClient.
+ */
 export const transformVisitSection = (
   homeData: Home | null,
-  space: Space | null,
+  space: SiteSetting | null,
 ): VisitSectionData | null => {
   if (homeData?.visitTitle) {
     return {
       title: homeData.visitTitle,
       description: homeData.visitDescription || '',
-      image: resolveMediaUrl(homeData.visitImage),
+      image: resolveOptimizedUrl(homeData.visitImage as Media, 1920) || resolveMediaUrl(homeData.visitImage),
       ctaText: homeData.visitCtaText || 'Plan Your Visit',
       ctaUrl: homeData.visitCtaUrl || '/visit',
     }
@@ -58,10 +80,8 @@ export const transformVisitSection = (
   }
 
   return {
-    title: 'Escape to the Duneland',
-    description:
-      space.description ||
-      'Located under an hours drive from Chicago, Gallery 1882, in the heart of Chesterton, Indiana is the gateway to the Indiana Dunes National Park. Always open, always free, always inspiring.',
+    title: space.name || 'Gallery 1882',
+    description: space.description || '',
     image: '',
     ctaText: 'Plan Your Visit',
     ctaUrl: '/visit',

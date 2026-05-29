@@ -3,6 +3,10 @@ import { render, cleanup } from '@testing-library/react'
 import HomePage from '@/app/(frontend)/page'
 import type { Happening, Artist, Media } from '@/payload-types'
 
+vi.mock('next/headers', () => ({
+  draftMode: vi.fn(() => Promise.resolve({ isEnabled: false })),
+}))
+
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
   default: ({ src, alt, ...props }: any) => (
@@ -84,7 +88,7 @@ describe('HomePage', () => {
 
     // Mock empty data
     vi.mocked(getCachedHappenings).mockReturnValue(async () => [])
-    vi.mocked(getCachedSpace).mockReturnValue(async () => null)
+    vi.mocked(getCachedSpace).mockReturnValue(async () => null as any)
     vi.mocked(getCachedGlobal).mockReturnValue(async () => ({} as any))
 
     const component = await HomePage()
@@ -112,7 +116,7 @@ describe('HomePage', () => {
     vi.mocked(getCachedSpace).mockReturnValue(async () => ({
       id: '1',
       description: 'Test space description',
-    }))
+    }) as any)
     vi.mocked(getCachedGlobal).mockReturnValue(async () => ({} as any))
 
     const component = await HomePage()
@@ -128,7 +132,7 @@ describe('HomePage', () => {
     const { getCachedGlobal } = await import('@/utilities/getGlobals')
 
     vi.mocked(getCachedHappenings).mockReturnValue(async () => [])
-    vi.mocked(getCachedSpace).mockReturnValue(async () => null)
+    vi.mocked(getCachedSpace).mockReturnValue(async () => null as any)
     vi.mocked(getCachedGlobal).mockReturnValue(async () => ({} as any))
 
     const component = await HomePage()

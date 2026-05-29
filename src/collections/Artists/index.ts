@@ -13,7 +13,13 @@ import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { formatSlug } from './hooks/formatSlug'
-import { revalidateArtist, revalidateDeleteArtist } from './hooks/revalidateArtist'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateArtist, afterDelete: revalidateDeleteArtist } = createRevalidateHook({
+  collection: 'artists',
+  getPaths: (doc) => (doc.slug ? [`/artists/${doc.slug}`] : []),
+  getTags: (doc) => ['artists', ...(doc.slug ? [`artist_${doc.slug}`] : [])],
+})
 
 export const Artists: CollectionConfig = {
   slug: 'artists',
@@ -26,9 +32,8 @@ export const Artists: CollectionConfig = {
   versions: {
     maxPerDoc: 3,
     drafts: {
-      autosave: {
-        interval: 100,
-      },
+      // autosave disabled — causes blank create pages on Vercel with required
+      // relationship fields (same pattern as Happenings, documented Apr 2026)
       schedulePublish: true,
     },
   },
@@ -82,9 +87,9 @@ export const Artists: CollectionConfig = {
               name: 'works',
               type: 'array',
               label: 'Works',
-              maxRows: 50,
+              maxRows: 100,
               admin: {
-                description: 'Gallery of artist works with images and captions',
+                description: 'Gallery of artist works. Photo captions/credits are managed on each Media document.',
               },
               fields: [
                 {
@@ -98,12 +103,19 @@ export const Artists: CollectionConfig = {
                   type: 'text',
                   required: false,
                   maxLength: 255,
+                  admin: {
+                    description: 'Artwork title. The photo caption/credit comes from the Media document.',
+                  },
                 },
                 {
-                  name: 'caption',
-                  type: 'text',
+                  name: 'happenings',
+                  type: 'relationship',
+                  relationTo: 'happenings',
+                  hasMany: true,
                   required: false,
-                  maxLength: 1000,
+                  admin: {
+                    description: 'Tag which shows/exhibitions this work appears in',
+                  },
                 },
               ],
             },

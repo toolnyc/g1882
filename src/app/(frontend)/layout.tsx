@@ -5,26 +5,27 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
-import { AdminBar } from '@/components/AdminBar'
+import { AdminBarIsland } from '@/components/AdminBarIsland'
 import { CustomCursor } from '@/components/CustomCursor'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { CookieConsent } from '@/components/CookieConsent'
+import { AccessibilityWidget } from '@/components/AccessibilityWidget'
 import { LayoutClient } from '@/components/LayoutClient'
 import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { getAuthStatus } from '@/utilities/getAuthStatus'
-import { draftMode } from 'next/headers'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Home } from '@/payload-types'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getOrganizationSchema } from '@/utilities/jsonLd'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-  const { isAuthenticated } = await getAuthStatus()
+  const homeData = (await getCachedGlobal('home', 0)()) as Home
 
   return (
     <html
@@ -48,20 +49,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           Skip to main content
         </a>
-        <Providers isAdmin={isAuthenticated}>
+        <Providers
+          popupHeadline={homeData?.popupHeadline}
+          popupDescription={homeData?.popupDescription}
+          popupButtonText={homeData?.popupButtonText}
+          popupSuccessMessage={homeData?.popupSuccessMessage}
+        >
           <LanderModeGuard>
             <CustomCursor />
-            {(isEnabled || isAuthenticated) && (
-              <div className="fixed top-0 left-0 right-0 z-[100]">
-                <AdminBar
-                  adminBarProps={{
-                    preview: isEnabled,
-                  }}
-                />
-              </div>
-            )}
+            <React.Suspense fallback={null}>
+              <AdminBarIsland />
+            </React.Suspense>
             <LayoutClient>
-              <div id="main-content">
+              <div id="main-content" className="flex flex-1 flex-col">
                 <Header />
                 {children}
                 <Footer />
@@ -69,10 +69,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </LayoutClient>
           </LanderModeGuard>
           <CookieConsent />
+          <AccessibilityWidget />
         </Providers>
         <Analytics />
         <SpeedInsights />
-      </body>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getOrganizationSchema()) }} />
+</body>
     </html>
   )
 }
@@ -80,6 +82,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   openGraph: mergeOpenGraph(),
+  title: {
+    template: '%s | Gallery 1882',
+    default: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
+  },
   twitter: {
     card: 'summary_large_image',
     creator: '@gallery1882',

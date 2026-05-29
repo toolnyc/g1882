@@ -1,39 +1,56 @@
 import type { Metadata } from 'next'
 
-import type { Media, Post, Config } from '../payload-types'
+import type { Post, Config } from '../payload-types'
+import type { MediaWithSizes } from '@/types/media-sizes'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
-const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
+const getImageURL = (image?: MediaWithSizes | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  let url = serverUrl + '/website-template-OG.webp'
+  const makeAbsolute = (path: string) => {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path
+    }
+    return serverUrl + path
+  }
+
+  let url = serverUrl + '/og-default.png'
 
   if (image && typeof image === 'object' && 'url' in image) {
-    const ogUrl = image.sizes?.og?.url
+    const ogUrl = (image as MediaWithSizes).sizes?.og?.url
 
-    url = ogUrl ? serverUrl + ogUrl : serverUrl + image.url
+    const imageUrl = (ogUrl || image.url) ?? undefined
+    url = imageUrl ? makeAbsolute(imageUrl) : url
   }
 
   return url
 }
 
 export const generateMeta = async (args: {
-  doc: Partial<Post> | { meta?: { title?: string | null; description?: string | null; image?: Media | string | null } } | null
+  collection?: string
+  doc: Partial<Post> | { meta?: { title?: string | null; description?: string | null; image?: MediaWithSizes | string | null } } | null
 }): Promise<Metadata> => {
-  const { doc } = args
+  const { collection, doc } = args
 
   const ogImage = getImageURL(doc?.meta?.image)
 
   const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+    ? doc?.meta?.title
+    : ''
 
   // Type guard to check if doc has slug property
   const docSlug = doc && 'slug' in doc ? doc.slug : undefined
   
   return {
+    ...(collection
+      ? {
+          alternates: {
+            canonical: `/${collection}/${docSlug || ''}`,
+          },
+        }
+      : {}),
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',

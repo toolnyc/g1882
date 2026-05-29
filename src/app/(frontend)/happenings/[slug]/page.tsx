@@ -4,17 +4,20 @@ import Link from 'next/link'
 import React from 'react'
 import { getCachedHappeningBySlug } from '@/utilities/getHappeningBySlug'
 import RichText from '@/components/RichText'
-import { getServerSideURL } from '@/utilities/getURL'
 import { generateMeta } from '@/utilities/generateMeta'
-import { CalendarButton } from './CalendarButton'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import { CategoryTag } from '@/components/CategoryTag'
 import { formatHappeningDateParts } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+import { getEventSchema } from '@/utilities/jsonLd'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 import type { Artist } from '@/payload-types'
+import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
+import type { WorkItem } from '@/components/WorksMasonryGrid'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type Args = {
   params: Promise<{
@@ -24,8 +27,8 @@ type Args = {
 
 export default async function HappeningPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const getHappening = getCachedHappeningBySlug(slug)
-  const happening = await getHappening()
+  const { isEnabled: draft } = await draftMode()
+  const happening = await getCachedHappeningBySlug(slug, draft)()
 
   if (!happening) {
     return (
@@ -45,11 +48,24 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
     .map((a) => (typeof a === 'object' && a ? (a as Artist) : null))
     .filter(Boolean) as Artist[]
 
+  // Collect works from all artists that are tagged with this happening
+  const exhibitionWorks: WorkItem[] = artists.flatMap((artist) => {
+    const works = artist.works || []
+    return works.filter((work) => {
+      const taggedHappenings = work.happenings || []
+      return taggedHappenings.some((h) => {
+        const happeningId = typeof h === 'object' && h ? h.id : h
+        return happeningId === happening.id
+      })
+    })
+  })
+
   const happeningType = resolveHappeningType(happening.type)
   const typeLabel = happeningType?.name || null
   const dateDisplayMode = happeningType?.dateDisplayMode || 'datetime'
 
-  const hasHeroImage = heroImage && typeof heroImage === 'object' && heroImage.url
+  const heroUrl = resolveOptimizedUrl(heroImage, 1400)
+  const hasHeroImage = heroImage && heroUrl
 
   const dateParts = formatHappeningDateParts(
     happening.startDate,
@@ -59,17 +75,30 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
 
   return (
     <main className="min-h-screen bg-off-white">
-      <article className={`pb-24${hasHeroImage ? '' : ' pt-48'}`}>
-        {/* Hero Image */}
+      <article className={`pb-24${hasHeroImage ? ' pt-40' : ' pt-48'}`}>
+        {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
-          <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
-            <Image
-              src={heroImage.url!}
-              alt={heroImage.alt || happening.title || ''}
-              fill
-              className="object-cover"
-              priority
-            />
+          <div className="mb-16">
+            <div className="w-full overflow-hidden flex items-center justify-center">
+              <div className="relative overflow-hidden group">
+                <Image
+                  src={heroUrl}
+                  alt={heroImage.alt || happening.title || ''}
+                  width={heroImage.width || 1920}
+                  height={heroImage.height || 1080}
+                  className="h-auto max-h-[80vh] w-auto max-w-full"
+                  priority
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1400px"
+                />
+                {heroImage.caption && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-off-white text-sm [&_p]:my-0 [&_p]:text-off-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                      <RichText data={heroImage.caption} enableGutter={false} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -80,26 +109,29 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-navy mb-4">
                 {happening.title}
               </h1>
+              {happening.subcaption && (
+                <p className="text-xl text-navy/70 mb-4">{happening.subcaption}</p>
+              )}
               {artists.length > 0 && (
-                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                <p className="text-lg text-bright-lake leading-relaxed">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.id}>
-                      {i > 0 && <span className="text-2xl text-bright-lake">,</span>}
+                      {i > 0 && ', '}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-2xl text-bright-lake font-semibold hover:text-lake transition-colors"
+                          className="font-semibold hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-2xl text-bright-lake font-semibold">
+                        <span className="font-semibold">
                           {artist.name}
                         </span>
                       )}
                     </React.Fragment>
                   ))}
-                </div>
+                </p>
               )}
             </div>
 
@@ -107,6 +139,9 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
             {dateParts.date && (
               <div className="mb-8 pb-8 border-b border-navy/20">
                 <span className="text-lg text-navy">{dateParts.date}</span>
+                {dateParts.endDate && (
+                  <span className="text-lg text-navy">{` \u2013 ${dateParts.endDate}`}</span>
+                )}
                 {dateParts.time && (
                   <span className="text-base text-navy/60 ml-2">{dateParts.time}</span>
                 )}
@@ -127,31 +162,41 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
               </div>
             )}
 
-            {/* Calendar Button */}
-            {happening.startDate && (
+            {/* Exhibition Works */}
+            {exhibitionWorks.length > 0 && (
               <div className="mt-12 pt-8 border-t border-navy/20">
-                <CalendarButton
-                  happening={{
-                    title: happening.title || '',
-                    description: extractPlainText(happening.description),
-                    startDate: new Date(happening.startDate as string),
-                    endDate: happening.endDate ? new Date(happening.endDate as string) : undefined,
-                    url: `${getServerSideURL()}/happenings/${slug}`,
-                  }}
+                <h2 className="text-2xl font-bold text-navy mb-6">Works</h2>
+                <WorksMasonryGrid
+                  works={exhibitionWorks}
+                  fallbackAlt={happening.title || ''}
                 />
               </div>
             )}
+
+            {/* Contact Info */}
+            {happening.contactInfo && (
+              <div className="mt-12 pt-8 border-t border-navy/20">
+                <RichText data={happening.contactInfo} enableGutter={false} className="prose-p:my-2 prose-p:text-base" />
+              </div>
+            )}
+
+
           </div>
         </div>
       </article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getEventSchema(happening)),
+          }}
+        />
     </main>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const getHappening = getCachedHappeningBySlug(slug)
-  const happening = await getHappening()
+  const happening = await getCachedHappeningBySlug(slug)()
 
   if (!happening) {
     return {
@@ -160,6 +205,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 
   return generateMeta({
+    collection: 'happenings',
     doc: {
       ...happening,
       meta: {

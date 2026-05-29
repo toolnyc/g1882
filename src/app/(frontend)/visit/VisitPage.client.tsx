@@ -3,6 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { AnimatedBorder } from '@/components/AnimatedBorder'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import type { Visit, Media } from '@/payload-types'
 
 interface FormattedHoursLine {
@@ -13,6 +14,8 @@ interface FormattedHoursLine {
 interface VisitPageClientProps {
   visit: Visit
   formattedHours: FormattedHoursLine[]
+  pageTitle?: string | null
+  galleryAddress?: string | null
 }
 
 const LocationIcon = () => (
@@ -89,7 +92,7 @@ const getDirectionCardStyle = (style: string | null | undefined) => {
   }
 }
 
-export default function VisitPageClient({ visit, formattedHours }: VisitPageClientProps) {
+export default function VisitPageClient({ visit, formattedHours, pageTitle, galleryAddress }: VisitPageClientProps) {
   const heroImage = visit.heroImage as Media | null | undefined
 
   const regularHours = formattedHours.length > 0 ? formattedHours : null
@@ -120,6 +123,12 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
       ? visit.location.directions
       : null
 
+  // Normalise address: collapse newlines/extra whitespace into a single line
+  const cleanAddress = galleryAddress?.replace(/\s*\n\s*/g, ', ').trim() || null
+  const mapsUrl =
+    visit.location?.googleMapsUrl?.trim() ||
+    (cleanAddress ? `https://maps.google.com/maps?q=${encodeURIComponent(cleanAddress)}` : null)
+
   const chestertonFeatures =
     visit.chesterton?.features && visit.chesterton.features.length > 0
       ? visit.chesterton.features
@@ -141,7 +150,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
             transition={{ duration: 0.8 }}
           >
             <div className="mb-8">
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">Visit</h1>
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl text-navy">{pageTitle || 'Visit'}</h1>
               <AnimatedBorder className="mt-4" />
             </div>
           </motion.div>
@@ -158,13 +167,14 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
               transition={{ duration: 0.8 }}
               className="relative overflow-hidden rounded-lg"
             >
-              <div className="aspect-[16/9] w-full bg-navy/5 flex items-center justify-center">
+              <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden">
                 <Image
-                  src={heroImage.url}
+                  src={resolveOptimizedUrl(heroImage, 1920) || heroImage.url}
                   alt={heroImage.alt || 'Gallery 1882'}
-                  width={1920}
-                  height={1080}
-                  className="h-full w-full object-cover object-center"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  priority
                 />
               </div>
             </motion.div>
@@ -206,7 +216,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                     </div>
                   )}
                   {visit.hours?.note && (
-                    <p className="text-sm text-navy/60 mt-6">{visit.hours.note}</p>
+                    <p className="text-base text-navy/60 mt-6 font-medium">{visit.hours.note}</p>
                   )}
                 </div>
               </div>
@@ -294,7 +304,7 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
       )}
 
       {/* Getting Here Section */}
-      {(visit.location?.description || visit.location?.address || directions) && (
+      {(visit.location?.description || galleryAddress || directions) && (
         <section className="py-20 gallery-section">
           <div className="container">
             <motion.div
@@ -314,17 +324,46 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                 <div className="space-y-6 text-lg leading-relaxed text-navy/80">
                   {visit.location?.description && <p>{visit.location.description}</p>}
                   <div className="space-y-6">
-                    {visit.location?.address && (
+                    {galleryAddress && (
                       <div>
-                        <h3 className="text-2xl font-bold text-navy mb-4">Address</h3>
+                        <h3 className="text-2xl font-bold text-navy mb-4">{visit.location?.addressLabel || 'Address'}</h3>
                         <p className="text-lg text-navy/80 whitespace-pre-line">
-                          {visit.location.address}
+                          {galleryAddress}
                         </p>
+                        {mapsUrl && (
+                          <a
+                            href={mapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-navy text-off-white text-sm font-semibold tracking-wide uppercase rounded-lg hover:bg-navy/90 transition-colors"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                            Get Directions
+                          </a>
+                        )}
                       </div>
                     )}
                     {(visit.location?.parkingDescription || parkingFeatures) && (
                       <div>
-                        <h3 className="text-2xl font-bold text-navy mb-4">Parking</h3>
+                        <h3 className="text-2xl font-bold text-navy mb-4">{visit.location?.parkingLabel || 'Parking'}</h3>
                         {visit.location?.parkingDescription && (
                           <p className="text-navy/80 mb-4">{visit.location.parkingDescription}</p>
                         )}
@@ -390,6 +429,37 @@ export default function VisitPageClient({ visit, formattedHours }: VisitPageClie
                   </div>
                 )}
               </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Duneland Community Section — only show when enabled */}
+      {visit.dunelandCommunityEnabled && (
+        <section className="py-20 gallery-section">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center max-w-4xl mx-auto"
+            >
+              {visit.dunelandCommunity?.caption && (
+                <div className="caption text-lake mb-6">{visit.dunelandCommunity.caption}</div>
+              )}
+              <h2 className="mb-8 text-4xl font-bold tracking-tight md:text-5xl text-navy">
+                {visit.dunelandCommunity?.title || 'Explore the Duneland Community'}
+              </h2>
+              {visit.dunelandCommunity?.description ? (
+                <p className="text-lg leading-relaxed text-navy/80">
+                  {visit.dunelandCommunity.description}
+                </p>
+              ) : (
+                <p className="text-lg leading-relaxed text-navy/50 italic">
+                  Content coming soon.
+                </p>
+              )}
             </motion.div>
           </div>
         </section>

@@ -1,6 +1,12 @@
 import type { GlobalConfig } from 'payload'
 import { hero } from '@/heros/config'
-import { revalidateHome } from './hooks/revalidateHome'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateHome } = createRevalidateHook({
+  collection: 'home',
+  getPaths: () => ['/'],
+  getTags: () => ['global_home'],
+})
 import { getServerSideURL } from '../../utilities/getURL'
 
 export const Home: GlobalConfig = {
@@ -30,13 +36,25 @@ export const Home: GlobalConfig = {
               fields: [hero],
             },
             {
-              name: 'heroVideoUrl',
-              type: 'text',
-              label: 'Hero Video URL',
+              name: 'heroVideo',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video',
               required: false,
               admin: {
                 description:
-                  'Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.',
+                  'Upload an MP4 or WebM video for the hero background. Leave blank to show no video.',
+              },
+            },
+            {
+              name: 'heroVideoPoster',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video Poster Image',
+              required: false,
+              admin: {
+                description:
+                  'Optional poster image shown while the video loads. Should be a still frame or preview of the video.',
               },
             },
           ],
@@ -45,12 +63,13 @@ export const Home: GlobalConfig = {
           label: 'Mission',
           fields: [
             {
-              name: 'missionCaption',
-              type: 'text',
-              label: 'Mission Section Caption',
+              name: 'missionIcon',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Mission Section Icon',
               required: false,
               admin: {
-                description: 'Caption above the mission statement (defaults to "Our Mission")',
+                description: 'Small icon/logo displayed above the mission statement',
               },
             },
             {
@@ -98,6 +117,16 @@ export const Home: GlobalConfig = {
               },
             },
             {
+              name: 'featuredArtistCtaPrefix',
+              type: 'text',
+              label: 'Featured Artist Button Prefix',
+              required: false,
+              admin: {
+                description:
+                  'Button text prefix before the artist\'s first name (defaults to "More About")',
+              },
+            },
+            {
               name: 'featuredArtistDescription',
               type: 'textarea',
               label: 'Featured Artist Description',
@@ -117,7 +146,7 @@ export const Home: GlobalConfig = {
               label: 'Show Visit Section',
               defaultValue: true,
               admin: {
-                description: 'Toggle the Visit section on the homepage',
+                description: 'Toggle the "Plan Your Visit" promo card on the homepage',
               },
             },
             {
@@ -125,6 +154,9 @@ export const Home: GlobalConfig = {
               type: 'text',
               label: 'Visit Section Title',
               required: false,
+              admin: {
+                description: 'Custom title for the homepage visit promo card. If empty, defaults to gallery description from Space.',
+              },
             },
             {
               name: 'visitDescription',
@@ -150,6 +182,81 @@ export const Home: GlobalConfig = {
               type: 'text',
               label: 'Visit CTA URL',
               required: false,
+            },
+          ],
+        },
+        {
+          label: 'Newsletter Popup',
+          fields: [
+            {
+              name: 'popupHeadline',
+              type: 'text',
+              label: 'Popup Headline',
+              required: false,
+              admin: {
+                description: 'Headline for the newsletter popup (defaults to "Opening Soon")',
+              },
+            },
+            {
+              name: 'popupDescription',
+              type: 'textarea',
+              label: 'Popup Description',
+              required: false,
+              admin: {
+                description:
+                  'Description text for the newsletter popup (defaults to launch announcement copy)',
+              },
+            },
+            {
+              name: 'popupButtonText',
+              type: 'text',
+              label: 'Popup Button Text',
+              required: false,
+              admin: {
+                description: 'Submit button text (defaults to "Subscribe")',
+              },
+            },
+            {
+              name: 'popupSuccessMessage',
+              type: 'text',
+              label: 'Popup Success Message',
+              required: false,
+              admin: {
+                description:
+                  'Message shown after successful signup (defaults to "You\'ve been added to the newsletter!")',
+              },
+            },
+          ],
+        },
+        {
+          label: "What's Happening",
+          fields: [
+            {
+              name: 'whatsHappeningEnabled',
+              type: 'checkbox',
+              label: "Show What's Happening Section",
+              defaultValue: true,
+              admin: {
+                description: "Toggle the What's Happening section on the homepage",
+              },
+            },
+            {
+              name: 'whatsHappeningTitle',
+              type: 'text',
+              label: "What's Happening Title",
+              required: false,
+              admin: {
+                description: 'Override the section title (defaults to "What\'s Happening?")',
+              },
+            },
+            {
+              name: 'whatsHappeningIcon',
+              type: 'checkbox',
+              label: 'Show Section Icon',
+              defaultValue: true,
+              admin: {
+                description: 'Show the decorative icon next to the section heading',
+              },
             },
           ],
         },

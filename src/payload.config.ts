@@ -12,13 +12,20 @@ import { Happenings } from './collections/Happenings'
 import { HappeningTypes } from './collections/HappeningTypes'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
+import { RentalInquiries } from './collections/RentalInquiries'
 import { Users } from './collections/Users'
 import { Home } from './globals/Home/config'
-import { Space } from './globals/Space/config'
 import { Visit } from './globals/Visit/config'
+import { Policies } from './globals/Policies/config'
+import { OurStory } from './globals/OurStory/config'
+import { Space } from './globals/Space/config'
+import { SiteSettings } from './globals/SiteSettings/config'
 import { plugins } from './plugins'
+import { blobFetchRetryPlugin } from './plugins/blobFetchRetry'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { generateImageSizesTask } from './jobs/generateImageSizes'
+import { canRunPayloadJobs } from './jobs/access'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -26,6 +33,14 @@ const dirname = path.dirname(filename)
 if (!process.env.PREVIEW_SECRET) {
   // Using console.warn here because Payload logger is not yet initialized at config load time
   console.warn('[g1882] PREVIEW_SECRET environment variable is not set — live preview will be disabled')
+}
+
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.warn('[g1882] BLOB_READ_WRITE_TOKEN is not set — media uploads will use local disk storage instead of Vercel Blob. URLs stored in the DB will be relative paths, which break in production.')
+}
+
+if (!process.env.CRON_SECRET) {
+  console.warn('[g1882] CRON_SECRET is not set — Vercel cron invocations of /api/payload-jobs/run will be rejected, leaving image processing jobs queued.')
 }
 
 export default buildConfig({
@@ -37,6 +52,7 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
+      afterNavLinks: ['@/components/BackToSite', '@/components/AdminDiagnostics'],
       graphics: {
         Logo: '@/components/Logo/Logo#Logo',
         Icon: '@/components/Logo/Icon#Icon',
@@ -74,18 +90,33 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes],
+  collections: [Posts, Media, Categories, Users, Artists, Happenings, HappeningTypes, RentalInquiries],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Space, Home, Visit],
+  globals: [Home, Visit, Policies, OurStory, Space, SiteSettings],
   plugins: [
     ...plugins,
     vercelBlobStorage({
       collections: {
-        media: true,
+        media: {
+          disablePayloadAccessControl: true,
+        },
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      clientUploads: true,
+      addRandomSuffix: true,
     }),
+    blobFetchRetryPlugin,
   ],
+  onInit: async (payload) => {
+    const { totalDocs } = await payload.count({
+      collection: 'happening-types',
+    })
+    if (totalDocs === 0) {
+      payload.logger.warn(
+        '[g1882] The happening-types collection is empty. Creating new Happenings will fail because the required "type" field has no options. Run the seed endpoint or create types manually in the admin panel.',
+      )
+    }
+  },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {
@@ -94,16 +125,9 @@ export default buildConfig({
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Allow logged in users to execute this endpoint (default)
-        if (req.user) return true
-
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
-        const authHeader = req.headers.get('authorization')
-        return authHeader === `Bearer ${process.env.CRON_SECRET}`
+        return canRunPayloadJobs(req)
       },
     },
-    tasks: [],
+    tasks: [generateImageSizesTask],
   },
 })

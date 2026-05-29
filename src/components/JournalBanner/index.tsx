@@ -78,6 +78,7 @@ export const JournalBanner: React.FC<JournalBannerProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                aria-label="Email address"
                 required
                 disabled={isLoading}
                 className="flex-1 w-full px-4 py-3 text-navy placeholder-navy/60 bg-off-white rounded-[3px] border-0 focus:outline-none focus:ring-2 focus:ring-off-white/50 disabled:opacity-50"

@@ -1,15 +1,58 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Policy } from '@/payload-types'
+import RichText from '@/components/RichText'
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | Gallery 1882',
-  description: 'Privacy policy for Gallery 1882 website.',
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    alternates: {
+      canonical: '/privacy',
+    },
+    title: 'Privacy Policy | Gallery 1882',
+    description: 'Privacy policy for Gallery 1882 website.',
+  }
 }
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const { isEnabled: draft } = await draftMode()
+  const policies = (await getCachedGlobal('policies', 1, draft)()) as Policy
+
+  const hasContent = policies?.privacyContent?.root?.children?.length
+
   return (
-    <main className="container py-24 max-w-3xl">
+    <main className="container pt-48 pb-24 max-w-3xl">
       <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
+
+      {hasContent ? (
+        <>
+          {policies.privacyLastUpdated && (
+            <p className="text-navy/70 mb-8 text-sm">
+              Last updated:{' '}
+              {new Date(policies.privacyLastUpdated).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+              })}
+            </p>
+          )}
+          <div className="prose prose-navy max-w-none">
+            <RichText data={policies.privacyContent!} enableGutter={false} />
+          </div>
+        </>
+      ) : (
+        <DefaultPrivacyContent />
+      )}
+    </main>
+  )
+}
+
+function DefaultPrivacyContent() {
+  return (
+    <>
       <p className="text-navy/70 mb-8 text-sm">Last updated: February 2026</p>
 
       <div className="prose prose-navy max-w-none space-y-8">
@@ -117,6 +160,6 @@ export default function PrivacyPolicyPage() {
           </p>
         </section>
       </div>
-    </main>
+    </>
   )
 }

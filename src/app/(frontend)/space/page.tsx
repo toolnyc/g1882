@@ -1,38 +1,63 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { getCachedSpace } from '@/utilities/getSpace'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting, Space } from '@/payload-types'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
 import { generateMeta } from '@/utilities/generateMeta'
+
+export const revalidate = false
 import { SpacePageClient } from './SpacePage.client'
 
 export default async function SpacePage() {
-  const space = await getCachedSpace()()
+  const { isEnabled: draft } = await draftMode()
+  const [space, siteSettings] = await Promise.all([
+    getCachedGlobal('space', 1, draft)() as Promise<Space>,
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
+  ])
 
-  return <SpacePageClient space={space ?? undefined} />
+  return <SpacePageClient space={space} siteSettings={siteSettings ?? undefined} />
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const space = await getCachedSpace()()
+  const [space, siteSettings] = await Promise.all([
+    getCachedGlobal('space', 0)() as Promise<Space>,
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+  ])
+
+  const galleryName = siteSettings?.name || 'Gallery 1882'
+  const title = space?.pageTitle || 'Gallery Space'
+  const description =
+    space?.intro?.description ||
+    siteSettings?.description ||
+    siteSettings?.tagline ||
+    'Rent our contemporary gallery space for private events, corporate gatherings, and art-centric celebrations.'
 
   if (!space) {
     return {
-      title: 'Gallery Space',
+      alternates: {
+        canonical: '/space',
+      },
+      title,
+      description,
     }
   }
 
-  return generateMeta({
+  const meta = await generateMeta({
     doc: {
       ...space,
       meta: {
-        title: `Gallery Space | ${space.name || 'Gallery 1882'}`,
-        description:
-          space.description ||
-          space.tagline ||
-          'Rent our contemporary gallery space for private events, corporate gatherings, and art-centric celebrations.',
+        title: `${title} | ${galleryName}`,
+        description,
       },
     },
   })
+
+  return {
+    ...meta,
+    alternates: {
+      canonical: '/space',
+    },
+  }
 }

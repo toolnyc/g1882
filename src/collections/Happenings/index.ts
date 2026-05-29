@@ -13,7 +13,20 @@ import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { formatSlug } from './hooks/formatSlug'
-import { revalidateHappening, revalidateDeleteHappening } from './hooks/revalidateHappening'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateHappening, afterDelete: revalidateDeleteHappening } = createRevalidateHook({
+  collection: 'happenings',
+  getPaths: (doc) => [
+    ...(doc.slug ? [`/happenings/${doc.slug}`] : []),
+    ...(doc.id != null ? [`/happenings/${doc.id}`] : []),
+  ],
+  getTags: (doc) => [
+    'happenings',
+    ...(doc.slug ? [`happening_${doc.slug}`] : []),
+    ...(doc.id != null ? [`happening_${doc.id}`] : []),
+  ],
+})
 
 export const Happenings: CollectionConfig = {
   slug: 'happenings',
@@ -26,9 +39,10 @@ export const Happenings: CollectionConfig = {
   versions: {
     maxPerDoc: 3,
     drafts: {
-      autosave: {
-        interval: 800,
-      },
+      // autosave temporarily disabled — suspected cause of blank create page
+      // autosave: {
+      //   interval: 800,
+      // },
       schedulePublish: true,
     },
   },
@@ -44,6 +58,15 @@ export const Happenings: CollectionConfig = {
       type: 'text',
       required: true,
       maxLength: 255,
+    },
+    {
+      name: 'subcaption',
+      type: 'text',
+      required: false,
+      maxLength: 500,
+      admin: {
+        description: 'Optional subtitle displayed between the title and artist list',
+      },
     },
     {
       name: 'type',
@@ -174,6 +197,26 @@ export const Happenings: CollectionConfig = {
               admin: {
                 description:
                   'Artists involved in this happening (supports multiple for group shows)',
+              },
+            },
+          ],
+        },
+        {
+          label: 'Exhibition Details',
+          fields: [
+            {
+              name: 'contactInfo',
+              type: 'richText',
+              required: false,
+              editor: lexicalEditor({
+                features: () => [
+                  FixedToolbarFeature(),
+                  InlineToolbarFeature(),
+                ],
+              }),
+              admin: {
+                description:
+                  'Contact information displayed below the works grid (e.g. gallery contact, sales inquiries)',
               },
             },
           ],

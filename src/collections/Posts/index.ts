@@ -16,7 +16,14 @@ import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
-import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidatePost, afterDelete: revalidateDelete } = createRevalidateHook({
+  collection: 'posts',
+  getPaths: (doc) => (doc.slug ? [`/news/${doc.slug}`] : []),
+  getTags: (doc) => ['posts', 'posts-sitemap', ...(doc.slug ? [`post_${doc.slug}`] : [])],
+  isDraftAware: true,
+})
 
 import {
   MetaDescriptionField,

@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
 import { formatHappeningDateParts, type DateDisplayMode } from '@/utilities/dateHelpers'
 import { resolveHappeningType } from '@/utilities/happeningTypeHelpers'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
+import type { Media } from '@/payload-types'
 
 interface Artist {
   id?: string
@@ -18,6 +20,7 @@ interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
+  subcaption?: string | null
   type?: { name?: string | null; slug?: string | null; dateDisplayMode?: string | null } | string | null
   artists?: (Artist | string)[] | null
   startDate?: string | Date | null
@@ -55,6 +58,9 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
 
   const getImageUrl = (happening: Happening) => {
     if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
+      // Use square (500px) WebP for 96px thumbnails
+      const optimized = resolveOptimizedUrl(happening.heroImage as Media, 500)
+      if (optimized) return optimized
       return happening.heroImage.url
     }
     if (typeof happening.heroImage === 'string' && happening.heroImage) {
@@ -126,6 +132,9 @@ export const FeaturedHappenings: React.FC<FeaturedHappeningsProps> = ({ happenin
                   <h3 className="text-xl font-bold text-navy mb-1 truncate group-hover:text-bright-lake transition-colors">
                     {happening.title}
                   </h3>
+                  {happening.subcaption && (
+                    <p className="text-xs text-navy/60 mb-1 truncate">{happening.subcaption}</p>
+                  )}
                   {getArtistNames(happening) && (
                     <p className="text-sm text-navy/70 mb-2">
                       {getArtistNames(happening)}

@@ -3,6 +3,10 @@ import { render, cleanup } from '@testing-library/react'
 import HappeningPage from '@/app/(frontend)/happenings/[slug]/page'
 import type { Happening, Artist, Media } from '@/payload-types'
 
+vi.mock('next/headers', () => ({
+  draftMode: vi.fn(() => Promise.resolve({ isEnabled: false })),
+}))
+
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
   default: ({ src, alt, ...props }: any) => (
@@ -33,11 +37,7 @@ vi.mock('@/components/RichText', () => ({
   ),
 }))
 
-vi.mock('@/app/(frontend)/happenings/[slug]/CalendarButton', () => ({
-  CalendarButton: ({ happening }: any) => (
-    <button data-testid="calendar-button">{happening?.title}</button>
-  ),
-}))
+
 
 // Mock utilities
 vi.mock('@/utilities/getCategoryTagClasses', () => ({
@@ -56,6 +56,7 @@ vi.mock('@/utilities/generateMeta', () => ({
 
 vi.mock('@/utilities/getURL', () => ({
   getServerSideURL: vi.fn(() => 'http://localhost:3000'),
+  getClientSideURL: vi.fn(() => 'http://localhost:3000'),
 }))
 
 describe('HappeningPage', () => {
@@ -210,27 +211,6 @@ describe('HappeningPage', () => {
     expect(getByText('Test Artist')).toBeDefined()
   })
 
-  it('displays calendar button when start date exists', async () => {
-    const { getCachedHappeningBySlug } = await import('@/utilities/getHappeningBySlug')
 
-    const mockHappening: Partial<Happening> = {
-      id: '1',
-      title: 'Test Happening',
-      slug: 'test-happening',
-      startDate: '2024-01-01T10:00:00Z',
-    }
-
-    vi.mocked(getCachedHappeningBySlug).mockReturnValue(
-      async () => mockHappening as Happening,
-    )
-
-    const component = await HappeningPage({
-      params: Promise.resolve({ slug: 'test-happening' }),
-    })
-    const { container } = render(component)
-
-    expect(container).toBeDefined()
-    expect(container.querySelector('[data-testid="calendar-button"]')).toBeDefined()
-  })
 })
 

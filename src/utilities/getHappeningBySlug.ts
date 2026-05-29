@@ -1,9 +1,8 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
-import { draftMode } from 'next/headers'
 
-async function getHappeningBySlug(slug: string, depth = 2, draft = false) {
+async function getHappeningBySlug(slug: string, depth = 3, draft = false) {
   const payload = await getPayload({ config: configPromise })
 
   // Decode URI-encoded slugs (e.g., "because%20flowers" -> "because flowers")
@@ -49,26 +48,20 @@ async function getHappeningBySlug(slug: string, depth = 2, draft = false) {
 }
 
 /**
- * Returns a function to fetch a happening by slug
- * Automatically handles draft mode - skips cache when previewing drafts
+ * Returns a cached function to fetch a happening by slug.
+ * Pass draft=true (from draftMode() at the page level) to bypass cache for editor previews.
  */
-export const getCachedHappeningBySlug = (slug: string) => {
-  // Decode early so cache keys are consistent regardless of encoding
+export const getCachedHappeningBySlug = (slug: string, draft = false) => {
   const decodedSlug = decodeURIComponent(slug)
 
-  return async () => {
-    const { isEnabled: isDraftMode } = await draftMode()
-
-    // Don't cache draft mode requests
-    if (isDraftMode) {
-      return getHappeningBySlug(decodedSlug, 2, true)
-    }
-
-    return unstable_cache(async () => getHappeningBySlug(decodedSlug), ['happening', decodedSlug], {
-      tags: [`happening_${decodedSlug}`, 'happenings'],
-      revalidate: 60,
-    })()
+  if (draft) {
+    return () => getHappeningBySlug(decodedSlug, 3, true)
   }
+
+  return unstable_cache(async () => getHappeningBySlug(decodedSlug), ['happening', decodedSlug], {
+    tags: [`happening_${decodedSlug}`, 'happenings'],
+    revalidate: false,
+  })
 }
 
 export { getHappeningBySlug }

@@ -2,9 +2,9 @@ import type { Payload } from 'payload'
 import { mockGalleryInfo } from './mockData'
 
 export async function seedGlobals(payload: Payload): Promise<void> {
-  // Seed Space
+  // Seed SiteSettings (Gallery Info tab)
   await payload.updateGlobal({
-    slug: 'space',
+    slug: 'site-settings',
     data: {
       name: mockGalleryInfo.name,
       tagline: mockGalleryInfo.tagline,
@@ -12,7 +12,6 @@ export async function seedGlobals(payload: Payload): Promise<void> {
       address: mockGalleryInfo.address,
       phone: mockGalleryInfo.phone,
       email: mockGalleryInfo.email,
-      hours: mockGalleryInfo.hours,
       admission: mockGalleryInfo.admission,
     },
     depth: 0,

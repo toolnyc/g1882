@@ -1,32 +1,48 @@
+import type { Metadata } from 'next'
 import React from 'react'
 
 import { HomePageClient } from '@/components/HomePage/HomePageClient'
 import { getCachedHappenings } from '@/utilities/getHappenings'
+import { draftMode } from 'next/headers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
-import { getCachedSpace } from '@/utilities/getSpace'
+export const revalidate = false
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    alternates: {
+      canonical: '/',
+    },
+    title: {
+      absolute: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
+    },
+    description:
+      'Gallery 1882 is a contemporary art gallery in Chesterton, Indiana featuring rotating exhibitions, artist residencies, and community events.',
+  }
+}
+
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
 import { transformFeaturedArtist, transformVisitSection } from '@/utilities/dataTransformers'
 import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
-import type { Happening, Home } from '@/payload-types'
+import type { Happening, Home, SiteSetting } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
-  heroImage: { url: string; alt?: string } | string | null
+  heroImage: { url: string; alt?: string; caption?: Record<string, unknown> | null } | string | null
   featured: boolean
   isActive: boolean
 }
 
 export default async function HomePage() {
-  // Fetch home global data
-  const homeData = (await getCachedGlobal('home', 2)()) as Home
-  // Fetch all published happenings once at depth 2 (populates artists, images, and type),
-  // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
-  const allHappenings = await getCachedHappenings({}, 2)()
-
-  // Fetch space global for structured hours and visit section
-  const space = await getCachedSpace()()
+  const { isEnabled: draft } = await draftMode()
+  // Fetch all data in parallel — these are independent queries
+  const [homeData, allHappenings, siteSettings] = await Promise.all([
+    getCachedGlobal('home', 2, draft)() as Promise<Home>,
+    // Fetch all published happenings once at depth 2 (populates artists, images, and type),
+    // then filter in memory. This consolidates what was previously 3 separate DB queries into 1.
+    getCachedHappenings({}, 2, undefined, draft)(),
+    // SiteSettings contains gallery info (name, description, hours, etc.) used by the visit section
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
+  ])
 
   const now = new Date()
 
@@ -57,23 +73,30 @@ export default async function HomePage() {
     }
   }
 
-  // Get upcoming happenings from the same dataset (future start dates, sorted ascending)
+  // Get upcoming happenings: include active ones and those that haven't ended yet
   const upcomingHappenings = allHappenings
-    .filter((h) => h.startDate && new Date(h.startDate as string) > now)
+    .filter((h) => {
+      if (!h.startDate) return false
+      if (h.isActive) return true
+      const endDate = h.endDate ? new Date(h.endDate as string) : null
+      if (endDate) return endDate > now
+      return new Date(h.startDate as string) > now
+    })
     .sort((a, b) => new Date(a.startDate as string).getTime() - new Date(b.startDate as string).getTime())
 
   const featuredArtistData = transformFeaturedArtist(homeData)
-  const visitSectionData = transformVisitSection(homeData, space)
+  const visitSectionData = transformVisitSection(homeData, siteSettings)
 
   const formatHeroImage = (
     heroImage: Happening['heroImage'],
-  ): { url: string; alt?: string } | string | null => {
+  ): { url: string; alt?: string; caption?: Record<string, unknown> | null } | string | null => {
     if (typeof heroImage === 'object' && heroImage) {
       const url = resolveMediaUrl(heroImage)
       if (!url) return null
       return {
         url,
         alt: heroImage.alt || undefined,
+        caption: (heroImage.caption as Record<string, unknown> | null) || null,
       }
     }
 
@@ -89,13 +112,6 @@ export default async function HomePage() {
       }
     : undefined
 
-  // Extract structured hours for open/closed calculation
-  const structuredHours = space?.structuredHours?.map((h: { day: string; open: string; close: string }) => ({
-    day: h.day,
-    open: h.open,
-    close: h.close,
-  })) || null
-
   return (
     <HomePageClient
       homeData={homeData}
@@ -106,9 +122,10 @@ export default async function HomePage() {
       }))}
       featuredArtistData={featuredArtistData}
       visitSectionData={visitSectionData}
-      heroVideoUrl={homeData?.heroVideoUrl}
-      structuredHours={structuredHours}
+      heroVideoUrl={resolveMediaUrl(homeData?.heroVideo) || null}
+      heroVideoPosterUrl={resolveMediaUrl(homeData?.heroVideoPoster) || null}
       isUpNext={isUpNext}
+      siteSettings={siteSettings}
     />
   )
 }

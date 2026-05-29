@@ -5,7 +5,7 @@ import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
 import { cn } from '@/utilities/ui'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { PayloadAdminBar } from '@payloadcms/admin-bar'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import './index.scss'
@@ -38,22 +38,35 @@ export const AdminBar: React.FC<{
   ) as keyof typeof collectionLabels
   const router = useRouter()
 
-  const onAuthChange = React.useCallback((user: PayloadMeUser) => {
+  const onAuthChange = useCallback((user: PayloadMeUser) => {
     setShow(Boolean(user?.id))
   }, [])
 
+  // Cmd+. (Mac) or Ctrl+. (Windows/Linux) to jump to admin
+  // Available to all users — unauthenticated users land on the login page
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '.' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        router.push('/admin')
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [router])
+
   return (
     <div
-      className={cn(baseClass, 'py-2 bg-black text-white', {
+      className={cn(baseClass, 'fixed top-0 inset-x-0 z-[9999] py-2 bg-black text-white', {
         block: show,
         hidden: !show,
       })}
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999 }}
     >
       <div className="container">
         <PayloadAdminBar
           {...adminBarProps}
-          className="py-2 text-white"
+          className="relative z-auto bg-transparent p-0 py-2 text-white"
           classNames={{
             controls: 'font-medium text-white',
             logo: 'text-white',
@@ -72,12 +85,6 @@ export const AdminBar: React.FC<{
               router.push('/')
               router.refresh()
             })
-          }}
-          style={{
-            backgroundColor: 'transparent',
-            padding: 0,
-            position: 'relative',
-            zIndex: 'unset',
           }}
         />
       </div>

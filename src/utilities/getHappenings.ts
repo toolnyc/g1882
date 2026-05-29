@@ -26,7 +26,7 @@ const defaultListSelect: Partial<Record<keyof Happening, true>> = {
   isActiveOverride: true,
 }
 
-async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) {
+async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>, draft = false) {
   const payload = await getPayload({ config: configPromise })
   const now = new Date()
 
@@ -87,12 +87,14 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
     Object.assign(where, allConditions[0])
   }
 
-  // Add published status filter since happenings uses drafts
-  const publishedFilter: Where = { _status: { equals: 'published' } }
-  if (Object.keys(where).length > 0) {
-    where.and = [...(where.and || []), publishedFilter]
-  } else {
-    Object.assign(where, publishedFilter)
+  // Add published status filter since happenings uses drafts (skip in draft mode)
+  if (!draft) {
+    const publishedFilter: Where = { _status: { equals: 'published' } }
+    if (Object.keys(where).length > 0) {
+      where.and = [...(where.and || []), publishedFilter]
+    } else {
+      Object.assign(where, publishedFilter)
+    }
   }
 
   // Default to ascending for upcoming, descending otherwise
@@ -102,6 +104,7 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
   const result = await payload.find({
     collection: 'happenings',
     depth,
+    draft,
     where,
     sort,
     limit: 1000,
@@ -143,17 +146,22 @@ async function getHappenings(filters: HappeningFilters = {}, depth = 1, select?:
 }
 
 /**
- * Returns a cached function to fetch happenings
- * Revalidates every 60 seconds or when the happenings tag is invalidated
+ * Returns a cached function to fetch happenings.
+ * Pass draft=true (from draftMode() at the page level) to bypass cache for editor previews.
  */
-export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>) =>
-  unstable_cache(
+export const getCachedHappenings = (filters: HappeningFilters = {}, depth = 1, select?: Record<string, true>, draft = false) => {
+  if (draft) {
+    return () => getHappenings(filters, depth, select, true)
+  }
+
+  return unstable_cache(
     async () => getHappenings(filters, depth, select),
     ['happenings', JSON.stringify(filters), `depth-${depth}`, select ? JSON.stringify(select) : 'default'],
     {
       tags: ['happenings'],
-      revalidate: 60, // Revalidate every 60 seconds
+      revalidate: false,
     },
   )
+}
 
 export { getHappenings }

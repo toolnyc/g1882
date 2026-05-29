@@ -7,11 +7,11 @@ import type { Artist } from '@/payload-types'
 
 type RelatedHappeningsProps = {
   artistId: string
+  draft?: boolean
 }
 
-export async function RelatedHappenings({ artistId }: RelatedHappeningsProps) {
-  const getHappenings = getCachedHappenings({}, 2)
-  const allHappenings = await getHappenings()
+export async function RelatedHappenings({ artistId, draft = false }: RelatedHappeningsProps) {
+  const allHappenings = await getCachedHappenings({}, 2, undefined, draft)()
 
   const relatedHappenings = allHappenings.filter((happening) => {
     if (happening.artists && happening.artists.length > 0) {

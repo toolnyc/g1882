@@ -3,11 +3,13 @@ import Image from 'next/image'
 import React from 'react'
 import { getCachedPostBySlug } from '@/utilities/getPostBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getArticleSchema } from '@/utilities/jsonLd'
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import RichText from '@/components/RichText'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type Args = {
   params: Promise<{
@@ -17,8 +19,8 @@ type Args = {
 
 export default async function PostPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const getPost = getCachedPostBySlug(slug)
-  const post = await getPost()
+  const { isEnabled: draft } = await draftMode()
+  const post = await getCachedPostBySlug(slug, draft)()
 
   if (!post) {
     return (
@@ -77,14 +79,19 @@ export default async function PostPage({ params: paramsPromise }: Args) {
           </div>
         </div>
       </article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getArticleSchema(post)),
+          }}
+        />
     </main>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const getPost = getCachedPostBySlug(slug)
-  const post = await getPost()
+  const post = await getCachedPostBySlug(slug)()
 
   if (!post) {
     return {
@@ -93,6 +100,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 
   return generateMeta({
+    collection: 'news',
     doc: {
       ...post,
       meta: {

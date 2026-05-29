@@ -10,6 +10,7 @@ import type { Props as MediaProps } from '../types'
 
 import { cssVariables } from '@/cssVariables'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 
 const { breakpoints } = cssVariables
 
@@ -42,11 +43,15 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     height = fullHeight!
     alt = altFromResource || ''
 
-    const cacheTag = resource.updatedAt
-
-    const resolved = getMediaUrl(url, cacheTag)
-    if (resolved) {
-      src = resolved
+    // Prefer pre-generated WebP size over original
+    const optimized = resolveOptimizedUrl(resource, fill ? 1920 : (width || 1400))
+    if (optimized) {
+      src = optimized
+    } else {
+      const resolved = getMediaUrl(url, resource.updatedAt)
+      if (resolved) {
+        src = resolved
+      }
     }
   }
 

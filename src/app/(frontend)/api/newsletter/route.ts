@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import { NextResponse } from 'next/server'
 import * as Sentry from '@sentry/nextjs'
 import { logger } from '@/lib/logger'
+import { newsletterWelcomeEmail } from '@/emails/newsletter-welcome'
 
 // Lazily initialize Resend to avoid build-time errors when API key is not set
 let _resend: Resend | null = null
@@ -74,14 +75,19 @@ export async function POST(request: Request) {
       }
     }
 
-    // Fallback: send confirmation email
-    // Note: Update 'onboarding@resend.dev' with your verified domain email
+    // Fallback: send confirmation email (requires RESEND_FROM_EMAIL to be set)
+    const fromEmail = process.env.RESEND_FROM_EMAIL
+    if (!fromEmail) {
+      logger.error('RESEND_FROM_EMAIL not configured — cannot send confirmation email', { route: '/api/newsletter' })
+      return NextResponse.json({ error: 'Newsletter service is not fully configured' }, { status: 503 })
+    }
+
     try {
       await getResend().emails.send({
-        from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+        from: fromEmail,
         to: email,
-        subject: 'Welcome to our newsletter!',
-        html: '<p>Thank you for subscribing to our newsletter!</p>',
+        subject: 'Welcome to the Gallery 1882 Journal',
+        html: newsletterWelcomeEmail({ email }),
       })
       return NextResponse.json({ success: true, message: 'Successfully subscribed to newsletter' })
     } catch (emailError) {

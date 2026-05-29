@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { LiveIndicator } from '../LiveIndicator'
 import { fadeUp, scaleIn, slideIn } from '@/utilities/animations'
 import RichText from '@/components/RichText'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
+import type { Media } from '@/payload-types'
+
 
 interface Artist {
   id?: string
@@ -23,12 +26,13 @@ interface Happening {
   id?: string
   slug?: string | null
   title?: string | null
+  subcaption?: string | null
   type?: HappeningType | string | null
   artists?: (Artist | string)[] | null
   startDate?: string | Date | null
   endDate?: string | Date | null
   description?: Record<string, unknown> | null
-  heroImage?: { url?: string; alt?: string } | string | null
+  heroImage?: { url?: string; alt?: string; caption?: Record<string, unknown> | null; sizes?: Record<string, { url?: string | null } | null> } | string | null
   featured?: boolean
   isActive?: boolean
 }
@@ -36,11 +40,17 @@ interface Happening {
 interface CurrentExhibitionProps {
   happening: Happening
   isUpNext?: boolean
+  onNowLabel?: string | null
+  upNextLabel?: string | null
+  viewHappeningLabel?: string | null
 }
 
 export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
   happening,
   isUpNext = false,
+  onNowLabel,
+  upNextLabel,
+  viewHappeningLabel,
 }) => {
   const getArtistNames = (): { name: string; slug?: string | null }[] => {
     if (happening.artists && happening.artists.length > 0) {
@@ -64,11 +74,13 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
   const getButtonText = () => {
     const typeName = getTypeName()
     if (typeName) return `View ${typeName}`
-    return 'View Happening'
+    return viewHappeningLabel || 'View Happening'
   }
 
   const getImageUrl = () => {
     if (typeof happening.heroImage === 'object' && happening.heroImage?.url) {
+      const optimized = resolveOptimizedUrl(happening.heroImage as Media, 1400)
+      if (optimized) return optimized
       return happening.heroImage.url
     }
     if (typeof happening.heroImage === 'string' && happening.heroImage) {
@@ -86,9 +98,17 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
     return `${happening.title || 'Happening'}${artistStr}`
   }
 
+  const getImageCaption = (): Record<string, unknown> | null => {
+    if (typeof happening.heroImage === 'object' && happening.heroImage?.caption) {
+      return happening.heroImage.caption
+    }
+    return null
+  }
+
   const imageUrl = getImageUrl()
+  const imageCaption = getImageCaption()
   const artists = getArtistNames()
-  const label = isUpNext ? 'Up Next' : 'On Now'
+  const label = isUpNext ? (upNextLabel || 'Up Next') : (onNowLabel || 'On Now')
 
   return (
     <section className="py-32 gallery-section">
@@ -113,17 +133,14 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
                   sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 50vw, (max-width: 1376px) 50vw, 656px"
                   className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
-                {/* Hover overlay with gradient and exhibition info */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-off-white text-sm font-medium tracking-wider">{happening.title}</p>
-                    {artists.length > 0 && (
-                      <p className="text-off-white/80 text-xs mt-1">
-                        {artists.map((a) => a.name).join(', ')}
-                      </p>
-                    )}
+                {/* Hover overlay with media caption */}
+                {imageCaption && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-off-white text-sm [&_p]:my-0 [&_p]:text-off-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                      <RichText data={imageCaption as never} enableGutter={false} />
+                    </div>
                   </div>
-                </div>
+                )}
               </motion.div>
             </div>
           )}
@@ -138,20 +155,23 @@ export const CurrentExhibition: React.FC<CurrentExhibitionProps> = ({
               <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">
                 {happening.title}
               </h2>
+              {happening.subcaption && (
+                <p className="text-lg text-navy/70 mb-4">{happening.subcaption}</p>
+              )}
               {artists.length > 0 && (
                 <div className="mb-4">
                   {artists.map((artist, i) => (
                     <React.Fragment key={artist.slug || i}>
-                      {i > 0 && <span className="text-xl text-bright-lake">, </span>}
+                      {i > 0 && <span className="text-base text-bright-lake">, </span>}
                       {artist.slug ? (
                         <Link
                           href={`/artists/${artist.slug}`}
-                          className="text-xl font-semibold text-bright-lake hover:text-lake transition-colors"
+                          className="text-base font-semibold text-bright-lake hover:text-lake transition-colors"
                         >
                           {artist.name}
                         </Link>
                       ) : (
-                        <span className="text-xl font-semibold text-bright-lake">
+                        <span className="text-base font-semibold text-bright-lake">
                           {artist.name}
                         </span>
                       )}

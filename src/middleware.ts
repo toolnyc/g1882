@@ -5,17 +5,28 @@ const formRateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const FORM_RATE_LIMIT_MAX = 5
 const FORM_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000
 
-function isFormRateLimited(ip: string): boolean {
+function isRateLimited(ip: string, limits: Map<string, { count: number; resetAt: number }>, maxRequests: number): boolean {
   const now = Date.now()
-  const entry = formRateLimitMap.get(ip)
+  const entry = limits.get(ip)
 
   if (!entry || now > entry.resetAt) {
-    formRateLimitMap.set(ip, { count: 1, resetAt: now + FORM_RATE_LIMIT_WINDOW_MS })
+    limits.set(ip, { count: 1, resetAt: now + FORM_RATE_LIMIT_WINDOW_MS })
     return false
   }
 
   entry.count++
-  return entry.count > FORM_RATE_LIMIT_MAX
+  return entry.count > maxRequests
+}
+
+function isFormRateLimited(ip: string): boolean {
+  return isRateLimited(ip, formRateLimitMap, FORM_RATE_LIMIT_MAX)
+}
+
+const rentalInquiryRateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RENTAL_INQUIRY_RATE_LIMIT_MAX = 5
+
+function isRentalInquiryRateLimited(ip: string): boolean {
+  return isRateLimited(ip, rentalInquiryRateLimitMap, RENTAL_INQUIRY_RATE_LIMIT_MAX)
 }
 
 setInterval(() => {
@@ -23,11 +34,56 @@ setInterval(() => {
   for (const [ip, entry] of formRateLimitMap) {
     if (now > entry.resetAt) formRateLimitMap.delete(ip)
   }
+  for (const [ip, entry] of rentalInquiryRateLimitMap) {
+    if (now > entry.resetAt) rentalInquiryRateLimitMap.delete(ip)
+  }
 }, FORM_RATE_LIMIT_WINDOW_MS)
 
+// Mutable HTTP methods that require CSRF origin validation
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
+
+/**
+ * Check if an Origin header matches our allowed origins.
+ * In dev (NODE_ENV=development), any localhost origin is allowed.
+ * Always allows the request's own host (same-origin).
+ * Also checks NEXT_PUBLIC_SERVER_URL and VERCEL_PROJECT_PRODUCTION_URL env vars.
+ */
+function isOriginAllowed(origin: string, host: string | null): boolean {
+  // Allow if origin matches the request's own host
+  if (host) {
+    if (origin === `http://${host}` || origin === `https://${host}`) {
+      return true
+    }
+  }
+
+  // Allow localhost in development (any port)
+  if (process.env.NODE_ENV === 'development') {
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+      return true
+    }
+  }
+
+  // Allow NEXT_PUBLIC_SERVER_URL
+  if (process.env.NEXT_PUBLIC_SERVER_URL) {
+    if (origin === process.env.NEXT_PUBLIC_SERVER_URL) {
+      return true
+    }
+  }
+
+  // Allow VERCEL_PROJECT_PRODUCTION_URL
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    if (origin === `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export function middleware(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+
   if (request.method === 'POST' && request.nextUrl.pathname === '/api/form-submissions') {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
     if (isFormRateLimited(ip)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
@@ -36,9 +92,37 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.next()
+  if (request.method === 'POST' && request.nextUrl.pathname === '/api/rental-inquiry') {
+    if (isRentalInquiryRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      )
+    }
+  }
 
+  // CSRF Origin validation for mutating requests to /api/* endpoints
   const pathname = request.nextUrl.pathname
+  if (
+    MUTATING_METHODS.has(request.method) &&
+    pathname.startsWith('/api/')
+  ) {
+    const origin = request.headers.get('Origin')
+
+    if (origin) {
+      const host = request.headers.get('host')
+
+      if (!isOriginAllowed(origin, host)) {
+        return NextResponse.json(
+          { error: 'Origin not allowed' },
+          { status: 403 },
+        )
+      }
+    }
+    // No Origin header → allow (server-to-server, same-origin navigations omit Origin)
+  }
+
+  const response = NextResponse.next()
 
   // Cache-Control for font files and static assets served through middleware
   if (pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
@@ -46,7 +130,7 @@ export function middleware(request: NextRequest) {
   } else if (pathname.startsWith('/api/')) {
     response.headers.set('Cache-Control', 'no-store')
   } else if (!pathname.startsWith('/admin')) {
-    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300')
+    response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate')
   }
 
   // Security headers (applied to all routes)
@@ -84,6 +168,7 @@ export function middleware(request: NextRequest) {
         "frame-ancestors 'self'",
         "base-uri 'self'",
         "form-action 'self'",
+        "upgrade-insecure-requests",
       ].join('; '),
     )
   }

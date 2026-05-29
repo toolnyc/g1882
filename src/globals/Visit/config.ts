@@ -1,6 +1,11 @@
 import type { GlobalConfig } from 'payload'
-import { revalidateVisit } from './hooks/revalidateVisit'
 import { getServerSideURL } from '../../utilities/getURL'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateVisit } = createRevalidateHook({
+  collection: 'visit',
+  getTags: () => ['global_visit'],
+})
 
 export const Visit: GlobalConfig = {
   slug: 'visit',
@@ -67,6 +72,9 @@ export const Visit: GlobalConfig = {
           name: 'specialHours',
           type: 'array',
           label: 'Special Hours',
+          admin: {
+            description: 'Holiday or temporary hour changes. Shown only on the Visit page, alongside regular hours from Space.',
+          },
           fields: [
             {
               name: 'title',
@@ -100,6 +108,7 @@ export const Visit: GlobalConfig = {
       type: 'group',
       label: 'Admission Section',
       admin: {
+        description: 'Detailed admission info (general & group visits). Shown only on the Visit page when enabled. For the short footer text, edit Space > Admission instead.',
         condition: (data) => Boolean(data?.showAdmissionSection),
       },
       fields: [
@@ -193,11 +202,31 @@ export const Visit: GlobalConfig = {
           label: 'Description',
         },
         {
-          name: 'address',
-          type: 'textarea',
-          label: 'Address',
+          name: 'addressLabel',
+          type: 'text',
+          label: 'Address Section Label',
+          defaultValue: 'Address',
           admin: {
-            description: 'Multi-line address',
+            description:
+              'Heading above the address (defaults to "Address"). The address itself is pulled from SiteSettings > Gallery Info.',
+          },
+        },
+        {
+          name: 'googleMapsUrl',
+          type: 'text',
+          label: 'Google Maps URL',
+          admin: {
+            description:
+              'Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.',
+          },
+        },
+        {
+          name: 'parkingLabel',
+          type: 'text',
+          label: 'Parking Section Label',
+          defaultValue: 'Parking',
+          admin: {
+            description: 'Heading above the parking info (defaults to "Parking")',
           },
         },
         {
@@ -303,6 +332,44 @@ export const Visit: GlobalConfig = {
               ],
             },
           ],
+        },
+      ],
+    },
+
+    // Duneland Community Section
+    {
+      name: 'dunelandCommunityEnabled',
+      type: 'checkbox',
+      label: 'Show Duneland Community Section',
+      defaultValue: false,
+      admin: {
+        description: 'Toggle visibility of the "Explore the Duneland Community" section',
+      },
+    },
+    {
+      name: 'dunelandCommunity',
+      type: 'group',
+      label: 'Duneland Community Section',
+      admin: {
+        condition: (data) => Boolean(data?.dunelandCommunityEnabled),
+      },
+      fields: [
+        {
+          name: 'caption',
+          type: 'text',
+          label: 'Caption',
+          defaultValue: 'Community',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Title',
+          defaultValue: 'Explore the Duneland Community',
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Description',
         },
       ],
     },

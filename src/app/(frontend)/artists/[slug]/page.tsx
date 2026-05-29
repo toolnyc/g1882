@@ -3,13 +3,16 @@ import Image from 'next/image'
 import React, { Suspense } from 'react'
 import { getCachedArtistBySlug } from '@/utilities/getArtistBySlug'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getPersonSchema } from '@/utilities/jsonLd'
+import { resolveOptimizedUrl } from '@/utilities/resolveOptimizedUrl'
 import { RelatedHappenings } from './RelatedHappenings'
-import { resolveMediaUrl } from '@/utilities/mediaHelpers'
+import { WorksMasonryGrid } from '@/components/WorksMasonryGrid'
 import RichText from '@/components/RichText'
 import { extractPlainText } from '@/utilities/richTextHelpers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type Args = {
   params: Promise<{
@@ -27,8 +30,8 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 export default async function ArtistPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const getArtist = getCachedArtistBySlug(slug)
-  const artist = await getArtist()
+  const { isEnabled: draft } = await draftMode()
+  const artist = await getCachedArtistBySlug(slug, draft)()
 
   if (!artist) {
     return (
@@ -40,7 +43,8 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
     )
   }
 
-  const artistImage = typeof artist.image === 'object' && artist.image ? artist.image : null
+  const artistImageObj = typeof artist.image === 'object' && artist.image ? artist.image : null
+  const artistImage = resolveOptimizedUrl(artistImageObj, 1400)
   const works = artist.works || []
   const socialLinks = artist.socialLinks || []
 
@@ -48,14 +52,16 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
     <main className="min-h-screen bg-off-white">
       <article className="pt-48 pb-24">
         {/* Hero Image — optional, graceful layout without */}
-        {artistImage && typeof artistImage === 'object' && artistImage.url && (
-          <div className="relative w-full h-[60vh] min-h-[400px] mb-16">
+        {artistImage && (
+          <div className="w-full max-h-[80vh] overflow-hidden flex items-center mb-16">
             <Image
-              src={artistImage.url}
-              alt={artistImage.alt || artist.name || ''}
-              fill
-              className="object-contain"
+              src={artistImage}
+              alt={artistImageObj?.alt || artist.name || ''}
+              width={artistImageObj?.width || 1400}
+              height={artistImageObj?.height || 900}
+              className="w-full h-auto max-h-[80vh] object-contain"
               priority
+              sizes="100vw"
             />
           </div>
         )}
@@ -109,88 +115,51 @@ export default async function ArtistPage({ params: paramsPromise }: Args) {
               </div>
             )}
 
-            {/* Works Gallery */}
+            {/* Works Gallery — masonry layout with natural aspect ratios */}
             {works.length > 0 && (
               <div className="mt-12 pt-8 border-t border-navy/20">
                 <h2 className="text-2xl font-bold text-navy mb-6">Works</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {works.map((work) => {
-                    const imageUrl = resolveMediaUrl(work.image)
-                    if (!imageUrl) return null
-
-                    return (
-                      <div key={work.id} className="group">
-                        <div className="aspect-square relative overflow-hidden rounded-lg bg-navy/5">
-                          <Image
-                            src={imageUrl}
-                            alt={work.title || work.caption || artist.name || ''}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-                          {/* Hover overlay with caption reveal */}
-                          {(work.title || work.caption) && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-4">
-                              <div className="translate-y-3 group-hover:translate-y-0 transition-transform duration-400">
-                                {work.title && (
-                                  <p className="text-off-white text-sm font-semibold">{work.title}</p>
-                                )}
-                                {work.caption && (
-                                  <p className="text-off-white/80 text-xs mt-0.5">{work.caption}</p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        {(work.title || work.caption) && (
-                          <div className="mt-3">
-                            {work.title && (
-                              <p className="font-semibold text-navy text-sm">{work.title}</p>
-                            )}
-                            {work.caption && (
-                              <p className="text-navy/60 text-sm">{work.caption}</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
+                <WorksMasonryGrid works={works} fallbackAlt={artist.name || ''} />
               </div>
             )}
 
             {/* Related Happenings */}
             <Suspense
               fallback={
-                <div className="mt-12 pt-8 border-t border-navy/20">
-                  <div className="h-8 bg-navy/20 animate-pulse rounded w-48 mb-6" />
+                <div className="mt-12 pt-8 border-t border-navy/10 animate-skeleton-in">
+                  <div className="h-8 bg-navy/10 animate-pulse rounded w-48 mb-6" />
                   <div className="space-y-4">
                     {[1, 2].map((i) => (
                       <div
                         key={i}
-                        className="p-4 border border-navy/20 rounded-lg bg-navy/5 animate-pulse"
+                        className="p-4 border border-navy/10 rounded-lg bg-navy/[0.03] animate-pulse"
                       >
-                        <div className="h-6 bg-navy/20 animate-pulse rounded w-3/4 mb-2" />
-                        <div className="h-4 bg-navy/10 animate-pulse rounded w-32" />
+                        <div className="h-6 bg-navy/10 animate-pulse rounded w-3/4 mb-2" />
+                        <div className="h-4 bg-navy/5 animate-pulse rounded w-32" />
                       </div>
                     ))}
                   </div>
                 </div>
               }
             >
-              <RelatedHappenings artistId={artist.id} />
+              <RelatedHappenings artistId={artist.id} draft={draft} />
             </Suspense>
           </div>
         </div>
       </article>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getPersonSchema(artist)),
+          }}
+        />
     </main>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const getArtist = getCachedArtistBySlug(slug)
-  const artist = await getArtist()
+  const artist = await getCachedArtistBySlug(slug)()
 
   if (!artist) {
     return {
@@ -199,6 +168,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 
   return generateMeta({
+    collection: 'artists',
     doc: {
       ...artist,
       meta: {

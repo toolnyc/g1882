@@ -10,6 +10,7 @@ import { useFocusTrap } from '@/hooks/useFocusTrap'
 const NAV_ITEMS = [
   { label: 'Happenings', url: '/happenings' },
   { label: 'Artists', url: '/artists' },
+  { label: 'Our Story', url: '/our-story' },
   { label: 'Visit', url: '/visit' },
 ] as const
 
@@ -49,13 +50,10 @@ export const GalleryNav: React.FC = () => {
               key={item.url}
               href={item.url}
               className={`nav-link text-lg font-medium transition-all duration-300 relative ${
-                isActive ? 'text-navy font-semibold' : 'text-navy/70 font-medium hover:text-navy'
+                isActive ? 'text-navy nav-link-active' : 'text-navy/70 hover:text-navy'
               }`}
             >
               {item.label}
-              {isActive && (
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-lake rounded-full" />
-              )}
             </Link>
           )
         })}
@@ -91,13 +89,15 @@ export const GalleryNav: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             className="absolute top-full left-0 right-0 bg-white/20 backdrop-blur-md border-t border-white/30 md:hidden"
           >
-            <nav className="container py-4 space-y-4">
+            <div className="container py-4 space-y-4" role="menu">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.url
                 return (
-                  <div key={item.url} role="menuitem" tabIndex={0} onClick={closeMenu} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') closeMenu() }}>
+                  <div key={item.url}>
                     <Link
                       href={item.url}
+                      role="menuitem"
+                      onClick={closeMenu}
                       className={`nav-link block text-lg font-medium transition-all duration-300 py-1 hover:bg-white/20 hover:px-3 hover:rounded ${
                         isActive ? 'text-lake font-semibold border-l-2 border-lake pl-3' : 'text-navy/70 hover:text-navy'
                       }`}
@@ -107,7 +107,7 @@ export const GalleryNav: React.FC = () => {
                   </div>
                 )
               })}
-            </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

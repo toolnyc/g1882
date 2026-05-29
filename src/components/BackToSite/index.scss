@@ -1,0 +1,26 @@
+@import '~@payloadcms/ui/scss';
+
+.back-to-site {
+  display: flex;
+  align-items: center;
+  gap: base(0.35);
+  padding: base(0.5) base(0.75);
+  margin: base(0.5) base(0.75);
+  border-radius: 4px;
+  color: var(--theme-text);
+  text-decoration: none;
+  font-size: 13px;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+
+  &:hover {
+    background-color: var(--theme-elevation-150);
+    color: var(--theme-text);
+    text-decoration: none;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+  }
+}

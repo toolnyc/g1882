@@ -14,16 +14,16 @@ const PageLoadingIndicatorInner = () => {
     // Reset loading state when route changes, but ensure minimum display time
     if (isLoading && loadingStartTime.current) {
       const elapsed = Date.now() - loadingStartTime.current
-      const remaining = Math.max(0, 500 - elapsed) // Minimum 500ms display time
+      const remaining = Math.max(0, 400 - elapsed) // Minimum 400ms display time
 
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsLoading(false)
         loadingStartTime.current = null
       }, remaining)
-    } else {
-      setIsLoading(false)
+
+      return () => clearTimeout(timer)
     }
-  }, [pathname, searchParams, isLoading])
+  }, [pathname, searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // Listen for clicks on links to show loading state
@@ -57,67 +57,21 @@ const PageLoadingIndicatorInner = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] pointer-events-none"
+          transition={{ duration: 0.15 }}
+          className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none h-[2px]"
         >
-          {/* Subtle overlay */}
-          <div className="absolute inset-0 bg-off-white/10 backdrop-blur-sm" />
-
-          {/* Centered pulse animation */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{
-                scale: [0.8, 1.1, 1],
-                opacity: [0, 1, 1],
-              }}
-              transition={{
-                duration: 0.6,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="relative"
-            >
-              {/* Pulsing glow */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 0, 0.5],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-                className="absolute inset-0 rounded-full bg-bright-lake blur-xl"
-                style={{ width: '75px', height: '75px', left: '-5px', top: '-5px' }}
-              />
-
-              {/* Center circle - simple blue */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  duration: 1,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-                className="relative w-[50px] h-[50px] rounded-full bg-bright-lake flex items-center justify-center shadow-lg"
-              >
-                <motion.div
-                  animate={{
-                    scale: [1, 0.9, 1],
-                  }}
-                  transition={{
-                    duration: 1,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                  className="w-[25px] h-[25px] rounded-full"
-                />
-              </motion.div>
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ scaleX: 0, transformOrigin: 'left' }}
+            animate={{
+              scaleX: [0, 0.4, 0.7, 0.85],
+            }}
+            transition={{
+              duration: 3,
+              ease: [0.22, 1, 0.36, 1],
+              times: [0, 0.3, 0.6, 1],
+            }}
+            className="h-full w-full bg-gradient-to-r from-lake to-bright-lake"
+          />
         </motion.div>
       )}
     </AnimatePresence>

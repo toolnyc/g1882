@@ -8,7 +8,7 @@ export const mockHappenings = [
     endDate: '2024-05-20T18:00:00Z',
     description:
       'A contemplative exploration of light and water along the Indiana Dunes shoreline.',
-
+    type: 'exhibition',
     artistName: 'Sarah Chen',
     heroImage: '/media/test-art.jpg',
     featured: true,
@@ -20,7 +20,7 @@ export const mockHappenings = [
     endDate: '2024-08-15T18:00:00Z',
     description:
       'Mixed media works examining the relationship between industry and nature in the Great Lakes region.',
-
+    type: 'exhibition',
     artistName: 'Marcus Rodriguez',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -31,7 +31,7 @@ export const mockHappenings = [
     startDate: '2024-09-01T10:00:00Z',
     endDate: '2024-11-30T18:00:00Z',
     description: 'Sculptural interpretations of the ever-changing dune landscapes.',
-
+    type: 'exhibition',
     artistName: 'Elena Kowalski',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -42,7 +42,7 @@ export const mockHappenings = [
     startDate: '2024-12-01T10:00:00Z',
     endDate: '2025-02-28T18:00:00Z',
     description: 'Geometric abstractions exploring the future of form and color.',
-
+    type: 'exhibition',
     artistName: 'Tomma Abts',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -53,7 +53,7 @@ export const mockHappenings = [
     startDate: '2024-01-15T10:00:00Z',
     endDate: '2024-03-10T18:00:00Z',
     description: 'Retrospective of pioneering performance and architectural interventions.',
-
+    type: 'event',
     artistName: 'Vito Acconci',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -64,7 +64,7 @@ export const mockHappenings = [
     startDate: '2023-10-01T10:00:00Z',
     endDate: '2023-12-15T18:00:00Z',
     description: 'Musical sculptures exploring African American history and culture.',
-
+    type: 'talk',
     artistName: 'Terry Adkins',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -75,7 +75,7 @@ export const mockHappenings = [
     startDate: '2023-07-01T10:00:00Z',
     endDate: '2023-09-30T18:00:00Z',
     description: 'Mystical paintings that predated the official birth of abstract art.',
-
+    type: 'exhibition',
     artistName: 'Hilma af Klint',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -86,7 +86,7 @@ export const mockHappenings = [
     startDate: '2023-04-01T10:00:00Z',
     endDate: '2023-06-30T18:00:00Z',
     description: 'Large-scale works exploring Nigerian and American cultural intersections.',
-
+    type: 'exhibition',
     artistName: 'Njideka Akunyili Crosby',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -97,7 +97,7 @@ export const mockHappenings = [
     startDate: '2023-01-15T10:00:00Z',
     endDate: '2023-03-31T18:00:00Z',
     description: 'Large-scale installations made from discarded materials transformed into art.',
-
+    type: 'exhibition',
     artistName: 'El Anatsui',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -108,7 +108,7 @@ export const mockHappenings = [
     startDate: '2022-10-01T10:00:00Z',
     endDate: '2022-12-31T18:00:00Z',
     description: 'Floor-based sculptures using industrial materials in minimalist arrangements.',
-
+    type: 'exhibition',
     artistName: 'Carl Andre',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -119,7 +119,7 @@ export const mockHappenings = [
     startDate: '2022-07-01T10:00:00Z',
     endDate: '2022-09-30T18:00:00Z',
     description: 'Arte Povera works exploring natural forces and materials.',
-
+    type: 'exhibition',
     artistName: 'Giovanni Anselmo',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -130,7 +130,7 @@ export const mockHappenings = [
     startDate: '2022-04-01T10:00:00Z',
     endDate: '2022-06-30T18:00:00Z',
     description: 'Raw, emotionally charged portraits and figure studies.',
-
+    type: 'exhibition',
     artistName: 'Francis Bacon',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -141,7 +141,7 @@ export const mockHappenings = [
     startDate: '2022-01-15T10:00:00Z',
     endDate: '2022-03-31T18:00:00Z',
     description: 'Satirical and subversive works commenting on politics and society.',
-
+    type: 'exhibition',
     artistName: 'Banksy',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -152,7 +152,7 @@ export const mockHappenings = [
     startDate: '2021-10-01T10:00:00Z',
     endDate: '2021-12-31T18:00:00Z',
     description: 'Large-scale paintings from the 1980s neo-expressionist movement.',
-
+    type: 'exhibition',
     artistName: 'Jean-Michel Basquiat',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -163,7 +163,7 @@ export const mockHappenings = [
     startDate: '2021-07-01T10:00:00Z',
     endDate: '2021-09-30T18:00:00Z',
     description: 'Large-scale sculptures exploring themes of sexuality and family.',
-
+    type: 'exhibition',
     artistName: 'Louise Bourgeois',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -174,7 +174,7 @@ export const mockHappenings = [
     startDate: '2021-04-01T10:00:00Z',
     endDate: '2021-06-30T18:00:00Z',
     description: 'Pioneering abstract sculptures that influenced modern art.',
-
+    type: 'exhibition',
     artistName: 'Constantin Brancusi',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -185,7 +185,7 @@ export const mockHappenings = [
     startDate: '2021-01-15T10:00:00Z',
     endDate: '2021-03-31T18:00:00Z',
     description: 'Works exploring the relationship between art and language.',
-
+    type: 'exhibition',
     artistName: 'Marcel Broodthaers',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -196,7 +196,7 @@ export const mockHappenings = [
     startDate: '2020-10-01T10:00:00Z',
     endDate: '2020-12-31T18:00:00Z',
     description: 'Innovative mobiles and stabiles in motion.',
-
+    type: 'exhibition',
     artistName: 'Alexander Calder',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -207,7 +207,7 @@ export const mockHappenings = [
     startDate: '2020-07-01T10:00:00Z',
     endDate: '2020-09-30T18:00:00Z',
     description: 'Photography, text, and performance exploring personal themes.',
-
+    type: 'exhibition',
     artistName: 'Sophie Calle',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -218,7 +218,7 @@ export const mockHappenings = [
     startDate: '2020-04-01T10:00:00Z',
     endDate: '2020-06-30T18:00:00Z',
     description: 'Large-scale collaborative installations from the feminist art movement.',
-
+    type: 'exhibition',
     artistName: 'Judy Chicago',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -229,7 +229,7 @@ export const mockHappenings = [
     startDate: '2020-01-15T10:00:00Z',
     endDate: '2020-03-31T18:00:00Z',
     description: 'Large-scale environmental art installations.',
-
+    type: 'exhibition',
     artistName: 'Christo',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -240,7 +240,7 @@ export const mockHappenings = [
     startDate: '2019-10-01T10:00:00Z',
     endDate: '2019-12-31T18:00:00Z',
     description: 'Gestural brushwork and abstract expressionist paintings.',
-
+    type: 'exhibition',
     artistName: 'Willem de Kooning',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -251,7 +251,7 @@ export const mockHappenings = [
     startDate: '2019-07-01T10:00:00Z',
     endDate: '2019-09-30T18:00:00Z',
     description: 'Works challenging conventional notions of art and aesthetics.',
-
+    type: 'exhibition',
     artistName: 'Marcel Duchamp',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -262,7 +262,7 @@ export const mockHappenings = [
     startDate: '2019-04-01T10:00:00Z',
     endDate: '2019-06-30T18:00:00Z',
     description: 'Emotionally charged portraits and figure paintings.',
-
+    type: 'exhibition',
     artistName: 'Marlene Dumas',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -273,7 +273,7 @@ export const mockHappenings = [
     startDate: '2019-01-15T10:00:00Z',
     endDate: '2019-03-31T18:00:00Z',
     description: 'Confessional and autobiographical works in various media.',
-
+    type: 'exhibition',
     artistName: 'Tracey Emin',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -284,7 +284,7 @@ export const mockHappenings = [
     startDate: '2018-10-01T10:00:00Z',
     endDate: '2018-12-31T18:00:00Z',
     description: 'Intense, psychological portraits and figure studies.',
-
+    type: 'exhibition',
     artistName: 'Lucian Freud',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -295,7 +295,7 @@ export const mockHappenings = [
     startDate: '2018-07-01T10:00:00Z',
     endDate: '2018-09-30T18:00:00Z',
     description: 'Abstract expressionist color field paintings.',
-
+    type: 'exhibition',
     artistName: 'Helen Frankenthaler',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -306,7 +306,7 @@ export const mockHappenings = [
     startDate: '2018-04-01T10:00:00Z',
     endDate: '2018-06-30T18:00:00Z',
     description: 'Elongated, existential figures in bronze.',
-
+    type: 'exhibition',
     artistName: 'Alberto Giacometti',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -317,7 +317,7 @@ export const mockHappenings = [
     startDate: '2018-01-15T10:00:00Z',
     endDate: '2018-03-31T18:00:00Z',
     description: 'Self-portraits inspired by Mexican folk art.',
-
+    type: 'exhibition',
     artistName: 'Frida Kahlo',
     heroImage: '/media/test-art.jpg',
     featured: false,
@@ -328,7 +328,7 @@ export const mockHappenings = [
     startDate: '2017-10-01T10:00:00Z',
     endDate: '2017-12-31T18:00:00Z',
     description: 'Pioneering abstract compositions and color theory.',
-
+    type: 'exhibition',
     artistName: 'Wassily Kandinsky',
     heroImage: '/media/test-art.jpg',
     featured: false,

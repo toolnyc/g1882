@@ -64,13 +64,11 @@
 @layer base {
   * {
     @apply border-border;
-    cursor: none !important;
   }
   
   body {
     @apply bg-off-white text-navy min-h-[100vh] flex flex-col;
-    font-family: 'Aktiv Grotesk', var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-    cursor: none !important; /* Hide default cursor — custom cursor replaces it */
+    font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
     /* Disable scroll bounce */
     overscroll-behavior: none;
     /* Ensure locomotive scroll works properly */
@@ -91,7 +89,7 @@
 
   /* Caption styles */
   .caption {
-    @apply font-medium text-sm;
+    @apply font-medium text-xl;
   }
 }
 
@@ -149,6 +147,11 @@
     width: 100%;
   }
 
+  .gallery-button-primary:focus-visible {
+    outline: 2px solid var(--gallery-lake);
+    outline-offset: 2px;
+  }
+
   .gallery-button-secondary {
     @apply border text-navy px-6 py-3 font-medium transition-all duration-300;
     border-color: var(--gallery-navy);
@@ -179,6 +182,11 @@
     height: 100%;
   }
 
+  .gallery-button-secondary:focus-visible {
+    outline: 2px solid var(--gallery-lake);
+    outline-offset: 2px;
+  }
+
   .gallery-button-cta {
     @apply text-navy px-6 py-3 font-medium transition-all duration-300;
     border-radius: 1px;
@@ -194,6 +202,11 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(31, 159, 204, 0.3);
     filter: brightness(1.08);
+  }
+
+  .gallery-button-cta:focus-visible {
+    outline: 2px solid var(--gallery-navy);
+    outline-offset: 2px;
   }
 
   /* Subtle grain effect for sections */
@@ -215,41 +228,15 @@
     /* No z-index to avoid overlapping custom cursor (z-[99999]) */
   }
 
-  /* Hero video iframe styles */
+  /* Hero video styles */
   .hero-video-iframe {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    border: none !important;
-    transform: scale(1.5) !important;
-    transform-origin: center center !important;
-    min-height: 100vh !important;
-    min-width: 100vw !important;
     object-fit: cover !important;
     pointer-events: none !important;
-  }
-}
-
-/* Mobile-specific video styles - outside of @layer for better specificity */
-@media (max-width: 1000px) {
-  .hero-video-iframe {
-    transform: scale(2) !important;
-    min-height: 150vh !important;
-    min-width: 150vw !important;
-    left: -25% !important;
-    top: -25% !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .hero-video-iframe {
-    transform: scale(2.25) !important;
-    min-height: 200vh !important;
-    min-width: 200vw !important;
-    left: -50% !important;
-    top: -50% !important;
   }
 }
 
@@ -277,6 +264,21 @@ html {
   position: fixed !important;
   transform: none !important;
   will-change: auto;
+}
+
+/* Hide system cursor on fine-pointer devices (mouse/trackpad) for custom cursor effect.
+   Only applies to interactive elements — keyboard focus indicators remain visible.
+   Touch/coarse-pointer devices keep their native cursor. */
+@media (pointer: fine) {
+  a,
+  button,
+  [role='button'],
+  input,
+  textarea,
+  select,
+  [data-clickable] {
+    cursor: none;
+  }
 }
 
 /* Respect reduced motion preferences */
@@ -313,6 +315,7 @@ html {
   transition: width 0.3s ease;
 }
 
-.nav-link:hover::before {
+.nav-link:hover::before,
+.nav-link-active::before {
   width: 100%;
 }

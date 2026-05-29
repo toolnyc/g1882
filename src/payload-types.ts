@@ -74,6 +74,7 @@ export interface Config {
     artists: Artist;
     happenings: Happening;
     'happening-types': HappeningType;
+    'rental-inquiries': RentalInquiry;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -92,6 +93,7 @@ export interface Config {
     artists: ArtistsSelect<false> | ArtistsSelect<true>;
     happenings: HappeningsSelect<false> | HappeningsSelect<true>;
     'happening-types': HappeningTypesSelect<false> | HappeningTypesSelect<true>;
+    'rental-inquiries': RentalInquiriesSelect<false> | RentalInquiriesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -105,14 +107,20 @@ export interface Config {
     defaultIDType: string;
   };
   globals: {
-    space: Space;
     home: Home;
     visit: Visit;
+    policies: Policy;
+    'our-story': OurStory;
+    space: Space;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
-    space: SpaceSelect<false> | SpaceSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     visit: VisitSelect<false> | VisitSelect<true>;
+    policies: PoliciesSelect<false> | PoliciesSelect<true>;
+    'our-story': OurStorySelect<false> | OurStorySelect<true>;
+    space: SpaceSelect<false> | SpaceSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -120,6 +128,7 @@ export interface Config {
   };
   jobs: {
     tasks: {
+      generateImageSizes: TaskGenerateImageSizes;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -207,11 +216,11 @@ export interface Post {
 export interface Media {
   id: string;
   /**
-   * Describe the image for screen readers and SEO (e.g. "Artist painting in gallery studio")
+   * Auto-generated from filename if left blank. Customize for better screen reader experience and SEO.
    */
-  alt?: string | null;
+  alt: string;
   /**
-   * Optional caption displayed below the image when shown on the site
+   * Photo credit or caption displayed wherever this image appears on the site
    */
   caption?: {
     root: {
@@ -232,6 +241,14 @@ export interface Media {
    * Details about automatic processing applied to this upload
    */
   processingInfo?: string | null;
+  /**
+   * Status of background image size generation
+   */
+  processingStatus?: ('pending' | 'processing' | 'complete' | 'failed') | null;
+  /**
+   * Error details from image processing
+   */
+  processingError?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -243,64 +260,7 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    xlarge?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    og?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
+  sizes?: {};
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -326,13 +286,19 @@ export interface Artist {
   } | null;
   image?: (string | null) | Media;
   /**
-   * Gallery of artist works with images and captions
+   * Gallery of artist works. Photo captions/credits are managed on each Media document.
    */
   works?:
     | {
         image: string | Media;
+        /**
+         * Artwork title. The photo caption/credit comes from the Media document.
+         */
         title?: string | null;
-        caption?: string | null;
+        /**
+         * Tag which shows/exhibitions this work appears in
+         */
+        happenings?: (string | Happening)[] | null;
         id?: string | null;
       }[]
     | null;
@@ -363,6 +329,10 @@ export interface Artist {
 export interface Happening {
   id: string;
   title: string;
+  /**
+   * Optional subtitle displayed between the title and artist list
+   */
+  subcaption?: string | null;
   /**
    * Determines how dates are displayed. Date Range types show "March 16–June 20"; Date+Time types show "March 28 from 7–9pm".
    */
@@ -403,6 +373,24 @@ export interface Happening {
    * Artists involved in this happening (supports multiple for group shows)
    */
   artists?: (string | Artist)[] | null;
+  /**
+   * Contact information displayed below the works grid (e.g. gallery contact, sales inquiries)
+   */
+  contactInfo?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   featured?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -477,6 +465,22 @@ export interface Category {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rental-inquiries".
+ */
+export interface RentalInquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  eventDate?: string | null;
+  numberOfGuests?: string | null;
+  eventType?: string | null;
+  message: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -775,7 +779,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug: 'inline' | 'generateImageSizes' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -808,7 +812,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'generateImageSizes' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -849,6 +853,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'happening-types';
         value: string | HappeningType;
+      } | null)
+    | ({
+        relationTo: 'rental-inquiries';
+        value: string | RentalInquiry;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -952,6 +960,8 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   processingInfo?: T;
+  processingStatus?: T;
+  processingError?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -963,80 +973,7 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        xlarge?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        og?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
+  sizes?: T | {};
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1094,7 +1031,7 @@ export interface ArtistsSelect<T extends boolean = true> {
     | {
         image?: T;
         title?: T;
-        caption?: T;
+        happenings?: T;
         id?: T;
       };
   website?: T;
@@ -1117,6 +1054,7 @@ export interface ArtistsSelect<T extends boolean = true> {
  */
 export interface HappeningsSelect<T extends boolean = true> {
   title?: T;
+  subcaption?: T;
   type?: T;
   description?: T;
   heroImage?: T;
@@ -1125,6 +1063,7 @@ export interface HappeningsSelect<T extends boolean = true> {
   isActiveOverride?: T;
   isActive?: T;
   artists?: T;
+  contactInfo?: T;
   featured?: T;
   generateSlug?: T;
   slug?: T;
@@ -1140,6 +1079,21 @@ export interface HappeningTypesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   dateDisplayMode?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rental-inquiries_select".
+ */
+export interface RentalInquiriesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  eventDate?: T;
+  numberOfGuests?: T;
+  eventType?: T;
+  message?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1400,43 +1354,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "space".
- */
-export interface Space {
-  id: string;
-  name: string;
-  tagline?: string | null;
-  description?: string | null;
-  address?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  /**
-   * Comma-separated hours string (legacy). Use structuredHours for new data.
-   */
-  hours?: string | null;
-  /**
-   * Structured hours for open/closed status. Day: 0=Sunday, 1=Monday, ... 6=Saturday
-   */
-  structuredHours?:
-    | {
-        day: '0' | '1' | '2' | '3' | '4' | '5' | '6';
-        /**
-         * Opening time in 24h format, e.g. "10:00"
-         */
-        open: string;
-        /**
-         * Closing time in 24h format, e.g. "18:00"
-         */
-        close: string;
-        id?: string | null;
-      }[]
-    | null;
-  admission?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home".
  */
 export interface Home {
@@ -1482,13 +1399,17 @@ export interface Home {
     };
   };
   /**
-   * Cloudflare Stream iframe URL for the hero video. Leave blank to use the default video.
+   * Upload an MP4 or WebM video for the hero background. Leave blank to show no video.
    */
-  heroVideoUrl?: string | null;
+  heroVideo?: (string | null) | Media;
   /**
-   * Caption above the mission statement (defaults to "Our Mission")
+   * Optional poster image shown while the video loads. Should be a still frame or preview of the video.
    */
-  missionCaption?: string | null;
+  heroVideoPoster?: (string | null) | Media;
+  /**
+   * Small icon/logo displayed above the mission statement
+   */
+  missionIcon?: (string | null) | Media;
   missionStatement?: string | null;
   missionCtaText?: string | null;
   missionCtaUrl?: string | null;
@@ -1501,18 +1422,53 @@ export interface Home {
    */
   featuredArtistImage?: (string | null) | Media;
   /**
+   * Button text prefix before the artist's first name (defaults to "More About")
+   */
+  featuredArtistCtaPrefix?: string | null;
+  /**
    * Optional: custom blurb for the homepage (overrides artist bio)
    */
   featuredArtistDescription?: string | null;
   /**
-   * Toggle the Visit section on the homepage
+   * Toggle the "Plan Your Visit" promo card on the homepage
    */
   visitSectionEnabled?: boolean | null;
+  /**
+   * Custom title for the homepage visit promo card. If empty, defaults to gallery description from Space.
+   */
   visitTitle?: string | null;
   visitDescription?: string | null;
   visitImage?: (string | null) | Media;
   visitCtaText?: string | null;
   visitCtaUrl?: string | null;
+  /**
+   * Headline for the newsletter popup (defaults to "Opening Soon")
+   */
+  popupHeadline?: string | null;
+  /**
+   * Description text for the newsletter popup (defaults to launch announcement copy)
+   */
+  popupDescription?: string | null;
+  /**
+   * Submit button text (defaults to "Subscribe")
+   */
+  popupButtonText?: string | null;
+  /**
+   * Message shown after successful signup (defaults to "You've been added to the newsletter!")
+   */
+  popupSuccessMessage?: string | null;
+  /**
+   * Toggle the What's Happening section on the homepage
+   */
+  whatsHappeningEnabled?: boolean | null;
+  /**
+   * Override the section title (defaults to "What's Happening?")
+   */
+  whatsHappeningTitle?: string | null;
+  /**
+   * Show the decorative icon next to the section heading
+   */
+  whatsHappeningIcon?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1532,6 +1488,9 @@ export interface Visit {
      */
     note?: string | null;
     specialHoursTitle?: string | null;
+    /**
+     * Holiday or temporary hour changes. Shown only on the Visit page, alongside regular hours from Space.
+     */
     specialHours?:
       | {
           title: string;
@@ -1544,6 +1503,9 @@ export interface Visit {
    * Toggle visibility of the Admission section on the Visit page
    */
   showAdmissionSection?: boolean | null;
+  /**
+   * Detailed admission info (general & group visits). Shown only on the Visit page when enabled. For the short footer text, edit Space > Admission instead.
+   */
   admission?: {
     caption?: string | null;
     title?: string | null;
@@ -1570,9 +1532,17 @@ export interface Visit {
     title?: string | null;
     description?: string | null;
     /**
-     * Multi-line address
+     * Heading above the address (defaults to "Address"). The address itself is pulled from SiteSettings > Gallery Info.
      */
-    address?: string | null;
+    addressLabel?: string | null;
+    /**
+     * Link to Google Maps directions (e.g. https://maps.google.com/?q=Gallery+1882). Displays a "Get Directions" button.
+     */
+    googleMapsUrl?: string | null;
+    /**
+     * Heading above the parking info (defaults to "Parking")
+     */
+    parkingLabel?: string | null;
     parkingDescription?: string | null;
     parkingFeatures?:
       | {
@@ -1602,6 +1572,15 @@ export interface Visit {
         }[]
       | null;
   };
+  /**
+   * Toggle visibility of the "Explore the Duneland Community" section
+   */
+  dunelandCommunityEnabled?: boolean | null;
+  dunelandCommunity?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+  };
   faqsSection?: {
     caption?: string | null;
     title?: string | null;
@@ -1618,28 +1597,296 @@ export interface Visit {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "space_select".
+ * via the `definition` "policies".
  */
-export interface SpaceSelect<T extends boolean = true> {
-  name?: T;
-  tagline?: T;
-  description?: T;
-  address?: T;
-  phone?: T;
-  email?: T;
-  hours?: T;
-  structuredHours?:
-    | T
+export interface Policy {
+  id: string;
+  /**
+   * Full privacy policy content. Leave empty to display the default hardcoded policy.
+   */
+  privacyContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  privacyLastUpdated?: string | null;
+  /**
+   * Full cookie policy content. Leave empty to display the default hardcoded policy.
+   */
+  cookiesContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cookiesLastUpdated?: string | null;
+  /**
+   * Full terms and conditions content.
+   */
+  termsContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  termsLastUpdated?: string | null;
+  /**
+   * Land acknowledgement statement.
+   */
+  landAcknowledgementContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story".
+ */
+export interface OurStory {
+  id: string;
+  /**
+   * Up to 10 photos displayed in the carousel. Drag to reorder.
+   */
+  photos?:
     | {
-        day?: T;
-        open?: T;
-        close?: T;
-        id?: T;
-      };
-  admission?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        image: string | Media;
+        /**
+         * Editorial caption for the carousel, shown below the photo on the Our Story page
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The gallery story content, displayed below the photo carousel
+   */
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "space".
+ */
+export interface Space {
+  id: string;
+  heroImage?: (string | null) | Media;
+  /**
+   * Add multiple images to display a full-width carousel. If only one is provided, it displays statically.
+   */
+  heroImages?:
+    | {
+        image: string | Media;
+        /**
+         * Optional caption to display with the image
+         */
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  pageTitle?: string | null;
+  intro?: {
+    caption?: string | null;
+    title?: string | null;
+    /**
+     * Use separate paragraphs by adding blank lines.
+     */
+    description?: string | null;
+  };
+  capacity?:
+    | {
+        label: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  amenities?: {
+    enabled?: boolean | null;
+    caption?: string | null;
+    title?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          icon?: ('check' | 'people' | 'calendar') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  inquiry?: {
+    caption?: string | null;
+    title?: string | null;
+    description?: string | null;
+    submitButtonLabel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  name: string;
+  tagline?: string | null;
+  description?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  /**
+   * Legacy field — no longer displayed. Use Operating Hours below instead.
+   */
+  hours?: string | null;
+  /**
+   * Regular operating hours. Shown in the footer and used as the base for the Visit page.
+   */
+  structuredHours?:
+    | {
+        day: '0' | '1' | '2' | '3' | '4' | '5' | '6';
+        /**
+         * Opening time in 24h format, e.g. "10:00"
+         */
+        open: string;
+        /**
+         * Closing time in 24h format, e.g. "18:00"
+         */
+        close: string;
+        id?: string | null;
+      }[]
+    | null;
+  admission?: string | null;
+  pageTitles?: {
+    /**
+     * Title shown at the top of the Artists page
+     */
+    artists?: string | null;
+    /**
+     * Title shown at the top of the Happenings page
+     */
+    happenings?: string | null;
+    /**
+     * Title shown at the top of the News page
+     */
+    news?: string | null;
+    /**
+     * Title shown at the top of the Visit page
+     */
+    visit?: string | null;
+    /**
+     * Title shown at the top of the Our Story page
+     */
+    ourStory?: string | null;
+  };
+  labels?: {
+    /**
+     * Caption shown above the featured artist on the homepage
+     */
+    featuredArtist?: string | null;
+    /**
+     * Banner label for artists with active exhibitions
+     */
+    currentlyShowing?: string | null;
+    /**
+     * Banner label on the News page for the latest post
+     */
+    recentlyPosted?: string | null;
+    /**
+     * Banner label on the Happenings page for the next event
+     */
+    comingUp?: string | null;
+    /**
+     * Caption above the "What's Happening" section on the homepage
+     */
+    upcoming?: string | null;
+    /**
+     * Label shown for currently active exhibitions
+     */
+    onNow?: string | null;
+    /**
+     * Label shown for the next upcoming exhibition
+     */
+    upNext?: string | null;
+    /**
+     * Label before the start date of a happening
+     */
+    opens?: string | null;
+    /**
+     * Label before the end date of a happening
+     */
+    closes?: string | null;
+    /**
+     * Fallback button text when a happening type name is not available
+     */
+    viewHappening?: string | null;
+  };
+  footer?: {
+    sitemapTitle?: string | null;
+    hoursTitle?: string | null;
+    infoTitle?: string | null;
+    newsletterTitle?: string | null;
+  };
+  search?: {
+    artistsShowSearch?: boolean | null;
+    happeningsShowSearch?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1672,13 +1919,15 @@ export interface HomeSelect<T extends boolean = true> {
               media?: T;
             };
       };
-  heroVideoUrl?: T;
-  missionCaption?: T;
+  heroVideo?: T;
+  heroVideoPoster?: T;
+  missionIcon?: T;
   missionStatement?: T;
   missionCtaText?: T;
   missionCtaUrl?: T;
   featuredArtist?: T;
   featuredArtistImage?: T;
+  featuredArtistCtaPrefix?: T;
   featuredArtistDescription?: T;
   visitSectionEnabled?: T;
   visitTitle?: T;
@@ -1686,6 +1935,13 @@ export interface HomeSelect<T extends boolean = true> {
   visitImage?: T;
   visitCtaText?: T;
   visitCtaUrl?: T;
+  popupHeadline?: T;
+  popupDescription?: T;
+  popupButtonText?: T;
+  popupSuccessMessage?: T;
+  whatsHappeningEnabled?: T;
+  whatsHappeningTitle?: T;
+  whatsHappeningIcon?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1742,7 +1998,9 @@ export interface VisitSelect<T extends boolean = true> {
         caption?: T;
         title?: T;
         description?: T;
-        address?: T;
+        addressLabel?: T;
+        googleMapsUrl?: T;
+        parkingLabel?: T;
         parkingDescription?: T;
         parkingFeatures?:
           | T
@@ -1774,6 +2032,14 @@ export interface VisitSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  dunelandCommunityEnabled?: T;
+  dunelandCommunity?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+      };
   faqsSection?:
     | T
     | {
@@ -1790,6 +2056,168 @@ export interface VisitSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "policies_select".
+ */
+export interface PoliciesSelect<T extends boolean = true> {
+  privacyContent?: T;
+  privacyLastUpdated?: T;
+  cookiesContent?: T;
+  cookiesLastUpdated?: T;
+  termsContent?: T;
+  termsLastUpdated?: T;
+  landAcknowledgementContent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-story_select".
+ */
+export interface OurStorySelect<T extends boolean = true> {
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  story?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "space_select".
+ */
+export interface SpaceSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroImages?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  pageTitle?: T;
+  intro?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+      };
+  capacity?:
+    | T
+    | {
+        label?: T;
+        description?: T;
+        id?: T;
+      };
+  amenities?:
+    | T
+    | {
+        enabled?: T;
+        caption?: T;
+        title?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  inquiry?:
+    | T
+    | {
+        caption?: T;
+        title?: T;
+        description?: T;
+        submitButtonLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  name?: T;
+  tagline?: T;
+  description?: T;
+  address?: T;
+  phone?: T;
+  email?: T;
+  hours?: T;
+  structuredHours?:
+    | T
+    | {
+        day?: T;
+        open?: T;
+        close?: T;
+        id?: T;
+      };
+  admission?: T;
+  pageTitles?:
+    | T
+    | {
+        artists?: T;
+        happenings?: T;
+        news?: T;
+        visit?: T;
+        ourStory?: T;
+      };
+  labels?:
+    | T
+    | {
+        featuredArtist?: T;
+        currentlyShowing?: T;
+        recentlyPosted?: T;
+        comingUp?: T;
+        upcoming?: T;
+        onNow?: T;
+        upNext?: T;
+        opens?: T;
+        closes?: T;
+        viewHappening?: T;
+      };
+  footer?:
+    | T
+    | {
+        sitemapTitle?: T;
+        hoursTitle?: T;
+        infoTitle?: T;
+        newsletterTitle?: T;
+      };
+  search?:
+    | T
+    | {
+        artistsShowSearch?: T;
+        happeningsShowSearch?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskGenerateImageSizes".
+ */
+export interface TaskGenerateImageSizes {
+  input: {
+    mediaId: string;
+  };
+  output: {
+    sizesGenerated?: number | null;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

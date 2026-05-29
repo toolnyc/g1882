@@ -1,15 +1,5 @@
 # AGENTS.md — Gallery 1882
 
-> Primary instruction source for all AI coding agents.
-> Tool-specific entry points (CLAUDE.md, .cursorrules, .windsurfrules) are thin wrappers that reference this file.
-
-| Entry point | Tool |
-|-------------|------|
-| `CLAUDE.md` | Claude Code |
-| `.cursorrules` | Cursor |
-| `.windsurfrules` | Windsurf |
-| `AGENTS.md` | GitHub Copilot, other agents |
-
 ## Project Overview
 
 Gallery 1882 — a Chesterton, IN art gallery website. Directs users to core gallery information, event/exhibition browsing, and current happenings. Currently in **maintenance/launch phase**.
@@ -156,39 +146,19 @@ The `main` branch exists for backwards compatibility but should not be used for 
 - ISR/caching is currently disabled (`force-dynamic`); Cloudflare handles caching
 - Payload admin bundle size affects cold start; avoid heavy imports in collection configs
 - ESLint blocks importing from `@/endpoints/seed/*` in runtime code
+- **Vercel Blob Client Uploads:** When files (e.g., with spaces) are uploaded client-side, the Blob SDK returns a URL-encoded filename. **Do not** sanitize or double-encode filenames in Payload hooks or fetch retry logic after the upload, as this will result in 404s when `head()` attempts to verify the blob using a malformed URL (like `%2520`).
 
-## Agentic Build System (Claude Code)
 
-Claude Code has access to hooks and skills in `.claude/` that enforce soft guardrails:
+## Agent skills
 
-### Sentinels (`.claude/state/`)
+### Issue tracker
 
-Ephemeral JSON state files that track workflow progress. Soft warnings only — no hard blocks.
+Issues are tracked in GitHub Issues (`toolnyc/g1882`). See `docs/agents/issue-tracker.md`.
 
-| Sentinel | Set by | Cleared by |
-|----------|--------|------------|
-| `types-current` | `pnpm generate:types` | Editing collection schema files |
-| `design-checked` | `/design-check` pass | Editing TSX files |
-| `verify-passed` | `/verify` pass | Any source file edit |
+### Triage labels
 
-### Skills
+Standard triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
 
-| Skill | Purpose |
-|-------|---------|
-| `/verify` | Lint → unit tests → int tests → build |
-| `/session-close` | End-of-session ritual, captures learnings |
-| `/epic` | Optional feature planning |
-| `/design-check` | Gallery 1882 design system validation |
-| `/docs-sync` | Documentation synchronization |
-| `/observability` | Logging/monitoring reference |
+### Domain docs
 
-## Knowledge Base
-
-Session reports and architecture decisions are stored in the Obsidian vault:
-
-```
-/Users/pete/Dropbox/Notes/Obsidian/Clients/Gallery 1882/
-├── Session Reports/     # AI session summaries
-├── Architecture/        # Design decisions
-└── *.md                 # Client feedback, meeting notes
-```
+Single-context layout with `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

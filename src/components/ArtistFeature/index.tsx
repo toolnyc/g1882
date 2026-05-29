@@ -3,22 +3,27 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import RichText from '@/components/RichText'
 
 interface ArtistFeatureProps {
   id: string
   name: string
-  title: string
   bio: string
   image: string
   artistSlug: string
+  caption?: string | null
+  ctaPrefix?: string | null
+  imageCaption?: Record<string, unknown> | null
 }
 
 export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
   name,
-  title,
   bio,
   image,
   artistSlug,
+  caption,
+  ctaPrefix,
+  imageCaption,
 }) => {
   return (
     <section className="py-32 gallery-section">
@@ -38,9 +43,8 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <div className="caption text-lake mb-6">Featured Artist</div>
-              <h2 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl">{name}</h2>
-              <p className="mb-8 text-xl font-medium text-lake">{title}</p>
+              <div className="caption text-lake mb-6">{caption || 'Featured Artist'}</div>
+              <h2 className="mb-6 text-6xl font-bold tracking-tight md:text-7xl">{name}</h2>
               {bio && <p className="mb-8 text-lg leading-relaxed text-navy/80">{bio}</p>}
               <div className="flex flex-col gap-4 sm:flex-row">
                 {artistSlug && (
@@ -48,7 +52,7 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
                     href={`/artists/${artistSlug}`}
                     className="gallery-button-primary px-8 py-4 text-lg"
                   >
-                    More About {name.split(' ')[0]}
+                    {ctaPrefix || 'More About'} {name.split(' ')[0]}
                   </Link>
                 )}
               </div>
@@ -67,18 +71,21 @@ export const ArtistFeature: React.FC<ArtistFeatureProps> = ({
               >
                 <Image
                   src={image}
-                  alt={`${name} - ${title}`}
+                  alt={name}
                   width={800}
                   height={1000}
                   quality={90}
                   sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 33vw, (max-width: 1376px) 33vw, 430px"
                   className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
-                {/* Hover overlay with gradient and caption */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <p className="text-off-white text-sm font-medium tracking-wider">{name}</p>
-                    {title && <p className="text-off-white/80 text-xs mt-1">{title}</p>}
+                {/* Hover overlay with media caption */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-off-white text-sm [&_p]:my-0 [&_p]:text-off-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    {imageCaption ? (
+                      <RichText data={imageCaption as never} enableGutter={false} />
+                    ) : (
+                      <p className="font-medium tracking-wider">{name}</p>
+                    )}
                   </div>
                 </div>
               </motion.div>

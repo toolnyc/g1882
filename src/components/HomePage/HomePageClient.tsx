@@ -9,10 +9,10 @@ import { UpcomingHappenings } from '@/components/UpcomingHappenings'
 import { MissionSection } from '@/components/MissionSection'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { useNewsletterGate } from '@/providers/NewsletterGate/context'
-import type { Happening, Home } from '@/payload-types'
+import type { Happening, Home, SiteSetting } from '@/payload-types'
 
 type FormattedHappening = Omit<Happening, 'heroImage'> & {
-  heroImage: { url: string; alt?: string } | string | null
+  heroImage: { url: string; alt?: string; caption?: Record<string, unknown> | null } | string | null
   featured: boolean
   isActive: boolean
 }
@@ -24,8 +24,9 @@ interface HomePageClientProps {
   featuredArtistData: ReturnType<typeof import('@/utilities/dataTransformers').transformFeaturedArtist>
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
   heroVideoUrl?: string | null
-  structuredHours?: { day: string; open: string; close: string }[] | null
+  heroVideoPosterUrl?: string | null
   isUpNext?: boolean
+  siteSettings?: SiteSetting | null
 }
 
 export const HomePageClient: React.FC<HomePageClientProps> = ({
@@ -35,8 +36,9 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   featuredArtistData,
   visitSectionData,
   heroVideoUrl,
-  structuredHours,
+  heroVideoPosterUrl,
   isUpNext = false,
+  siteSettings,
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const { shouldShowFullSite } = useNewsletterGate()
@@ -54,10 +56,8 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
       {/* Gate enabled (pre-launch): show only video with "Coming Soon" */}
       {showLanderContent && (
         <GalleryHero
-          statusText="Coming Soon"
-          statusIndicatorColor="bg-lake"
           heroVideoUrl={heroVideoUrl}
-          structuredHours={structuredHours}
+          heroVideoPosterUrl={heroVideoPosterUrl}
         />
       )}
 
@@ -65,26 +65,45 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
       {showFullSite && (
         <>
           <GalleryHero
-            statusText="Open"
-            statusIndicatorColor="bg-bright-lake"
             heroVideoUrl={heroVideoUrl}
-            structuredHours={structuredHours}
+            heroVideoPosterUrl={heroVideoPosterUrl}
           />
 
           <MissionSection
-            missionCaption={homeData?.missionCaption}
+            missionIcon={typeof homeData?.missionIcon === 'object' && homeData.missionIcon ? { url: homeData.missionIcon.url || '', alt: homeData.missionIcon.alt || '' } : null}
             missionStatement={homeData?.missionStatement}
             missionCtaText={homeData?.missionCtaText}
             missionCtaUrl={homeData?.missionCtaUrl}
           />
 
           {currentHappening && (
-            <CurrentExhibition happening={currentHappening} isUpNext={isUpNext} />
+            <CurrentExhibition
+              happening={currentHappening}
+              isUpNext={isUpNext}
+              onNowLabel={siteSettings?.labels?.onNow}
+              upNextLabel={siteSettings?.labels?.upNext}
+              viewHappeningLabel={siteSettings?.labels?.viewHappening}
+            />
           )}
 
-          {featuredArtistData && <ArtistFeature {...featuredArtistData} />}
+          {featuredArtistData && (
+            <ArtistFeature
+              {...featuredArtistData}
+              caption={siteSettings?.labels?.featuredArtist}
+              ctaPrefix={homeData?.featuredArtistCtaPrefix}
+            />
+          )}
 
-          {upcomingHappenings.length > 0 && <UpcomingHappenings happenings={upcomingHappenings} />}
+          {upcomingHappenings.length > 0 && homeData?.whatsHappeningEnabled !== false && (
+            <UpcomingHappenings
+              happenings={upcomingHappenings}
+              sectionTitle={homeData?.whatsHappeningTitle}
+              upcomingCaption={siteSettings?.labels?.upcoming}
+              opensLabel={siteSettings?.labels?.opens}
+              closesLabel={siteSettings?.labels?.closes}
+              viewHappeningLabel={siteSettings?.labels?.viewHappening}
+            />
+          )}
 
           {visitSectionData && homeData?.visitSectionEnabled !== false && (
             <VisitSection {...visitSectionData} />
