@@ -9,14 +9,15 @@ import { formatDate } from '@/utilities/dateHelpers'
 import React from 'react'
 import PageClient from './page.client'
 import type { SiteSetting } from '@/payload-types'
+import { draftMode } from 'next/headers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+export const revalidate = false
 
 export default async function Page() {
+  const { isEnabled: draft } = await draftMode()
   const [allPosts, siteSettings] = await Promise.all([
-    getCachedPosts(1)(),
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    getCachedPosts(1, draft)(),
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
   ])
 
   // Sort posts by publishedAt date (newest first)

@@ -3,8 +3,9 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import { formatStructuredHours } from '@/utilities/hoursHelpers'
 import type { SiteSetting, Visit } from '@/payload-types'
 import VisitPageClient from './VisitPage.client'
+import { draftMode } from 'next/headers'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -18,9 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function VisitPage() {
+  const { isEnabled: draft } = await draftMode()
   const [visit, siteSettings] = await Promise.all([
-    getCachedGlobal('visit', 1)() as Promise<Visit>,
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    getCachedGlobal('visit', 1, draft)() as Promise<Visit>,
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
   ])
 
   const formattedHours = formatStructuredHours(siteSettings?.structuredHours)

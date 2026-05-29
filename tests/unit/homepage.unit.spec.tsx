@@ -3,6 +3,10 @@ import { render, cleanup } from '@testing-library/react'
 import HomePage from '@/app/(frontend)/page'
 import type { Happening, Artist, Media } from '@/payload-types'
 
+vi.mock('next/headers', () => ({
+  draftMode: vi.fn(() => Promise.resolve({ isEnabled: false })),
+}))
+
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
   default: ({ src, alt, ...props }: any) => (

@@ -1,7 +1,6 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
-import { draftMode } from 'next/headers'
 
 async function getArtistBySlug(slug: string, depth = 2, draft = false) {
   const payload = await getPayload({ config: configPromise })
@@ -29,25 +28,20 @@ async function getArtistBySlug(slug: string, depth = 2, draft = false) {
 }
 
 /**
- * Returns a function to fetch an artist by slug
- * Automatically handles draft mode - skips cache when previewing drafts
+ * Returns a cached function to fetch an artist by slug.
+ * Pass draft=true (from draftMode() at the page level) to bypass cache for editor previews.
  */
-export const getCachedArtistBySlug = (slug: string) => {
-  // Decode early so cache keys are consistent regardless of encoding
+export const getCachedArtistBySlug = (slug: string, draft = false) => {
   const decodedSlug = decodeURIComponent(slug)
 
-  return async () => {
-    const { isEnabled: isDraftMode } = await draftMode()
-
-    if (isDraftMode) {
-      return getArtistBySlug(decodedSlug, 2, true)
-    }
-
-    return unstable_cache(async () => getArtistBySlug(decodedSlug), ['artist', decodedSlug], {
-      tags: [`artist_${decodedSlug}`, 'artists'],
-      revalidate: 60,
-    })()
+  if (draft) {
+    return () => getArtistBySlug(decodedSlug, 2, true)
   }
+
+  return unstable_cache(async () => getArtistBySlug(decodedSlug), ['artist', decodedSlug], {
+    tags: [`artist_${decodedSlug}`, 'artists'],
+    revalidate: false,
+  })
 }
 
 export { getArtistBySlug }

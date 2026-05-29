@@ -4,15 +4,17 @@ import React from 'react'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting, Space } from '@/payload-types'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
 import { generateMeta } from '@/utilities/generateMeta'
+
+export const revalidate = false
 import { SpacePageClient } from './SpacePage.client'
 
 export default async function SpacePage() {
+  const { isEnabled: draft } = await draftMode()
   const [space, siteSettings] = await Promise.all([
-    getCachedGlobal('space', 1)() as Promise<Space>,
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    getCachedGlobal('space', 1, draft)() as Promise<Space>,
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
   ])
 
   return <SpacePageClient space={space} siteSettings={siteSettings ?? undefined} />

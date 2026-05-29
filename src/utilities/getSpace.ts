@@ -1,7 +1,6 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
-import { draftMode } from 'next/headers'
 import { cache } from 'react'
 
 const getSpace = cache(async (depth = 0, draft = false) => {
@@ -22,24 +21,19 @@ const getSpace = cache(async (depth = 0, draft = false) => {
  * now read from SiteSettings, which contains the same fields (name, address, phone,
  * email, structuredHours, admission, etc.) under the Gallery Info tab.
  *
- * When draft mode is enabled, bypasses cache to always fetch fresh draft content.
+ * Pass draft=true (from draftMode() at the page level) to bypass cache for editor previews.
  */
-export const getCachedSpace = (depth = 0) => {
-  return async () => {
-    const { isEnabled } = await draftMode()
-
-    // When in draft mode, bypass cache to always get fresh draft content
-    if (isEnabled) {
-      return getSpace(depth, true)
-    }
-
-    return unstable_cache(
-      async () => getSpace(depth, false),
-      ['site-settings', `site-settings-depth-${depth}`],
-      {
-        tags: ['global_site-settings'],
-        revalidate: 60,
-      },
-    )()
+export const getCachedSpace = (depth = 0, draft = false) => {
+  if (draft) {
+    return () => getSpace(depth, true)
   }
+
+  return unstable_cache(
+    async () => getSpace(depth, false),
+    ['site-settings', `site-settings-depth-${depth}`],
+    {
+      tags: ['global_site-settings'],
+      revalidate: false,
+    },
+  )
 }

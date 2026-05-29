@@ -1,15 +1,5 @@
 # AGENTS.md — Gallery 1882
 
-> Primary instruction source for all AI coding agents.
-> Tool-specific entry points (CLAUDE.md, .cursorrules, .windsurfrules) are thin wrappers that reference this file.
-
-| Entry point | Tool |
-|-------------|------|
-| `CLAUDE.md` | Claude Code |
-| `.cursorrules` | Cursor |
-| `.windsurfrules` | Windsurf |
-| `AGENTS.md` | GitHub Copilot, other agents |
-
 ## Project Overview
 
 Gallery 1882 — a Chesterton, IN art gallery website. Directs users to core gallery information, event/exhibition browsing, and current happenings. Currently in **maintenance/launch phase**.
@@ -158,50 +148,6 @@ The `main` branch exists for backwards compatibility but should not be used for 
 - ESLint blocks importing from `@/endpoints/seed/*` in runtime code
 - **Vercel Blob Client Uploads:** When files (e.g., with spaces) are uploaded client-side, the Blob SDK returns a URL-encoded filename. **Do not** sanitize or double-encode filenames in Payload hooks or fetch retry logic after the upload, as this will result in 404s when `head()` attempts to verify the blob using a malformed URL (like `%2520`).
 
-## Agentic Build System (Claude Code)
-
-Claude Code has access to hooks and skills in `.claude/` that enforce soft guardrails:
-
-### Sentinels (`.claude/state/`)
-
-Ephemeral JSON state files that track workflow progress. Soft warnings only — no hard blocks.
-
-| Sentinel | Set by | Cleared by |
-|----------|--------|------------|
-| `types-current` | `pnpm generate:types` | Editing collection schema files |
-| `design-checked` | `/design-check` pass | Editing TSX files |
-| `verify-passed` | `/verify` pass | Any source file edit |
-
-### Skills
-
-| Skill | Purpose |
-|-------|---------|
-| `/verify` | Lint → unit tests → int tests → build |
-| `/session-close` | End-of-session ritual, captures learnings |
-| `/epic` | Optional feature planning |
-| `/design-check` | Gallery 1882 design system validation |
-| `/docs-sync` | Documentation synchronization |
-| `/observability` | Logging/monitoring reference |
-
-## Agent Team Conventions
-
-When spawning parallel agents (e.g., worktree-isolated epic implementations):
-
-| Guideline | Why |
-|-----------|-----|
-| Use `dontAsk` mode, not `bypassPermissions` | `bypassPermissions` causes write failures in worktrees |
-| Always branch from `preview` | `main` is deprecated; `prod` has empty DB. Verify with `git merge-base HEAD preview` after completion |
-| Prefer smaller agent scope | One sub-task per agent. Shorter runs = less exposure to session drops |
-| Research-only agents are more reliable | Agents that only read/search rarely fail; use them for exploration |
-| Include fallback instructions | Tell agents to document progress so work can be completed manually if auth drops |
-| Frame prompts idempotently | Agents should check if work already exists before creating, so re-runs are safe |
-| Verify branch base after completion | Run `git merge-base HEAD preview` to confirm the branch descends from `preview` |
-
-### Worktree Notes
-
-- Sentinels resolve from `git rev-parse --git-common-dir`, so they're shared across worktrees
-- Hooks in `.claude/hooks/` reference sentinels via import, so they work in worktrees automatically
-- If hooks aren't firing in a worktree, ensure `.claude/` is accessible from the worktree root
 
 ## Agent skills
 
@@ -216,14 +162,3 @@ Standard triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-
 ### Domain docs
 
 Single-context layout with `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
-
-## Knowledge Base
-
-Session reports and architecture decisions are stored in the Obsidian vault:
-
-```
-/Users/pete/Dropbox/Notes/Obsidian/Clients/Gallery 1882/
-├── Session Reports/     # AI session summaries
-├── Architecture/        # Design decisions
-└── *.md                 # Client feedback, meeting notes
-```

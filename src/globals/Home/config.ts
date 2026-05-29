@@ -1,6 +1,12 @@
 import type { GlobalConfig } from 'payload'
 import { hero } from '@/heros/config'
-import { revalidateHome } from './hooks/revalidateHome'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateHome } = createRevalidateHook({
+  collection: 'home',
+  getPaths: () => ['/'],
+  getTags: () => ['global_home'],
+})
 import { getServerSideURL } from '../../utilities/getURL'
 
 export const Home: GlobalConfig = {

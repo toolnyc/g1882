@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { DirectoryListing } from '@/components/DirectoryListing'
+import { draftMode } from 'next/headers'
 
-// Force dynamic rendering since layout reads headers (draftMode, auth)
-export const dynamic = 'force-dynamic'
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -17,10 +17,14 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+import { CurrentArtistBanner } from '@/components/CurrentArtistBanner'
 import { getCachedArtists } from '@/utilities/getArtists'
+import { getCachedHappenings } from '@/utilities/getHappenings'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveMediaUrl } from '@/utilities/mediaHelpers'
-import type { SiteSetting } from '@/payload-types'
+import { isDateRangeType } from '@/utilities/happeningTypeHelpers'
+import { extractPlainText } from '@/utilities/richTextHelpers'
+import type { Artist, SiteSetting } from '@/payload-types'
 
 const getLastName = (name: string): string => {
   const parts = name.trim().split(/\s+/)
@@ -28,27 +32,92 @@ const getLastName = (name: string): string => {
 }
 
 export default async function ArtistsPage() {
-  const [siteSettings, artists] = await Promise.all([
-    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
-    getCachedArtists(1)(),
+  const { isEnabled: draft } = await draftMode()
+  const [siteSettings, artists, happenings] = await Promise.all([
+    getCachedGlobal('site-settings', 0, draft)() as Promise<SiteSetting>,
+    getCachedArtists(1, draft)(),
+    // Fetch with depth 2 to populate artists array relations
+    getCachedHappenings({ active: true }, 2, undefined, draft)(),
   ])
   const showSearch = siteSettings?.search?.artistsShowSearch !== false
 
+  // Find active exhibitions (date-range types) that reference artists
+  const activeExhibitions = happenings.filter(
+    (h) => h.isActive && isDateRangeType(h.type),
+  )
+
+  // Build a map of artist ID → exhibition titles
+  const artistExhibitionMap = new Map<string, string[]>()
+  for (const exhibition of activeExhibitions) {
+    const exhibArtists = exhibition.artists || []
+    for (const a of exhibArtists) {
+      const artistObj = typeof a === 'object' && a ? (a as Artist) : null
+      if (artistObj) {
+        const existing = artistExhibitionMap.get(artistObj.id) || []
+        existing.push(exhibition.title || 'Exhibition')
+        artistExhibitionMap.set(artistObj.id, existing)
+      }
+    }
+  }
+
+  // Find an artist for the "Currently Showing" banner — only from active exhibitions
+  let bannerArtist: {
+    id: string
+    name: string
+    bio: string
+    image: string
+    exhibitions: string[]
+    slug?: string
+  } | null = null
+  let exhibitionTitle: string | undefined
+
+  if (activeExhibitions.length > 0) {
+    const firstExhibition = activeExhibitions[0]
+    // Try the new artists array first
+    const exhibitionArtists = firstExhibition.artists || []
+    const firstArtist = exhibitionArtists.find(
+      (a) => typeof a === 'object' && a,
+    ) as Artist | undefined
+
+    if (firstArtist) {
+      bannerArtist = {
+        id: firstArtist.id,
+        name: firstArtist.name,
+        bio: extractPlainText(firstArtist.bio),
+        image: resolveMediaUrl(firstArtist.image),
+        exhibitions: [],
+        slug: firstArtist.slug,
+      }
+      exhibitionTitle = firstExhibition.title
+    }
+  }
+
+  // Sort artists alphabetically by last name
   const sortedArtists = [...artists].sort((a, b) => {
     const lastA = getLastName(a.name).toLowerCase()
     const lastB = getLastName(b.name).toLowerCase()
     return lastA.localeCompare(lastB)
   })
 
-  const artistItems = sortedArtists.map((artist) => ({
-    id: artist.id,
-    slug: artist.slug,
-    name: artist.name,
-    groupKey: getLastName(artist.name).charAt(0).toUpperCase(),
-    displayName: artist.name,
-    href: `/artists/${artist.slug}`,
-    image: resolveMediaUrl(artist.image),
-  }))
+  // Map artists to DirectoryListing format
+  const artistItems = sortedArtists.map((artist) => {
+    const imageUrl = resolveMediaUrl(artist.image)
+    const exhibitions = artistExhibitionMap.get(artist.id)
+    const subtitle = exhibitions
+      ? `Currently in: ${exhibitions.join(', ')}`
+      : undefined
+
+    return {
+      id: artist.id,
+      slug: artist.slug,
+      name: artist.name,
+      groupKey: getLastName(artist.name).charAt(0).toUpperCase(),
+      displayName: artist.name,
+      subtitle,
+      href: `/artists/${artist.slug}`,
+      image: imageUrl,
+    }
+  })
 
   return (
     <main className="bg-off-white">
@@ -57,6 +126,15 @@ export default async function ArtistsPage() {
         title={siteSettings?.pageTitles?.artists || 'Artists'}
         groupBy="alphabetical"
         showSearch={showSearch}
+        banner={
+          bannerArtist && exhibitionTitle ? (
+            <CurrentArtistBanner
+              artist={bannerArtist}
+              exhibitionTitle={exhibitionTitle}
+              label={siteSettings?.labels?.currentlyShowing}
+            />
+          ) : undefined
+        }
       />
     </main>
   )

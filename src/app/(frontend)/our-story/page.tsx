@@ -8,7 +8,9 @@ import { AnimatedBorder } from '@/components/AnimatedBorder'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { Media } from '@/payload-types'
 
-export const dynamic = 'force-dynamic'
+import { draftMode } from 'next/headers'
+
+export const revalidate = false
 
 type PhotoItem = {
   image: Media | string
@@ -17,7 +19,8 @@ type PhotoItem = {
 }
 
 export default async function OurStoryPage() {
-  const ourStory = (await getCachedGlobal('our-story', 1)()) as OurStoryType
+  const { isEnabled: draft } = await draftMode()
+  const ourStory = (await getCachedGlobal('our-story', 1, draft)()) as OurStoryType
 
   const photos = (ourStory?.photos as PhotoItem[] | undefined) ?? []
   const hasPhotos = photos.length > 0

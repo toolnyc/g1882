@@ -13,7 +13,13 @@ import { authenticated } from '../../access/authenticated'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { formatSlug } from './hooks/formatSlug'
-import { revalidateArtist, revalidateDeleteArtist } from './hooks/revalidateArtist'
+import { createRevalidateHook } from '@/utilities/revalidateFactory'
+
+const { afterChange: revalidateArtist, afterDelete: revalidateDeleteArtist } = createRevalidateHook({
+  collection: 'artists',
+  getPaths: (doc) => (doc.slug ? [`/artists/${doc.slug}`] : []),
+  getTags: (doc) => ['artists', ...(doc.slug ? [`artist_${doc.slug}`] : [])],
+})
 
 export const Artists: CollectionConfig = {
   slug: 'artists',
