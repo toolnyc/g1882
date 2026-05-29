@@ -16,6 +16,7 @@ import { LayoutClient } from '@/components/LayoutClient'
 import { LanderModeGuard } from '@/components/LanderModeGuard'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Home } from '@/payload-types'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -24,7 +25,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { getOrganizationSchema } from '@/utilities/jsonLd'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const homeData = await getCachedGlobal('home', 0)()
+  const homeData = (await getCachedGlobal('home', 0)()) as Home
 
   return (
     <html
