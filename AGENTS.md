@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Gallery 1882 — a Chesterton, IN art gallery website. Directs users to core gallery information, event/exhibition browsing, and current happenings. Currently in **maintenance/launch phase**.
+Gallery 1882 — a Chesterton, IN art gallery website. Directs users to core gallery information, event/exhibition browsing, and current happenings. Currently in **launch phase**.
 
 ## Tech Stack
 
@@ -37,32 +37,29 @@ pnpm test:pre-deploy      # Lint + unit + integration (run before merging)
 
 | Branch | Purpose |
 |--------|---------|
-| `prod` | Production. Deploys to production domain. |
+| `main` | Production. Deploys to production domain. |
 | `preview` | Staging. Deploys to preview environment. |
 | `feature/*` | New features. Branch from `preview`, merge back. |
 | `fix/*` | Bug fixes. Branch from affected branch, merge back. |
 
-**Workflow**: feature branch → `preview` (validate) → `prod` (release)
+**Workflow**: feature branch → `preview` (validate) → `main` (release)
 
-The `main` branch exists for backwards compatibility but should not be used for new work.
 
 ### Branch Safety Rules
 
-| Rule | Why |
-|------|-----|
-| **Never edit source files directly on `prod`** | Auto-deploys to live site; production MongoDB is empty (no test data) |
-| **Prefer feature/fix branches over direct `preview` edits** | Keeps staging clean; allows PR review before merge |
-| **Always branch from `preview`**, not `prod` | `preview` has the full development database and latest validated code |
-| **Run `/verify` before any push** | Lint + tests + build must pass; sentinel tracks this |
-| **Merge to `prod` only after validating on `preview`** | Production has no test data — broken code is immediately visible to users |
+| Rule |
+|------|
+| **Never edit source files directly on `prod`** |
+| **Prefer feature/fix branches over direct `preview` edits** |
+| **Merge to `main` only after validating on `preview`** | 
 
 ### Environment Context
 
 | Branch | Deploys to | Database | Risk |
 |--------|-----------|----------|------|
-| `prod` | Production domain | Production MongoDB (empty — no test data) | **High** |
-| `preview` | Preview environment | Development MongoDB (has test data) | Medium |
-| `feature/*`, `fix/*` | Preview (on push) | Development MongoDB | Low |
+| `main` | Production domain | **High** |
+| `preview` | Preview environment | Uses same database as main | Medium |
+| `feature/*`, `fix/*` | Preview (on push) | same database as above | Medium |
 
 ## Key Patterns
 
@@ -112,42 +109,6 @@ The `main` branch exists for backwards compatibility but should not be used for 
 | `RESEND_API_KEY` | Email sending (newsletter) |
 | `RESEND_AUDIENCE_ID` | Resend audience for contacts |
 | `RESEND_FROM_EMAIL` | Sender email address |
-
-## Design References
-
-- Gallery aesthetic: refined, minimal, art-forward. Avoid generic/corporate patterns.
-- Typography and color should reflect the gallery's physical identity
-- Mobile-first responsive design; touch-friendly event browsing
-- Accessibility: WCAG AA compliance target for all public-facing pages
-- Image-heavy pages must use responsive `imageSizes` from Media collection and Next.js `<Image />`
-
-## Testing Priorities
-
-1. **Pre-deploy gate**: `pnpm test:pre-deploy` must pass before merging to `preview`
-2. **Unit tests** (`tests/unit/`): Utility functions, data transformers, date helpers
-3. **Integration tests** (`tests/int/`): Payload collection CRUD, hook behavior, access control
-4. **E2E tests** (`tests/e2e/` via Playwright): Critical user paths
-5. **Manual verification**: Live preview, admin panel content editing, image uploads
-
-## Deployment Checklist
-
-1. All tests pass locally (`pnpm test:pre-deploy`)
-2. No TypeScript errors (`pnpm build` succeeds)
-3. Payload types are up to date (`pnpm generate:types` if schema changed)
-4. Environment variables are set in Vercel for the target environment
-5. Feature branch merged to `preview`; verify in preview environment
-6. After validation, merge `preview` to `prod` for production release
-
-## Platform Constraints
-
-- Vercel serverless functions have a 10s default / 60s max execution time
-- MongoDB connections are pooled; avoid opening new connections in hooks
-- Vercel Blob has a 500MB free tier; monitor media storage usage
-- ISR/caching is currently disabled (`force-dynamic`); Cloudflare handles caching
-- Payload admin bundle size affects cold start; avoid heavy imports in collection configs
-- ESLint blocks importing from `@/endpoints/seed/*` in runtime code
-- **Vercel Blob Client Uploads:** When files (e.g., with spaces) are uploaded client-side, the Blob SDK returns a URL-encoded filename. **Do not** sanitize or double-encode filenames in Payload hooks or fetch retry logic after the upload, as this will result in 404s when `head()` attempts to verify the blob using a malformed URL (like `%2520`).
-
 
 ## Agent skills
 
