@@ -40,11 +40,8 @@ export function NewsletterForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-2"
-    >
-      <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 justify-center items-center">
         <input
           type="email"
           value={email}
@@ -58,7 +55,7 @@ export function NewsletterForm() {
         <button
           type="submit"
           disabled={isLoading || !consent}
-          className="bg-lake text-off-white px-4 py-2 text-sm font-medium rounded-[3px] hover:bg-bright-lake hover:scale-105 transition-all duration-300 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-lake text-off-white px-4 py-2 text-sm font-medium rounded-[3px] hover:bg-bright-lake hover:scale-105 transition-all duration-300 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Subscribing...' : 'Subscribe'}
         </button>
