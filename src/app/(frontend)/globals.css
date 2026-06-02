@@ -242,11 +242,19 @@
 
 html {
   opacity: 1;
-  /* Do NOT set overflow-x here. body's overflow-x:hidden propagates to the viewport
+  /* Do NOT set overflow-x globally. body's overflow-x:hidden propagates to the viewport
      per CSS spec (html overflow:visible triggers propagation). Setting overflow on html
      blocks that propagation, trapping body as a scroll container whose
-     overscroll-behavior:none then swallows wheel events. */
+     overscroll-behavior:none then swallows wheel events on desktop trackpads. */
   overscroll-behavior: none;
+}
+
+/* Prevent horizontal scroll on touch/mobile only — desktop keeps html overflow:visible
+   so the CSS viewport-propagation rule stays intact for trackpad scroll. */
+@media (pointer: coarse) {
+  html {
+    overflow-x: hidden;
+  }
 }
 
 /* Fixed directory sidebar - outside scroll container */
