@@ -93,7 +93,7 @@ export const GalleryNav: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             className={`absolute top-full left-0 right-0 border-t md:hidden ${
               isGlassy
-                ? 'bg-white/10 backdrop-blur-md border-white/20'
+                ? 'bg-white/10 backdrop-blur-xl border-white/20'
                 : 'bg-off-white border-navy/10'
             }`}
           >
