@@ -11,11 +11,13 @@ const WeatherWidget = dynamic(
 
 interface GalleryHeroProps {
   heroVideoUrl?: string | null
+  heroVideoMobileUrl?: string | null
   heroVideoPosterUrl?: string | null
 }
 
 export const GalleryHero: React.FC<GalleryHeroProps> = ({
   heroVideoUrl,
+  heroVideoMobileUrl,
   heroVideoPosterUrl,
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('')
@@ -46,20 +48,41 @@ export const GalleryHero: React.FC<GalleryHeroProps> = ({
       <div className="absolute inset-0 pointer-events-none">
         <div className="relative h-full w-full overflow-hidden">
           {/* eslint-disable jsx-a11y/no-interactive-element-to-noninteractive-role */}
-          {heroVideoUrl ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster={heroVideoPosterUrl || undefined}
-              className="hero-video-iframe"
-              aria-hidden="true"
-              role="presentation"
-            >
-              <source src={heroVideoUrl} />
-            </video>
+          {heroVideoUrl || heroVideoMobileUrl ? (
+            <>
+              {/* Mobile video — shown below md breakpoint */}
+              {(heroVideoMobileUrl || heroVideoUrl) && (
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster={heroVideoPosterUrl || undefined}
+                  className="hero-video-iframe md:hidden"
+                  aria-hidden="true"
+                  role="presentation"
+                >
+                  <source src={(heroVideoMobileUrl || heroVideoUrl)!} />
+                </video>
+              )}
+              {/* Desktop video — hidden below md breakpoint */}
+              {heroVideoUrl && (
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster={heroVideoPosterUrl || undefined}
+                  className="hero-video-iframe hidden md:block"
+                  aria-hidden="true"
+                  role="presentation"
+                >
+                  <source src={heroVideoUrl} />
+                </video>
+              )}
+            </>
           ) : heroVideoPosterUrl ? (
             <div
               className="absolute inset-0"

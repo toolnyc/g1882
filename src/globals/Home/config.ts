@@ -39,11 +39,22 @@ export const Home: GlobalConfig = {
               name: 'heroVideo',
               type: 'upload',
               relationTo: 'media',
-              label: 'Hero Video',
+              label: 'Hero Video (Desktop)',
               required: false,
               admin: {
                 description:
-                  'Upload an MP4 or WebM video for the hero background. Leave blank to show no video.',
+                  'Upload an MP4 or WebM video for the hero background on desktop. Leave blank to show no video.',
+              },
+            },
+            {
+              name: 'heroVideoMobile',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Hero Video (Mobile)',
+              required: false,
+              admin: {
+                description:
+                  'Upload an MP4 or WebM video optimized for mobile (portrait crop). If blank, falls back to the desktop video.',
               },
             },
             {

@@ -123,6 +123,7 @@ export default async function HomePage() {
       featuredArtistData={featuredArtistData}
       visitSectionData={visitSectionData}
       heroVideoUrl={resolveMediaUrl(homeData?.heroVideo) || null}
+      heroVideoMobileUrl={resolveMediaUrl(homeData?.heroVideoMobile) || null}
       heroVideoPosterUrl={resolveMediaUrl(homeData?.heroVideoPoster) || null}
       isUpNext={isUpNext}
       siteSettings={siteSettings}

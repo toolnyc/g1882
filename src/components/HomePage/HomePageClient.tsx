@@ -24,6 +24,7 @@ interface HomePageClientProps {
   featuredArtistData: ReturnType<typeof import('@/utilities/dataTransformers').transformFeaturedArtist>
   visitSectionData: ReturnType<typeof import('@/utilities/dataTransformers').transformVisitSection>
   heroVideoUrl?: string | null
+  heroVideoMobileUrl?: string | null
   heroVideoPosterUrl?: string | null
   isUpNext?: boolean
   siteSettings?: SiteSetting | null
@@ -36,6 +37,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
   featuredArtistData,
   visitSectionData,
   heroVideoUrl,
+  heroVideoMobileUrl,
   heroVideoPosterUrl,
   isUpNext = false,
   siteSettings,
@@ -57,6 +59,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
       {showLanderContent && (
         <GalleryHero
           heroVideoUrl={heroVideoUrl}
+          heroVideoMobileUrl={heroVideoMobileUrl}
           heroVideoPosterUrl={heroVideoPosterUrl}
         />
       )}
@@ -66,6 +69,7 @@ export const HomePageClient: React.FC<HomePageClientProps> = ({
         <>
           <GalleryHero
             heroVideoUrl={heroVideoUrl}
+            heroVideoMobileUrl={heroVideoMobileUrl}
             heroVideoPosterUrl={heroVideoPosterUrl}
           />
 

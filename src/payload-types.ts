@@ -1399,9 +1399,13 @@ export interface Home {
     };
   };
   /**
-   * Upload an MP4 or WebM video for the hero background. Leave blank to show no video.
+   * Upload an MP4 or WebM video for the hero background on desktop. Leave blank to show no video.
    */
   heroVideo?: (string | null) | Media;
+  /**
+   * Upload an MP4 or WebM video optimized for mobile (portrait crop). If blank, falls back to the desktop video.
+   */
+  heroVideoMobile?: (string | null) | Media;
   /**
    * Optional poster image shown while the video loads. Should be a still frame or preview of the video.
    */
@@ -1920,6 +1924,7 @@ export interface HomeSelect<T extends boolean = true> {
             };
       };
   heroVideo?: T;
+  heroVideoMobile?: T;
   heroVideoPoster?: T;
   missionIcon?: T;
   missionStatement?: T;
