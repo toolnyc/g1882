@@ -1,13 +1,11 @@
 'use client'
-import React, { useState, useCallback, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useNewsletterGate } from '@/providers/NewsletterGate/context'
-import { useFocusTrap } from '@/hooks/useFocusTrap'
 
-// Static navigation items - always show these three
-const NAV_ITEMS = [
+export const NAV_ITEMS = [
   { label: 'Happenings', url: '/happenings' },
   { label: 'Artists', url: '/artists' },
   { label: 'Our Story', url: '/our-story' },
@@ -15,30 +13,14 @@ const NAV_ITEMS = [
 ] as const
 
 interface GalleryNavProps {
-  isGlassy: boolean
+  isOpen: boolean
+  onToggle: () => void
 }
 
-export const GalleryNav: React.FC<GalleryNavProps> = ({ isGlassy }) => {
-  const [isOpen, setIsOpen] = useState(false)
+export const GalleryNav: React.FC<GalleryNavProps> = ({ isOpen, onToggle }) => {
   const pathname = usePathname()
   const { shouldShowFullSite } = useNewsletterGate()
-  const menuRef = useFocusTrap(isOpen)
 
-  const closeMenu = useCallback(() => setIsOpen(false), [])
-
-  // Close menu on Escape
-  useEffect(() => {
-    if (!isOpen) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeMenu()
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, closeMenu])
-
-  // Hide navigation when gate is active and user shouldn't see full site
   if (!shouldShowFullSite) {
     return null
   }
@@ -65,7 +47,7 @@ export const GalleryNav: React.FC<GalleryNavProps> = ({ isGlassy }) => {
 
       {/* Mobile Menu Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="md:hidden flex flex-col items-center justify-center w-8 h-8 space-y-1"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
@@ -80,43 +62,6 @@ export const GalleryNav: React.FC<GalleryNavProps> = ({ isGlassy }) => {
           className="w-6 h-0.5 bg-navy"
         />
       </button>
-
-      {/* Mobile Navigation */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={menuRef}
-            role="dialog"
-            aria-label="Mobile navigation menu"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className={`absolute top-full left-0 right-0 border-t md:hidden ${
-              isGlassy ? 'bg-white/10 backdrop-blur-md border-white/20' : 'bg-off-white border-navy/10'
-            }`}
-          >
-            <div className="container py-4 space-y-4" role="menu">
-              {NAV_ITEMS.map((item) => {
-                const isActive = pathname === item.url
-                return (
-                  <div key={item.url}>
-                    <Link
-                      href={item.url}
-                      role="menuitem"
-                      onClick={closeMenu}
-                      className={`nav-link block text-lg font-medium transition-all duration-300 py-1 hover:bg-white/20 hover:px-3 hover:rounded ${
-                        isActive ? 'text-lake font-semibold border-l-2 border-lake pl-3' : 'text-navy/70 hover:text-navy'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  </div>
-                )
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }
