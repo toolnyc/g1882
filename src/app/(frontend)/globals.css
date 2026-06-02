@@ -242,6 +242,7 @@
 
 html {
   opacity: 1;
+  overflow-x: hidden;
   /* Disable scroll bounce on macOS/iOS */
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
