@@ -91,10 +91,10 @@ export const GalleryNav: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className={`absolute top-full left-0 right-0 md:hidden ${
+            className={`absolute top-full left-0 right-0 border-t md:hidden ${
               isGlassy
-                ? 'bg-white/10 backdrop-blur-md border-t border-white/20'
-                : 'bg-white/30 backdrop-blur-lg border-t border-white/40'
+                ? 'bg-white/10 backdrop-blur-md border-white/20'
+                : 'bg-off-white border-navy/10'
             }`}
           >
             <div className="container py-4 space-y-4" role="menu">
