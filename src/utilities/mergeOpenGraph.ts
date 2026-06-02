@@ -3,7 +3,7 @@ import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'Gallery 1882 is a contemporary art gallery in Chesterton, Indiana featuring rotating exhibitions, artist residencies, and community events.',
+  description: 'A contemporary art gallery in the Indiana dunes.',
   images: [
     {
       url: `${getServerSideURL()}/og-default.png`,

@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import React from 'react'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
 import { HomePageClient } from '@/components/HomePage/HomePageClient'
 import { getCachedHappenings } from '@/utilities/getHappenings'
 import { draftMode } from 'next/headers'
 
 export const revalidate = false
+
+const HOME_DESCRIPTION = 'A contemporary art gallery in the Indiana dunes.'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -15,8 +18,12 @@ export async function generateMetadata(): Promise<Metadata> {
     title: {
       absolute: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
     },
-    description:
-      'Gallery 1882 is a contemporary art gallery in Chesterton, Indiana featuring rotating exhibitions, artist residencies, and community events.',
+    description: HOME_DESCRIPTION,
+    openGraph: mergeOpenGraph({
+      title: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
+      description: HOME_DESCRIPTION,
+      url: '/',
+    }),
   }
 }
 

@@ -81,6 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  description: 'A contemporary art gallery in the Indiana dunes.',
   openGraph: mergeOpenGraph(),
   title: {
     template: '%s | Gallery 1882',
