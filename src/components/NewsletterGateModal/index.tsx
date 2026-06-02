@@ -92,7 +92,7 @@ export function NewsletterGateModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 pointer-events-none"
+          className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4"
           onClick={handleDismiss}
         >
           <motion.div
@@ -104,7 +104,7 @@ export function NewsletterGateModal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="bg-off-white text-navy rounded-[3px] max-w-md w-full p-6 sm:p-8 relative shadow-2xl pointer-events-auto"
+            className="bg-off-white text-navy rounded-[3px] max-w-md w-full p-6 sm:p-8 relative shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}

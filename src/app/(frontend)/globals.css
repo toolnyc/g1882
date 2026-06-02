@@ -242,10 +242,11 @@
 
 html {
   opacity: 1;
-  overflow-x: clip; /* clip (not hidden) avoids creating a scroll container — preserves touchpad/wheel scroll routing */
-  /* Disable scroll bounce on macOS/iOS */
+  /* Do NOT set overflow-x here. body's overflow-x:hidden propagates to the viewport
+     per CSS spec (html overflow:visible triggers propagation). Setting overflow on html
+     blocks that propagation, trapping body as a scroll container whose
+     overscroll-behavior:none then swallows wheel events. */
   overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Fixed directory sidebar - outside scroll container */
