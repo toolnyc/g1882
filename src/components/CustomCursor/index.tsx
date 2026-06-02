@@ -4,8 +4,14 @@ import React, { useEffect, useRef, useState } from 'react'
 export const CustomCursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
+  const [isFinePointer, setIsFinePointer] = useState<boolean | null>(null)
 
   useEffect(() => {
+    setIsFinePointer(window.matchMedia('(pointer: fine)').matches)
+  }, [])
+
+  useEffect(() => {
+    if (!isFinePointer) return
     if (typeof window === 'undefined') return
 
     const interactiveSelector =
@@ -53,7 +59,9 @@ export const CustomCursor: React.FC = () => {
       document.removeEventListener('pointerout', handlePointerOut, true)
       document.removeEventListener('visibilitychange', resetHoverState)
     }
-  }, [])
+  }, [isFinePointer])
+
+  if (isFinePointer === false) return null
 
   return (
     <div

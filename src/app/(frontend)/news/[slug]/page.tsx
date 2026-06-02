@@ -35,7 +35,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
   const postImage = typeof post.heroImage === 'object' && post.heroImage ? post.heroImage : null
 
   return (
-    <main className="min-h-screen bg-off-white">
+    <main className="min-h-screen bg-off-white animate-fade-in">
       <article className="pt-48 pb-24">
         {/* Hero Image */}
         {postImage && typeof postImage === 'object' && postImage.url && (

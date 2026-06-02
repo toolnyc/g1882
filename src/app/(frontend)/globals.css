@@ -73,7 +73,7 @@
     overscroll-behavior: none;
     /* Ensure locomotive scroll works properly */
     overflow-x: hidden;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 
   /* Gallery 1882 Typography System */
@@ -122,7 +122,7 @@
     position: relative;
     overflow: hidden;
     border: 1px solid transparent;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     font-size: 0.8125rem;
   }
 
@@ -158,7 +158,7 @@
     border-radius: 1px;
     position: relative;
     overflow: hidden;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     font-size: 0.8125rem;
   }
 
@@ -193,7 +193,7 @@
     position: relative;
     overflow: hidden;
     background: var(--gallery-lake);
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     font-size: 0.8125rem;
     border: 1px solid transparent;
   }
@@ -264,12 +264,15 @@ html {
   position: fixed !important;
   transform: none !important;
   will-change: auto;
+  transition: top 0.3s ease-in-out;
 }
 
 /* Hide system cursor on fine-pointer devices (mouse/trackpad) for custom cursor effect.
-   Only applies to interactive elements — keyboard focus indicators remain visible.
    Touch/coarse-pointer devices keep their native cursor. */
 @media (pointer: fine) {
+  html {
+    cursor: none;
+  }
   a,
   button,
   [role='button'],

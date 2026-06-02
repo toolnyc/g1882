@@ -42,6 +42,7 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
   const stickyHeaderRef = useRef<HTMLDivElement>(null)
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState<number>(0)
   const [showBanner, setShowBanner] = useState<boolean>(true)
+  const [isHeaderVisible, setIsHeaderVisible] = useState<boolean>(true)
   const [lastScrollY, setLastScrollY] = useState<number>(0)
 
   // Filter items based on search query
@@ -99,19 +100,21 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
     return groups
   }, [groupedItems, groupBy])
 
-  // Banner hide/show on scroll
+  // Header + banner hide/show on scroll
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
 
-      if (currentScrollY < 200) {
-        // Show banner at the top
+      if (currentScrollY < 10) {
+        setIsHeaderVisible(true)
         setShowBanner(true)
-      } else if (currentScrollY > lastScrollY && currentScrollY > 300) {
-        // Scrolling down & past 300px - hide banner
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down — hide header and banner
+        setIsHeaderVisible(false)
         setShowBanner(false)
       } else if (currentScrollY < lastScrollY) {
-        // Scrolling up - show banner
+        // Scrolling up — show header and banner
+        setIsHeaderVisible(true)
         setShowBanner(true)
       }
 
@@ -191,7 +194,8 @@ export const DirectoryListing: React.FC<DirectoryListingProps> = ({
           independent of the section offsets and avoid layout jumps. */}
       <div
         ref={stickyHeaderRef}
-        className="fixed top-0 left-0 right-0 z-20 directory-header-fixed bg-off-white border-b border-navy/10"
+        className="fixed left-0 right-0 z-20 directory-header-fixed bg-off-white border-b border-navy/10"
+        style={{ top: isHeaderVisible ? 0 : -stickyHeaderHeight || 0 }}
       >
         <div className="container px-4 pt-36 pb-3">
           {/* Header */}

@@ -74,7 +74,7 @@ export default async function HappeningPage({ params: paramsPromise }: Args) {
   )
 
   return (
-    <main className="min-h-screen bg-off-white">
+    <main className="min-h-screen bg-off-white animate-fade-in">
       <article className={`pb-24${hasHeroImage ? ' pt-40' : ' pt-48'}`}>
         {/* Hero Image - full aspect ratio */}
         {hasHeroImage && (
