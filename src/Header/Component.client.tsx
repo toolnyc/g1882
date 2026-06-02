@@ -72,7 +72,7 @@ export const HeaderClient: React.FC = () => {
                 className={`max-w-[60px] md:max-w-[80px] h-auto ${isGlassy ? 'mix-blend-difference' : ''}`}
               />
             </Link>
-            <GalleryNav />
+            <GalleryNav isGlassy={isGlassy} />
           </div>
         </div>
       </div>

@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNewsletterGate } from '@/providers/NewsletterGate/context'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 // Static navigation items - always show these three
@@ -15,14 +14,15 @@ const NAV_ITEMS = [
   { label: 'Visit', url: '/visit' },
 ] as const
 
-export const GalleryNav: React.FC = () => {
+interface GalleryNavProps {
+  isGlassy: boolean
+}
+
+export const GalleryNav: React.FC<GalleryNavProps> = ({ isGlassy }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const { shouldShowFullSite } = useNewsletterGate()
-  const { headerTheme } = useHeaderTheme()
   const menuRef = useFocusTrap(isOpen)
-
-  const isGlassy = headerTheme === 'glassy' || pathname === '/'
 
   const closeMenu = useCallback(() => setIsOpen(false), [])
 
@@ -92,9 +92,7 @@ export const GalleryNav: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className={`absolute top-full left-0 right-0 border-t md:hidden ${
-              isGlassy
-                ? 'bg-white/10 backdrop-blur-xl border-white/20'
-                : 'bg-off-white border-navy/10'
+              isGlassy ? 'bg-white/10 backdrop-blur-md border-white/20' : 'bg-off-white border-navy/10'
             }`}
           >
             <div className="container py-4 space-y-4" role="menu">
