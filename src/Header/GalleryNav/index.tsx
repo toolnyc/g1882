@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNewsletterGate } from '@/providers/NewsletterGate/context'
+import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 // Static navigation items - always show these three
@@ -18,7 +19,10 @@ export const GalleryNav: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const { shouldShowFullSite } = useNewsletterGate()
+  const { headerTheme } = useHeaderTheme()
   const menuRef = useFocusTrap(isOpen)
+
+  const isGlassy = headerTheme === 'glassy' || pathname === '/'
 
   const closeMenu = useCallback(() => setIsOpen(false), [])
 
@@ -87,7 +91,11 @@ export const GalleryNav: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="absolute top-full left-0 right-0 bg-white/20 backdrop-blur-md border-t border-white/30 md:hidden"
+            className={`absolute top-full left-0 right-0 md:hidden ${
+              isGlassy
+                ? 'bg-white/40 backdrop-blur-xl border-t border-white/50'
+                : 'bg-white/30 backdrop-blur-lg border-t border-white/40'
+            }`}
           >
             <div className="container py-4 space-y-4" role="menu">
               {NAV_ITEMS.map((item) => {
