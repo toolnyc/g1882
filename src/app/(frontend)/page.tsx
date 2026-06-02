@@ -20,7 +20,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: HOME_DESCRIPTION,
     openGraph: mergeOpenGraph({
-      title: 'Gallery 1882 — Contemporary Art in Chesterton, IN',
       description: HOME_DESCRIPTION,
       url: '/',
     }),
