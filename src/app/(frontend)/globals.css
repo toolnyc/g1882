@@ -271,8 +271,8 @@ html {
 /* Hide system cursor on fine-pointer devices (mouse/trackpad) for custom cursor effect.
    Touch/coarse-pointer devices keep their native cursor. */
 @media (pointer: fine) {
-  html {
-    cursor: none;
+  body {
+    cursor: none; /* body, not html — cursor:none on html breaks wheel-event hit-testing in Safari/Chrome */
   }
   a,
   button,
